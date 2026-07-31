@@ -1,0 +1,36 @@
+name: Sincronizar propiedades desde Inmoweb
+
+on:
+  schedule:
+    # 21:00 UTC = 22:00-23:00 hora de España según la época del año.
+    # Siempre dentro de la ventana 18:00-09:00 en que el feed de Inmoweb está disponible.
+    - cron: '0 21 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalar dependencias
+        run: npm install fast-xml-parser
+
+      - name: Descargar y convertir el feed de Inmoweb
+        run: node scripts/sync-inmoweb.mjs
+        env:
+          INMOWEB_KEY: ${{ secrets.INMOWEB_KEY }}
+
+      - name: Guardar cambios en el repositorio
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add properties.json
+          git diff --staged --quiet || git commit -m "Actualización automática de propiedades desde Inmoweb"
+          git push
