@@ -2104,7 +2104,7 @@
     var ops=[].slice.call(card.querySelectorAll('.prop-op'));
     var refTxt=((card.querySelector('.prop-ref')||{}).textContent||'').trim();
     document.getElementById('d-ref').textContent=refTxt;
-    var galAttr = imgWrap ? imgWrap.getAttribute('data-gallery') : null;
+    var galAttr = imgWrap ? (imgWrap.getAttribute('data-gallery-full') || imgWrap.getAttribute('data-gallery')) : null;
     var gallery = galAttr ? galAttr.split('|') : (imgEl ? [imgEl.getAttribute('src')] : []);
     initGallery(gallery, title);
     document.getElementById('d-img').alt=title;
@@ -2195,6 +2195,14 @@
 
     function esc(s){ var d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
 
+    // Sirve las fotos a través de un proxy gratuito que las redimensiona y comprime,
+    // en vez de descargar el archivo original (a menudo varios MB) tal cual.
+    function imgProxy(url, width){
+      if(!url) return url;
+      var clean = url.replace(/^https?:\/\//,'');
+      return 'https://images.weserv.nl/?url='+encodeURIComponent(clean)+'&w='+width+'&output=webp&q=78';
+    }
+
     function fmtPrice(n){
       if(n==null || n==='') return '';
       var num = typeof n === 'string' ? parseFloat(n.replace(/[^\d.,-]/g,'').replace(',', '.')) : n;
@@ -2205,7 +2213,10 @@
     function buildCard(p){
       var isVenta = (p.operacion||'').toLowerCase() === 'venta';
       var photos = (p.fotos||[]).length ? p.fotos : ['https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80'];
-      var gallery = photos.join('|');
+      var galleryThumbs = photos.map(function(u){ return imgProxy(u, 700); });
+      var galleryFull = photos.map(function(u){ return imgProxy(u, 1600); });
+      var gallery = galleryThumbs.join('|');
+      var galleryFullAttr = galleryFull.join('|');
       var opClass = isVenta ? 'venta' : 'alquiler';
       var opText = isVenta ? 'Venta' : 'Alquiler';
       var modalidad = p.modalidad || '';
@@ -2222,8 +2233,8 @@
 
       return '' +
       '<article class="prop" data-year="'+esc(year)+'" data-feats="'+esc(featsAttr)+'" data-e-consl="'+esc(eConsL)+'" data-e-consv="" data-e-emil="" data-e-emiv="">' +
-        '<div class="prop-img" data-gallery="'+esc(gallery)+'">' +
-          '<img src="'+esc(photos[0])+'" alt="'+esc(title)+'">' +
+        '<div class="prop-img" data-gallery="'+esc(gallery)+'" data-gallery-full="'+esc(galleryFullAttr)+'">' +
+          '<img src="'+esc(galleryThumbs[0])+'" alt="'+esc(title)+'" loading="lazy" decoding="async">' +
           MINI_ARROWS +
           '<span class="prop-zone">'+esc(zone)+'</span><span class="prop-op '+opClass+'">'+opText+'</span>'+modBadge +
         '</div>' +
