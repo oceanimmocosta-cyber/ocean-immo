@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-08-01T00:14:13.397Z",
+  "actualizado": "2026-08-01T08:23:48.336Z",
   "propiedades": [
     {
       "referencia": "SMEST0004",
@@ -41,7 +41,9 @@
         "Doble acristalamiento",
         "Terraza (no acristalada)"
       ],
-      "modalidad": null
+      "modalidad": null,
+      "estado": "",
+      "vendido": false
     },
     {
       "referencia": "CHA0006",
@@ -85,7 +87,9 @@
         "Doble acristalamiento",
         "Terraza (no acristalada)"
       ],
-      "modalidad": null
+      "modalidad": null,
+      "estado": "",
+      "vendido": false
     },
     {
       "referencia": "SMP0024",
@@ -139,7 +143,9 @@
         "Doble acristalamiento",
         "Terraza (no acristalada)"
       ],
-      "modalidad": null
+      "modalidad": null,
+      "estado": "",
+      "vendido": false
     },
     {
       "referencia": "EMPG0003",
@@ -167,7 +173,9 @@
         "Garaje",
         "Trastero"
       ],
-      "modalidad": null
+      "modalidad": null,
+      "estado": "",
+      "vendido": false
     },
     {
       "referencia": "CNC0005",
@@ -244,7 +252,9 @@
         "Doble acristalamiento",
         "Terraza (no acristalada)"
       ],
-      "modalidad": null
+      "modalidad": null,
+      "estado": "",
+      "vendido": false
     },
     {
       "referencia": "MMP0028",
@@ -304,7 +314,9 @@
         "Doble acristalamiento",
         "Terraza (no acristalada)"
       ],
-      "modalidad": null
+      "modalidad": null,
+      "estado": "",
+      "vendido": false
     },
     {
       "referencia": "RP0020",
@@ -341,7 +353,9 @@
         "Doble acristalamiento",
         "Terraza (no acristalada)"
       ],
-      "modalidad": null
+      "modalidad": null,
+      "estado": "",
+      "vendido": false
     },
     {
       "referencia": "RP0026",
@@ -373,7 +387,9 @@
         "Amueblado",
         "Terraza (no acristalada)"
       ],
-      "modalidad": null
+      "modalidad": null,
+      "estado": "",
+      "vendido": false
     },
     {
       "referencia": "AMPT0001",
@@ -400,7 +416,9 @@
       "caracteristicas": [
         "Orientación Sur"
       ],
-      "modalidad": null
+      "modalidad": null,
+      "estado": "",
+      "vendido": false
     },
     {
       "referencia": "GRT0006",
@@ -441,7 +459,9 @@
       "anioConstruccion": null,
       "certEnergetica": "",
       "caracteristicas": [],
-      "modalidad": null
+      "modalidad": null,
+      "estado": "",
+      "vendido": false
     },
     {
       "referencia": "AMPE0002",
@@ -474,7 +494,9 @@
         "Vistas a panoramicas",
         "Terraza (no acristalada)"
       ],
-      "modalidad": null
+      "modalidad": null,
+      "estado": "",
+      "vendido": false
     },
     {
       "referencia": "SMEST0003",
@@ -515,7 +537,9 @@
         "Doble acristalamiento",
         "Terraza (acristalada)"
       ],
-      "modalidad": null
+      "modalidad": null,
+      "estado": "",
+      "vendido": false
     },
     {
       "referencia": "SMP0013",
@@ -563,7 +587,9 @@
         "Armarios empotrados",
         "Terraza (no acristalada)"
       ],
-      "modalidad": null
+      "modalidad": null,
+      "estado": "",
+      "vendido": false
     },
     {
       "referencia": "RATC0001",
@@ -614,7 +640,9 @@
         "Vistas a mar",
         "Terraza (no acristalada)"
       ],
-      "modalidad": null
+      "modalidad": null,
+      "estado": "",
+      "vendido": false
     },
     {
       "referencia": "SMC0002",
@@ -670,7 +698,9 @@
         "Vistas a panoramicas",
         "Terraza (no acristalada)"
       ],
-      "modalidad": null
+      "modalidad": null,
+      "estado": "",
+      "vendido": false
     },
     {
       "referencia": "RP0022",
@@ -715,7 +745,9 @@
         "Doble acristalamiento",
         "Terraza (no acristalada)"
       ],
-      "modalidad": null
+      "modalidad": null,
+      "estado": "",
+      "vendido": false
     },
     {
       "referencia": "SMP0019",
@@ -758,7 +790,9 @@
         "Orientación Sur",
         "Terraza (no acristalada)"
       ],
-      "modalidad": null
+      "modalidad": null,
+      "estado": "",
+      "vendido": false
     },
     {
       "referencia": "RDUP0002",
@@ -802,7 +836,9 @@
         "Amueblado",
         "Doble acristalamiento"
       ],
-      "modalidad": null
+      "modalidad": null,
+      "estado": "",
+      "vendido": false
     },
     {
       "referencia": "CR0003",
@@ -865,7 +901,9 @@
         "Vistas a mar",
         "Terraza (no acristalada)"
       ],
-      "modalidad": null
+      "modalidad": null,
+      "estado": "",
+      "vendido": false
     },
     {
       "referencia": "GT0002",
@@ -918,7 +956,9 @@
       "anioConstruccion": null,
       "certEnergetica": "",
       "caracteristicas": [],
-      "modalidad": null
+      "modalidad": null,
+      "estado": "",
+      "vendido": false
     },
     {
       "referencia": "PSPAR0005",
@@ -948,7 +988,9 @@
       "anioConstruccion": null,
       "certEnergetica": "",
       "caracteristicas": [],
-      "modalidad": null
+      "modalidad": null,
+      "estado": "",
+      "vendido": false
     },
     {
       "referencia": "MMP0015",
@@ -1001,7 +1043,9 @@
         "Doble acristalamiento",
         "Terraza (no acristalada)"
       ],
-      "modalidad": null
+      "modalidad": null,
+      "estado": "",
+      "vendido": false
     },
     {
       "referencia": "PIMPAR0002",
@@ -1028,7 +1072,9 @@
       "anioConstruccion": null,
       "certEnergetica": "",
       "caracteristicas": [],
-      "modalidad": null
+      "modalidad": null,
+      "estado": "",
+      "vendido": false
     },
     {
       "referencia": "RPAR0001",
@@ -1056,7 +1102,9 @@
       "anioConstruccion": null,
       "certEnergetica": "",
       "caracteristicas": [],
-      "modalidad": null
+      "modalidad": null,
+      "estado": "",
+      "vendido": false
     },
     {
       "referencia": "RP0012",
@@ -1118,7 +1166,9 @@
         "Doble acristalamiento",
         "Terraza (no acristalada)"
       ],
-      "modalidad": null
+      "modalidad": null,
+      "estado": "",
+      "vendido": false
     },
     {
       "referencia": "AMPP0011",
@@ -1163,7 +1213,9 @@
         "Vistas a despejadas",
         "Doble acristalamiento"
       ],
-      "modalidad": null
+      "modalidad": null,
+      "estado": "",
+      "vendido": false
     },
     {
       "referencia": "SMP0010",
@@ -1202,7 +1254,9 @@
         "Doble acristalamiento",
         "Terraza (no acristalada)"
       ],
-      "modalidad": null
+      "modalidad": null,
+      "estado": "",
+      "vendido": false
     },
     {
       "referencia": "RP0005",
@@ -1256,7 +1310,9 @@
         "Vistas a despejadas",
         "Calefacción individual"
       ],
-      "modalidad": null
+      "modalidad": null,
+      "estado": "",
+      "vendido": false
     },
     {
       "referencia": "AMPG0002",
@@ -1290,7 +1346,9 @@
       "caracteristicas": [
         "Garaje"
       ],
-      "modalidad": null
+      "modalidad": null,
+      "estado": "",
+      "vendido": false
     },
     {
       "referencia": "RP0002",
@@ -1333,7 +1391,9 @@
         "Doble acristalamiento",
         "Terraza (acristalada)"
       ],
-      "modalidad": null
+      "modalidad": null,
+      "estado": "",
+      "vendido": false
     },
     {
       "referencia": "PRP0001",
@@ -1382,7 +1442,9 @@
         "Vistas a mar",
         "Orientación Sureste"
       ],
-      "modalidad": null
+      "modalidad": null,
+      "estado": "",
+      "vendido": false
     },
     {
       "referencia": "PRP0027",
@@ -1431,7 +1493,9 @@
         "Doble acristalamiento",
         "Terraza (acristalada)"
       ],
-      "modalidad": null
+      "modalidad": null,
+      "estado": "",
+      "vendido": false
     },
     {
       "referencia": "EMPP0025",
@@ -1471,7 +1535,9 @@
         "Vistas a despejadas",
         "Terraza (no acristalada)"
       ],
-      "modalidad": null
+      "modalidad": null,
+      "estado": "",
+      "vendido": false
     },
     {
       "referencia": "VT0007",
@@ -1508,7 +1574,9 @@
       "anioConstruccion": null,
       "certEnergetica": "",
       "caracteristicas": [],
-      "modalidad": null
+      "modalidad": null,
+      "estado": "",
+      "vendido": false
     },
     {
       "referencia": "MMTR0001",
@@ -1527,7 +1595,9 @@
       "anioConstruccion": null,
       "certEnergetica": "",
       "caracteristicas": [],
-      "modalidad": null
+      "modalidad": null,
+      "estado": "",
+      "vendido": false
     }
   ]
 }
