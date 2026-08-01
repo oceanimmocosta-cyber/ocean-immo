@@ -76,11 +76,12 @@ async function main() {
     const zona = textOf(p.localizacion?.zona) || textOf(p.localizacion?.poblacion);
     const banosNum = (Number(p.banos) || 0) + (Number(p.aseos) || 0);
 
-    // Estado del inmueble (activo, vendido, reservado...). Guardamos el valor tal cual
-    // por si hace falta ajustar la detección de "vendido" según lo que use Inmoweb realmente.
-    const estadoRaw = (p.estado?.['@_id'] ?? textOf(p.estado) ?? '').toString();
-    const estadoNorm = estadoRaw.toLowerCase();
-    const vendido = /vend|sold/.test(estadoNorm);
+    // Inmoweb marca el estado con "etiquetas" (Vendido, Reservado, Exclusiva...),
+    // no con un campo "estado" como se probó al principio. Puede haber una sola
+    // etiqueta (texto) o varias (lista), así que lo tratamos siempre como lista.
+    const etiquetasRaw = toArray(p.etiquetas?.etiqueta).map((e) => textOf(e));
+    const etiquetasNorm = etiquetasRaw.map((e) => e.toLowerCase());
+    const vendido = etiquetasNorm.some((e) => e.includes('vend'));
 
     return {
       referencia: textOf(p.referencia) || String(p['@_id'] || ''),
@@ -97,9 +98,8 @@ async function main() {
       certEnergetica: cmap['certificacion_energetica'] || '',
       caracteristicas: feats,
       modalidad: opId === '6' ? 'Vacacional' : null,
-      estado: estadoRaw,
+      etiquetas: etiquetasRaw,
       vendido,
-      _debug: p,
     };
   });
 
