@@ -99,6 +99,7 @@ async function main() {
       modalidad: opId === '6' ? 'Vacacional' : null,
       estado: estadoRaw,
       vendido,
+      _debug: p,
     };
   });
 
