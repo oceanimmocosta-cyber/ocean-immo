@@ -372,6 +372,17 @@
   .filter-bar .field select{cursor:pointer}
   .filter-bar .btn{flex:0 0 auto}
   .subpage-count{color:var(--muted);font-size:.92rem;margin-bottom:22px;font-weight:500}
+  .pagination{display:flex;justify-content:center;align-items:center;gap:8px;margin:36px 0 8px;flex-wrap:wrap}
+  .pagination button{
+    min-width:38px;height:38px;padding:0 8px;border-radius:10px;border:1px solid var(--line);
+    background:#fff;color:var(--navy);font-family:var(--body);font-weight:600;font-size:.9rem;
+    cursor:pointer;transition:background .2s,border-color .2s,color .2s;display:flex;align-items:center;justify-content:center;
+  }
+  .pagination button:hover:not(:disabled){border-color:var(--turquoise);color:var(--turquoise-dark)}
+  .pagination button.active{background:var(--turquoise);border-color:var(--turquoise);color:#fff}
+  .pagination button:disabled{opacity:.35;cursor:default}
+  .pagination button svg{width:16px;height:16px}
+  .pagination .pg-dots{color:var(--muted);padding:0 4px;font-weight:600}
   .services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
   .service-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:32px;box-shadow:var(--shadow-sm);transition:transform .3s,box-shadow .3s}
   .service-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-md)}
@@ -1331,6 +1342,7 @@
         </div>
       </article>
       </div>
+      <div class="pagination" id="comprar-pagination"></div>
     </div>
   </section>
 </div>
@@ -1453,6 +1465,7 @@
         </div>
       </article>
       </div>
+      <div class="pagination" id="alquilar-pagination"></div>
     </div>
   </section>
 </div>
@@ -2252,6 +2265,51 @@
       '</article>';
     }
 
+    var PER_PAGE = 12;
+
+    function buildPaginationHTML(page, totalPages){
+      if(totalPages<=1) return '';
+      var html='';
+      html+='<button data-pg="prev" '+(page===1?'disabled':'')+' aria-label="Página anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>';
+      var pages=[]; var maxShown=7;
+      if(totalPages<=maxShown){
+        for(var i=1;i<=totalPages;i++) pages.push(i);
+      } else {
+        pages.push(1);
+        if(page>3) pages.push('...');
+        var s=Math.max(2,page-1), e=Math.min(totalPages-1,page+1);
+        for(var i=s;i<=e;i++) pages.push(i);
+        if(page<totalPages-2) pages.push('...');
+        pages.push(totalPages);
+      }
+      pages.forEach(function(p){
+        if(p==='...') html+='<span class="pg-dots">…</span>';
+        else html+='<button data-pg="'+p+'" class="'+(p===page?'active':'')+'">'+p+'</button>';
+      });
+      html+='<button data-pg="next" '+(page===totalPages?'disabled':'')+' aria-label="Página siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button>';
+      return html;
+    }
+
+    function renderPaginated(list, gridEl, paginationEl, page){
+      if(!gridEl) return;
+      var totalPages=Math.max(1, Math.ceil(list.length / PER_PAGE));
+      page=Math.min(Math.max(1,page), totalPages);
+      var start=(page-1)*PER_PAGE;
+      gridEl.innerHTML = list.slice(start, start+PER_PAGE).map(buildCard).join('');
+      initMiniGalleries(gridEl);
+      if(paginationEl){
+        paginationEl.innerHTML = buildPaginationHTML(page, totalPages);
+        paginationEl.onclick = function(e){
+          var btn=e.target.closest('[data-pg]');
+          if(!btn || btn.disabled) return;
+          var v=btn.getAttribute('data-pg');
+          var newPage = v==='prev' ? page-1 : v==='next' ? page+1 : parseInt(v,10);
+          renderPaginated(list, gridEl, paginationEl, newPage);
+          gridEl.scrollIntoView({behavior:'smooth', block:'start'});
+        };
+      }
+    }
+
     fetch('./properties.json', { cache: 'no-store' })
       .then(function(r){ if(!r.ok) throw new Error('properties.json error ' + r.status); return r.json(); })
       .then(function(data){
@@ -2266,16 +2324,18 @@
         var alquilarGrid = document.getElementById('alquilar-grid');
         var comprarCount = document.getElementById('comprar-count');
         var alquilarCount = document.getElementById('alquilar-count');
+        var comprarPag = document.getElementById('comprar-pagination');
+        var alquilarPag = document.getElementById('alquilar-pagination');
 
-        if(comprarGrid){ comprarGrid.innerHTML = ventas.map(buildCard).join(''); }
-        if(alquilarGrid){ alquilarGrid.innerHTML = alquileres.map(buildCard).join(''); }
+        renderPaginated(ventas, comprarGrid, comprarPag, 1);
+        renderPaginated(alquileres, alquilarGrid, alquilarPag, 1);
         if(comprarCount){ comprarCount.textContent = 'Mostrando ' + ventas.length + ' propiedad' + (ventas.length===1?'':'es') + ' en venta'; }
         if(alquilarCount){ alquilarCount.textContent = 'Mostrando ' + alquileres.length + ' alquiler' + (alquileres.length===1?'':'es') + ' disponible' + (alquileres.length===1?'':'s'); }
         if(homeGrid){
           var featured = records.slice(0,6);
           homeGrid.innerHTML = featured.map(buildCard).join('');
+          initMiniGalleries(homeGrid);
         }
-        initMiniGalleries();
       })
       .catch(function(err){
         console.warn('No se pudo cargar properties.json, se muestran las propiedades de ejemplo.', err);
