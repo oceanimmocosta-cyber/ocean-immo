@@ -74,6 +74,7 @@ async function main() {
       .filter(Boolean);
 
     const zona = textOf(p.localizacion?.zona) || textOf(p.localizacion?.poblacion);
+    const poblacion = textOf(p.localizacion?.poblacion) || textOf(p.localizacion?.zona);
     const banosNum = (Number(p.banos) || 0) + (Number(p.aseos) || 0);
 
     // Inmoweb marca el estado con "etiquetas" (Vendido, Reservado, Exclusiva...),
@@ -89,6 +90,7 @@ async function main() {
       descripcion,
       operacion,
       zona,
+      poblacion,
       precio: textOf(p.precio),
       m2: p.superficies?.construida || p.superficies?.habitable || null,
       habitaciones: p.dormitorios ?? null,
