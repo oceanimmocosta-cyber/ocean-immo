@@ -752,16 +752,16 @@
         <div class="search-fields">
           <div class="field select-wrap full">
             <label>Población</label>
-            <select>
-              <option>Todas las poblaciones</option>
-              <option>Roses</option>
-              <option>Castelló d'Empúries</option>
-              <option>Empuriabrava</option>
-              <option>Pedret i Marzà</option>
-              <option>Garriguella</option>
-              <option>Vilajuïga</option>
-              <option>Peralada</option>
-              <option>Figueres</option>
+            <select id="hero-f-poblacion">
+              <option value="">Todas las poblaciones</option>
+              <option value="Roses">Roses</option>
+              <option value="Castelló d'Empúries">Castelló d'Empúries</option>
+              <option value="Empuriabrava">Empuriabrava</option>
+              <option value="Pedret i Marzà">Pedret i Marzà</option>
+              <option value="Garriguella">Garriguella</option>
+              <option value="Vilajuïga">Vilajuïga</option>
+              <option value="Peralada">Peralada</option>
+              <option value="Figueres">Figueres</option>
             </select>
           </div>
           <div class="field select-wrap">
@@ -774,7 +774,7 @@
           </div>
           <div class="field select-wrap full">
             <label>Precio máximo</label>
-            <select><option>Sin límite</option><option>Hasta 150.000 €</option><option>Hasta 250.000 €</option><option>Hasta 400.000 €</option><option>Hasta 600.000 €</option><option>Más de 600.000 €</option></select>
+            <select id="hero-f-precio"><option value="">Sin límite</option><option value="0-150000">Hasta 150.000 €</option><option value="0-250000">Hasta 250.000 €</option><option value="0-400000">Hasta 400.000 €</option><option value="0-600000">Hasta 600.000 €</option><option value="600000-">Más de 600.000 €</option></select>
           </div>
         </div>
         <a href="#" id="searchBtn" class="btn btn-turquoise">
@@ -2405,6 +2405,14 @@
 
         wireFilterSearch('comprar-f-buscar', 'comprar-f-poblacion', 'comprar-f-precio', ventas, comprarGrid, comprarPag);
         wireFilterSearch('alquilar-f-buscar', 'alquilar-f-poblacion', 'alquilar-f-precio', alquileres, alquilarGrid, alquilarPag);
+
+        // Expuesto para que el buscador de la portada también pueda filtrar
+        window.__propertyData = {
+          ventas: ventas, alquileres: alquileres,
+          comprarGrid: comprarGrid, alquilarGrid: alquilarGrid,
+          comprarPag: comprarPag, alquilarPag: alquilarPag,
+          applyFilters: applyFilters, renderPaginated: renderPaginated
+        };
       })
       .catch(function(err){
         console.warn('No se pudo cargar properties.json, se muestran las propiedades de ejemplo.', err);
@@ -2438,7 +2446,24 @@
       e.preventDefault();
       var tabs=[].slice.call(document.querySelectorAll('.search-tabs button'));
       var idx=tabs.findIndex(function(b){return b.classList.contains('active');});
-      showPage(idx===1 ? 'alquilar' : 'comprar');
+      var target = idx===1 ? 'alquilar' : 'comprar';
+      showPage(target);
+      if(window.__propertyData){
+        var pd=window.__propertyData;
+        var poblacion=(document.getElementById('hero-f-poblacion')||{}).value || '';
+        var precio=(document.getElementById('hero-f-precio')||{}).value || '';
+        var list = target==='alquilar' ? pd.alquileres : pd.ventas;
+        var grid = target==='alquilar' ? pd.alquilarGrid : pd.comprarGrid;
+        var pag = target==='alquilar' ? pd.alquilarPag : pd.comprarPag;
+        if(list && grid){
+          var filtered = pd.applyFilters(list, poblacion, precio);
+          pd.renderPaginated(filtered, grid, pag, 1);
+          var pageSel=document.getElementById(target+'-f-poblacion');
+          var pagePrecio=document.getElementById(target+'-f-precio');
+          if(pageSel) pageSel.value=poblacion;
+          if(pagePrecio) pagePrecio.value=precio;
+        }
+      }
       return;
     }
     if(t.hasAttribute('data-back')){
