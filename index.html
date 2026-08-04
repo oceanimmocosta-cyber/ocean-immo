@@ -2342,12 +2342,15 @@
       var m2 = p.m2, hab = p.habitaciones, banos = p.banos;
       var year = p.anioConstruccion || '';
       var featsAttr = (p.caracteristicas||[]).join('|');
-      var eConsL = p.certEnergetica || '';
+      var eConsL = p.certConsumoLetra || p.certEnergetica || '';
+      var eConsV = p.certConsumoValor || '';
+      var eEmiL = p.certEmisionesLetra || '';
+      var eEmiV = p.certEmisionesValor || '';
       var vendido = !!p.vendido;
       var soldBadge = vendido ? '<span class="sold-ribbon">Vendido</span>' : '';
 
       return '' +
-      '<article class="prop'+(vendido?' is-sold':'')+'" data-vendido="'+(vendido?'true':'false')+'" data-year="'+esc(year)+'" data-feats="'+esc(featsAttr)+'" data-e-consl="'+esc(eConsL)+'" data-e-consv="" data-e-emil="" data-e-emiv="">' +
+      '<article class="prop'+(vendido?' is-sold':'')+'" data-vendido="'+(vendido?'true':'false')+'" data-year="'+esc(year)+'" data-feats="'+esc(featsAttr)+'" data-e-consl="'+esc(eConsL)+'" data-e-consv="'+esc(eConsV)+'" data-e-emil="'+esc(eEmiL)+'" data-e-emiv="'+esc(eEmiV)+'">' +
         '<div class="prop-img" data-gallery="'+esc(gallery)+'" data-gallery-full="'+esc(galleryFullAttr)+'">' +
           '<img src="'+esc(galleryThumbs[0])+'" alt="'+esc(title)+'" loading="lazy" decoding="async">' +
           MINI_ARROWS +
