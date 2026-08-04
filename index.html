@@ -2105,6 +2105,7 @@
   const _oES=new WeakMap();
   function _tr(n){var p=n.parentNode;if(!p)return false;var t=p.nodeName;return !(t==='SCRIPT'||t==='STYLE'||t==='NOSCRIPT');}
   function buildDesc(t,z){
+    t = escHtml(t); z = escHtml(z);
     var D={
       es:"<p>"+t+" situada en "+z+", una de las zonas más apreciadas de Roses y su entorno. Una propiedad luminosa y bien comunicada, a pocos minutos de la playa, los comercios y todos los servicios.</p><p>Se encuentra en muy buen estado y lista para disfrutarla desde el primer día. Una excelente oportunidad tanto para vivienda como para inversión en la Costa Brava.</p>",
       ca:"<p>"+t+" situada a "+z+", una de les zones més apreciades de Roses i el seu entorn. Una propietat lluminosa i ben comunicada, a pocs minuts de la platja, els comerços i tots els serveis.</p><p>Es troba en molt bon estat i llesta per gaudir-la des del primer dia. Una excel·lent oportunitat tant per a habitatge com per a inversió a la Costa Brava.</p>",
@@ -2113,6 +2114,10 @@
     };
     return D[currentLang]||D.es;
   }
+  // Escapa texto antes de insertarlo como HTML, para evitar inyección de código (XSS)
+  // desde datos externos (Inmoweb, Airtable, etc.) que se copian de un atributo a otro.
+  function escHtml(s){ var d=document.createElement('div'); d.textContent=(s==null?'':String(s)); return d.innerHTML; }
+
   function buildFeats(z,v,year,custom){
     var B={
       es:["Ubicación privilegiada en "+z,"A pocos minutos de la playa","Cocina equipada","Mucha luz natural","Armarios empotrados","Aire acondicionado","Cerca de comercios y servicios"],
@@ -2262,10 +2267,14 @@
   function fillEnergyCert(card){
     var wrap=document.getElementById('d-energy-wrap'), grid=document.getElementById('d-energy');
     if(!wrap||!grid) return;
-    var consL=card.getAttribute('data-e-consl')||'';
-    var consV=card.getAttribute('data-e-consv')||'';
-    var emiL=card.getAttribute('data-e-emil')||'';
-    var emiV=card.getAttribute('data-e-emiv')||'';
+    var rawConsL=card.getAttribute('data-e-consl')||'';
+    var rawEmiL=card.getAttribute('data-e-emil')||'';
+    // La letra solo puede ser A-G; cualquier otro valor se descarta (evita inyección vía atributo class).
+    var letterRe=/^[A-G]$/i;
+    var consL = letterRe.test(rawConsL) ? rawConsL.toUpperCase() : '';
+    var emiL = letterRe.test(rawEmiL) ? rawEmiL.toUpperCase() : '';
+    var consV=escHtml(card.getAttribute('data-e-consv')||'');
+    var emiV=escHtml(card.getAttribute('data-e-emiv')||'');
     if(!consL && !emiL){ wrap.style.display='none'; grid.innerHTML=''; return; }
     var lang=(typeof currentLang!=='undefined')?currentLang:'es';
     var L={
@@ -2325,7 +2334,7 @@
     var yearBuilt=card.getAttribute('data-year')||'';
     var featsAttr=card.getAttribute('data-feats')||'';
     var customFeats=featsAttr ? featsAttr.split('|').filter(Boolean) : [];
-    document.getElementById('d-features').innerHTML=buildFeats(zone,isVenta,yearBuilt,customFeats).map(function(f){return '<li>'+CHK+'<span>'+f+'</span></li>';}).join('');
+    document.getElementById('d-features').innerHTML=buildFeats(zone,isVenta,yearBuilt,customFeats).map(function(f){return '<li>'+CHK+'<span>'+escHtml(f)+'</span></li>';}).join('');
     document.getElementById('d-map').src='https://www.google.com/maps?q='+encodeURIComponent(zone+', Roses, Girona')+'&output=embed';
     fillEnergyCert(card);
     var msg=document.getElementById('d-cta-msg'); if(msg) msg.value=buildMsg(refTxt||title);
