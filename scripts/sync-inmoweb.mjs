@@ -38,6 +38,12 @@ function textOf(node) {
   return String(node).trim();
 }
 
+// Escapa texto antes de insertarlo en HTML (el email de aviso), para evitar que datos
+// externos de Inmoweb (título, zona...) puedan inyectar código en el correo enviado.
+function escHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
 async function main() {
   const key = process.env.INMOWEB_KEY;
   if (!key) throw new Error('Falta la variable de entorno INMOWEB_KEY (revisa el secreto en GitHub).');
@@ -109,7 +115,8 @@ async function main() {
     };
   });
 
-  // ===== Detectar propiedades nuevas comparando con el properties.json anterior =====
+  // Si el feed devuelve 0 propiedades pero antes había muchas, algo ha ido mal
+  // (feed caído, XML corrupto...). Mejor no sobrescribir y avisar, que borrar la cartera.
   let propiedadesAnteriores = [];
   try {
     const anterior = JSON.parse(fs.readFileSync('properties.json', 'utf8'));
@@ -117,6 +124,15 @@ async function main() {
   } catch {
     // No hay properties.json previo (primera ejecución) — no se avisa de "nuevas" la primera vez.
   }
+
+  if (propiedades.length === 0 && propiedadesAnteriores.length > 0) {
+    throw new Error(
+      `El feed de Inmoweb ha devuelto 0 propiedades, pero antes había ${propiedadesAnteriores.length}. ` +
+      `Por seguridad, no se sobrescribe properties.json. Revisa el feed de Inmoweb manualmente.`
+    );
+  }
+
+  // ===== Detectar propiedades nuevas comparando con el properties.json anterior =====
   const refsAnteriores = new Set(propiedadesAnteriores.map((p) => p.referencia));
   const nuevas = propiedadesAnteriores.length
     ? propiedades.filter((p) => !refsAnteriores.has(p.referencia) && !p.vendido)
@@ -155,13 +171,17 @@ async function avisarSuscriptores(nuevas) {
   const tarjetas = nuevas
     .map((p) => {
       const foto = p.fotos && p.fotos[0] ? p.fotos[0] : '';
+      const titulo = escHtml(p.titulo);
+      const operacion = escHtml(p.operacion);
+      const poblacion = escHtml(p.poblacion);
+      const fotoSafe = escHtml(foto);
       return `
         <table style="width:100%;max-width:560px;margin:0 auto 24px;border:1px solid #e5e0d8;border-radius:8px;overflow:hidden;font-family:Helvetica,Arial,sans-serif">
-          <tr>${foto ? `<td><img src="${foto}" alt="${p.titulo}" style="width:100%;display:block;max-height:260px;object-fit:cover"></td>` : ''}</tr>
+          <tr>${foto ? `<td><img src="${fotoSafe}" alt="${titulo}" style="width:100%;display:block;max-height:260px;object-fit:cover"></td>` : ''}</tr>
           <tr><td style="padding:16px 20px">
-            <p style="margin:0 0 4px;color:#039BA5;font-weight:700;font-size:13px;letter-spacing:.03em;text-transform:uppercase">${p.operacion}${p.poblacion ? ' · ' + p.poblacion : ''}</p>
-            <h3 style="margin:0 0 8px;color:#1A2E43;font-size:19px">${p.titulo}</h3>
-            <p style="margin:0 0 14px;color:#1A2E43;font-size:18px;font-weight:700">${fmtPrecio(p.precio)}</p>
+            <p style="margin:0 0 4px;color:#039BA5;font-weight:700;font-size:13px;letter-spacing:.03em;text-transform:uppercase">${operacion}${poblacion ? ' · ' + poblacion : ''}</p>
+            <h3 style="margin:0 0 8px;color:#1A2E43;font-size:19px">${titulo}</h3>
+            <p style="margin:0 0 14px;color:#1A2E43;font-size:18px;font-weight:700">${escHtml(fmtPrecio(p.precio))}</p>
             <a href="${SITE_URL}" style="display:inline-block;background:#039BA5;color:#fff;text-decoration:none;padding:10px 22px;border-radius:100px;font-size:14px;font-weight:600">Ver en la web</a>
           </td></tr>
         </table>`;
@@ -177,9 +197,12 @@ async function avisarSuscriptores(nuevas) {
       <p style="text-align:center;color:#8a8578;font-size:12px;margin-top:24px">Ocean Immo · Roses, Costa Brava</p>
     </div>`;
 
+  // Quitamos saltos de línea del título para el asunto del correo: evita que alguien
+  // intente inyectar cabeceras de email adicionales (Bcc, etc.) a través de ese campo.
+  const tituloSeguro = (s) => String(s ?? '').replace(/[\r\n]+/g, ' ').trim();
   const subject =
     nuevas.length === 1
-      ? `Nueva propiedad: ${nuevas[0].titulo}`
+      ? `Nueva propiedad: ${tituloSeguro(nuevas[0].titulo)}`
       : `${nuevas.length} nuevas propiedades en Ocean Immo`;
 
   const createRes = await fetch('https://api.brevo.com/v3/emailCampaigns', {
