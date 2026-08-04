@@ -332,6 +332,7 @@
   .news-copy h2{color:#fff;font-size:clamp(1.7rem,3.2vw,2.4rem);margin-bottom:12px}
   .news-copy p{color:rgba(255,255,255,.9);font-size:1.02rem;font-weight:300}
   .news-form{display:flex;gap:12px}
+  .news-success{color:#fff;font-weight:600;margin-top:14px;display:none}
   .news-form input{flex:1;border:none;border-radius:100px;padding:16px 22px;font-family:var(--body);font-size:.95rem}
   .news-form input:focus{outline:2px solid var(--gold-soft)}
   .news-form .btn{flex-shrink:0}
@@ -1161,12 +1162,14 @@
       <h2>Sé el primero en ver las nuevas propiedades</h2>
       <p>Suscríbete y recibe en primicia las viviendas que entran en nuestra cartera, antes que nadie.</p>
     </div>
-    <form class="news-form" action="https://formsubmit.co/oceanimmocosta@gmail.com" method="POST">
-      <input type="hidden" name="_subject" value="Nueva suscripción newsletter - Ocean Immo">
-      <input type="hidden" name="_captcha" value="false">
-      <input type="email" name="Email" required placeholder="Tu correo electrónico" aria-label="Email">
+    <form class="news-form" id="news-form" action="https://ceabbe05.sibforms.com/serve/MUIFAK-grbTEDrlX9pibtdFYDw3ZIWfx6arL_ySKpK6Lw_bbPx3yP4EYc6MHnPgya9ISQyvjZpk4t2SweoSCreKPHBnC-4w6Jw3ulHEGjI5ZONeDIOqmNr8PRNBT7W12qaGl750dRNVnG89f9dMC6NG5SVH2b19pSuANWT1INGdh2WTN3Kltfuleda95TDu6uXed8bs2yzJlQCiQAQ==" method="POST" target="news-hidden-frame">
+      <input type="email" name="EMAIL" required placeholder="Tu correo electrónico" aria-label="Email">
+      <input type="text" name="email_address_check" value="" style="display:none">
+      <input type="hidden" name="locale" value="es">
       <button class="btn btn-navy" type="submit">Suscribirme</button>
     </form>
+    <p class="news-success" id="news-form-success" style="display:none">✓ ¡Gracias! Revisa tu correo para confirmar la suscripción.</p>
+    <iframe name="news-hidden-frame" style="display:none"></iframe>
   </div>
 </section>
 
@@ -1999,6 +2002,20 @@
           if(errorBox) errorBox.classList.add('show');
         });
       });
+    });
+  })();
+
+  // ===== Newsletter (Brevo) — se envía a un iframe oculto para no salir de la página =====
+  (function(){
+    var form=document.getElementById('news-form');
+    var successMsg=document.getElementById('news-form-success');
+    if(!form) return;
+    form.addEventListener('submit', function(){
+      // El envío real ocurre de forma normal (hacia el iframe oculto), solo mostramos el aviso.
+      setTimeout(function(){
+        form.style.display='none';
+        if(successMsg) successMsg.style.display='block';
+      }, 600);
     });
   })();
 
