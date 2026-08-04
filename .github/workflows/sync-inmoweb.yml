@@ -20,7 +20,7 @@ jobs:
           node-version: '20'
 
       - name: Instalar dependencias
-        run: npm install fast-xml-parser
+        run: npm install fast-xml-parser@4.5.3
 
       - name: Descargar y convertir el feed de Inmoweb
         run: node scripts/sync-inmoweb.mjs
