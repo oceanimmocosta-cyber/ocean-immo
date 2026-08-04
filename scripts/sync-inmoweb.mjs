@@ -109,11 +109,105 @@ async function main() {
     };
   });
 
+  // ===== Detectar propiedades nuevas comparando con el properties.json anterior =====
+  let propiedadesAnteriores = [];
+  try {
+    const anterior = JSON.parse(fs.readFileSync('properties.json', 'utf8'));
+    propiedadesAnteriores = anterior.propiedades || [];
+  } catch {
+    // No hay properties.json previo (primera ejecución) — no se avisa de "nuevas" la primera vez.
+  }
+  const refsAnteriores = new Set(propiedadesAnteriores.map((p) => p.referencia));
+  const nuevas = propiedadesAnteriores.length
+    ? propiedades.filter((p) => !refsAnteriores.has(p.referencia) && !p.vendido)
+    : [];
+
   fs.writeFileSync(
     'properties.json',
     JSON.stringify({ actualizado: new Date().toISOString(), propiedades }, null, 2)
   );
   console.log(`Guardadas ${propiedades.length} propiedades en properties.json`);
+
+  if (nuevas.length) {
+    console.log(`Detectadas ${nuevas.length} propiedades nuevas. Avisando a los suscriptores...`);
+    await avisarSuscriptores(nuevas);
+  } else {
+    console.log('No hay propiedades nuevas desde la última sincronización.');
+  }
+}
+
+const SITE_URL = 'https://oceanimmocosta-cyber.github.io/ocean-immo/';
+const BREVO_LIST_ID = 5;
+
+function fmtPrecio(n) {
+  const num = typeof n === 'string' ? parseFloat(n.replace(/[^\d.,-]/g, '').replace(',', '.')) : n;
+  if (isNaN(num)) return n;
+  return Math.round(num).toLocaleString('es-ES') + ' €';
+}
+
+async function avisarSuscriptores(nuevas) {
+  const apiKey = process.env.BREVO_API_KEY;
+  if (!apiKey) {
+    console.warn('Falta BREVO_API_KEY: no se puede avisar a los suscriptores (revisa el secreto en GitHub).');
+    return;
+  }
+
+  const tarjetas = nuevas
+    .map((p) => {
+      const foto = p.fotos && p.fotos[0] ? p.fotos[0] : '';
+      return `
+        <table style="width:100%;max-width:560px;margin:0 auto 24px;border:1px solid #e5e0d8;border-radius:8px;overflow:hidden;font-family:Helvetica,Arial,sans-serif">
+          <tr>${foto ? `<td><img src="${foto}" alt="${p.titulo}" style="width:100%;display:block;max-height:260px;object-fit:cover"></td>` : ''}</tr>
+          <tr><td style="padding:16px 20px">
+            <p style="margin:0 0 4px;color:#039BA5;font-weight:700;font-size:13px;letter-spacing:.03em;text-transform:uppercase">${p.operacion}${p.poblacion ? ' · ' + p.poblacion : ''}</p>
+            <h3 style="margin:0 0 8px;color:#1A2E43;font-size:19px">${p.titulo}</h3>
+            <p style="margin:0 0 14px;color:#1A2E43;font-size:18px;font-weight:700">${fmtPrecio(p.precio)}</p>
+            <a href="${SITE_URL}" style="display:inline-block;background:#039BA5;color:#fff;text-decoration:none;padding:10px 22px;border-radius:100px;font-size:14px;font-weight:600">Ver en la web</a>
+          </td></tr>
+        </table>`;
+    })
+    .join('');
+
+  const htmlContent = `
+    <div style="background:#F6F1E7;padding:32px 16px;font-family:Helvetica,Arial,sans-serif">
+      <h2 style="text-align:center;color:#1A2E43;margin-bottom:24px">
+        ${nuevas.length === 1 ? 'Nueva propiedad disponible en Ocean Immo' : `${nuevas.length} nuevas propiedades disponibles en Ocean Immo`}
+      </h2>
+      ${tarjetas}
+      <p style="text-align:center;color:#8a8578;font-size:12px;margin-top:24px">Ocean Immo · Roses, Costa Brava</p>
+    </div>`;
+
+  const subject =
+    nuevas.length === 1
+      ? `Nueva propiedad: ${nuevas[0].titulo}`
+      : `${nuevas.length} nuevas propiedades en Ocean Immo`;
+
+  const createRes = await fetch('https://api.brevo.com/v3/emailCampaigns', {
+    method: 'POST',
+    headers: { 'api-key': apiKey, 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: JSON.stringify({
+      name: `Aviso automático - ${new Date().toISOString().slice(0, 10)}`,
+      subject,
+      sender: { name: 'Ocean Immo', email: 'oceanimmocosta@gmail.com' },
+      htmlContent,
+      recipients: { listIds: [BREVO_LIST_ID] },
+    }),
+  });
+  if (!createRes.ok) {
+    console.error('Error al crear la campaña en Brevo:', createRes.status, await createRes.text());
+    return;
+  }
+  const { id } = await createRes.json();
+
+  const sendRes = await fetch(`https://api.brevo.com/v3/emailCampaigns/${id}/sendNow`, {
+    method: 'POST',
+    headers: { 'api-key': apiKey, Accept: 'application/json' },
+  });
+  if (!sendRes.ok) {
+    console.error('Error al enviar la campaña en Brevo:', sendRes.status, await sendRes.text());
+    return;
+  }
+  console.log('Aviso enviado a los suscriptores correctamente.');
 }
 
 main().catch((err) => {
