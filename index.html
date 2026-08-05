@@ -2345,17 +2345,48 @@
   function fillSimilarProperties(isVenta, currentRef){
     var wrap=document.getElementById('d-similar'), grid=document.getElementById('d-similar-grid');
     if(!wrap||!grid) return;
+
+    if(window.__propertyData){
+      var pd=window.__propertyData;
+      var list = isVenta ? pd.ventas : pd.alquileres;
+      var refClean = (currentRef||'').replace(/^ref\.?\s*/i,'').trim();
+      function priceOf(p){
+        var n = typeof p.precio === 'string' ? parseFloat(p.precio.replace(/[^\d.,-]/g,'').replace(',', '.')) : p.precio;
+        return isNaN(n) ? null : n;
+      }
+      var current = list.find(function(p){ return (p.referencia||'').trim()===refClean; });
+      var currentPrice = current ? priceOf(current) : null;
+      var candidates = list.filter(function(p){
+        return (p.referencia||'').trim()!==refClean && !p.vendido;
+      });
+      if(currentPrice!=null){
+        candidates.sort(function(a,b){
+          var da = priceOf(a); var db = priceOf(b);
+          da = da==null ? Infinity : Math.abs(da-currentPrice);
+          db = db==null ? Infinity : Math.abs(db-currentPrice);
+          return da-db;
+        });
+      }
+      var picks = candidates.slice(0,3);
+      grid.innerHTML = picks.map(pd.buildCard).join('');
+      initMiniGalleries(grid);
+      wrap.style.display = picks.length ? '' : 'none';
+      return;
+    }
+
+    // Sin datos en directo cargados (p.ej. fallo de red): usamos las tarjetas de ejemplo visibles como respaldo.
     var sourcePage = isVenta ? '#page-comprar' : '#page-alquilar';
     var all = [].slice.call(document.querySelectorAll(sourcePage+' .prop'));
     var others = all.filter(function(c){
       var r=(c.querySelector('.prop-ref')||{}).textContent||'';
-      return r.trim() !== (currentRef||'').trim();
+      var esVendida = c.getAttribute('data-vendido')==='true';
+      return r.trim() !== (currentRef||'').trim() && !esVendida;
     });
-    var picks = others.slice(0,3);
+    var picks2 = others.slice(0,3);
     grid.innerHTML='';
-    picks.forEach(function(c){ grid.appendChild(c.cloneNode(true)); });
+    picks2.forEach(function(c){ grid.appendChild(c.cloneNode(true)); });
     initMiniGalleries(grid);
-    wrap.style.display = picks.length ? '' : 'none';
+    wrap.style.display = picks2.length ? '' : 'none';
   }
   function resetVisitToggle(){
     var vchk=document.getElementById('d-visit-check'); var vfields=document.getElementById('d-visit-fields'); var vbtn=document.getElementById('d-cta-btn');
@@ -2586,7 +2617,7 @@
         if(comprarCount){ comprarCount.textContent = 'Mostrando ' + ventas.length + ' propiedad' + (ventas.length===1?'':'es') + ' en venta'; }
         if(alquilarCount){ alquilarCount.textContent = 'Mostrando ' + alquileres.length + ' alquiler' + (alquileres.length===1?'':'es') + ' disponible' + (alquileres.length===1?'':'s'); }
         if(homeGrid){
-          var featured = records.slice(0,6);
+          var featured = records.filter(function(p){ return !p.vendido; }).slice(0,6);
           homeGrid.innerHTML = featured.map(buildCard).join('');
           initMiniGalleries(homeGrid);
         }
