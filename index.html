@@ -75,10 +75,15 @@
   header{
     position:fixed;top:0;left:0;right:0;z-index:100;
     background:rgba(26,46,67,.92);backdrop-filter:blur(14px);
-    border-bottom:1px solid rgba(255,255,255,.08);transition:transform .35s ease,box-shadow .3s,border-color .3s,background .3s;
+    transition:transform .35s ease,box-shadow .3s,background .3s;
+  }
+  header::after{
+    content:'';position:absolute;left:0;right:0;bottom:0;height:3px;
+    background:linear-gradient(90deg,var(--turquoise) 0%,#6FA84B 50%,var(--gold) 100%);
+    pointer-events:none;
   }
   header.header-hidden{transform:translateY(-100%)}
-  header.scrolled{background:var(--navy);box-shadow:0 6px 24px rgba(0,0,0,.28);border-color:transparent}
+  header.scrolled{background:var(--navy);box-shadow:0 6px 24px rgba(0,0,0,.28)}
   .nav{display:flex;align-items:center;justify-content:space-between;height:76px;gap:18px;padding-left:0}
   header .wrap.nav{padding-left:10px}
   .logo{display:flex;align-items:center;gap:11px;font-family:var(--display);font-weight:700;font-size:1.4rem;color:var(--navy)}
@@ -1201,7 +1206,7 @@
       <div class="info-card">
         <div class="info-row">
           <div class="ir-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
-          <div><div class="ir-lbl">Oficina</div><div class="ir-val">Carrer de Bernat Desclot<br>17480 Roses, Girona</div></div>
+          <div><div class="ir-lbl">Oficina</div><div class="ir-val">Carrer de Bernat Desclot, 17<br>17480 Roses, Girona</div></div>
         </div>
         <div class="info-row">
           <div class="ir-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
@@ -1221,7 +1226,7 @@
         Escríbenos por WhatsApp
       </a>
       <div class="map-embed">
-        <iframe title="Ubicación Ocean Immo Roses" src="https://www.google.com/maps?q=Ocean+Immo+Carrer+de+Bernat+Desclot+17480+Roses+Girona&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <iframe title="Ubicación Ocean Immo Roses" src="https://www.google.com/maps?q=Ocean+Immo+Carrer+de+Bernat+Desclot+17,+17480+Roses+Girona&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
       </div>
     </div>
   </div>
@@ -1665,13 +1670,13 @@
   </section>
   <section class="sec article-page">
     <div class="wrap article-body">
-      <p>Según lo dispuesto en el artículo 9 de la Ley 34/2002 de 11 de Julio de Servicios de la Sociedad de la Información y Comercio Electrónico, se hace constar que el presente sitio web es propiedad de Ocean Immo y con domicilio social en Roses 17480 Roses (Girona).</p>
+      <p>Según lo dispuesto en el artículo 9 de la Ley 34/2002 de 11 de Julio de Servicios de la Sociedad de la Información y Comercio Electrónico, se hace constar que el presente sitio web es propiedad de Ocean Immo y con domicilio social en Carrer de Bernat Desclot, 17, 17480 Roses (Girona).</p>
 
       <h2 class="detail-h2">1. Protección de datos</h2>
       <p>En el marco del cumplimiento de la legislación vigente, recogida en el Reglamento (UE) 2016/679 del Parlamento Europeo y del Consejo de 27 de abril de 2016, relativo a la protección de las personas físicas en lo que respecta al tratamiento de datos personales y a la libre circulación de estos datos y por el que se deroga la Directiva 95/46/CE, en adelante conocido como Reglamento general de protección de datos o RGPD; Ocean Immo informa a los usuarios de que los datos introducidos en los formularios de contacto, y de contratar se almacenarán en tratamientos propiedad de Ocean Immo. Asimismo Ocean Immo se compromete a cumplir con lo dispuesto por la normativa sobre protección de datos anteriormente mencionada, así como a hacer cumplir las medidas de seguridad técnicas y organizativas implantadas al personal a su servicio que trate datos de carácter personal, evitando de esta forma la pérdida, alteración y acceso no autorizado a los mismos. Dicho personal se halla sujeto al deber de secreto y confidencialidad respecto a los datos que trata en los mismos términos que Ocean Immo.</p>
 
       <h2 class="detail-h2">2. Derecho de acceso, rectificación, supresión u olvido, limitación, oposición, portabilidad y a retirar el consentimiento prestado</h2>
-      <p>El titular de los datos tiene el derecho de acceso, rectificación, supresión u olvido, limitación, oposición, portabilidad y a retirar el consentimiento prestado con respecto a los datos personales ofrecidos. Para ejercitar estos derechos, los titulares de los datos pueden dirigir una petición escrita por correo postal a la dirección postal Roses 17480 Roses (Girona), al email de contacto oceanimmocosta@gmail.com, o bien pueden contactar a través del teléfono +34 632 25 14 70.</p>
+      <p>El titular de los datos tiene el derecho de acceso, rectificación, supresión u olvido, limitación, oposición, portabilidad y a retirar el consentimiento prestado con respecto a los datos personales ofrecidos. Para ejercitar estos derechos, los titulares de los datos pueden dirigir una petición escrita por correo postal a la dirección postal Carrer de Bernat Desclot, 17, 17480 Roses (Girona), al email de contacto oceanimmocosta@gmail.com, o bien pueden contactar a través del teléfono +34 632 25 14 70.</p>
 
       <h2 class="detail-h2">3. Divulgación de la información a terceras partes</h2>
       <p>Ocean Immo se compromete a no vender o transferir la información personal recabada en sus sitios web a otras entidades para su utilización sin su aprobación expresa y ofreciéndole la oportunidad de ejercer sus derechos mencionados anteriormente.</p>
@@ -1744,7 +1749,7 @@
       <p>En Ocean Immo nos tomamos en serio la privacidad de nuestros usuarios y clientes. Esta política explica qué datos personales recogemos a través de esta web, con qué finalidad, y qué derechos tienes al respecto, en cumplimiento del Reglamento (UE) 2016/679 (RGPD) y la Ley Orgánica 3/2018 de Protección de Datos y Garantía de los Derechos Digitales (LOPDGDD).</p>
 
       <h2 class="detail-h2">1. Responsable del tratamiento</h2>
-      <p><strong>Ocean Immo</strong><br>Carrer de Bernat Desclot, 17480 Roses (Girona)<br>Email: oceanimmocosta@gmail.com<br>Teléfono: +34 632 25 14 70</p>
+      <p><strong>Ocean Immo</strong><br>Carrer de Bernat Desclot, 17, 17480 Roses (Girona)<br>Email: oceanimmocosta@gmail.com<br>Teléfono: +34 632 25 14 70</p>
 
       <h2 class="detail-h2">2. Qué datos recogemos y con qué finalidad</h2>
       <p>Esta web recoge datos personales únicamente a través de los formularios que el usuario rellena voluntariamente:</p>
@@ -1921,7 +1926,7 @@
         <h4>Datos de la agencia</h4>
         <p class="foot-legal-info">
           <strong>Ocean Immo</strong><br>
-          Carrer de Bernat Desclot<br>17480 Roses, Girona<br><br>
+          Carrer de Bernat Desclot, 17<br>17480 Roses, Girona<br><br>
           <strong>API</strong> A14553<br>
           <strong>AICAT</strong> 13757
         </p>
