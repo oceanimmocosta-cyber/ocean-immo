@@ -117,8 +117,30 @@
   .nav-phone{display:flex;align-items:center;gap:5px;font-weight:600;font-size:.85rem;color:#fff;white-space:nowrap}
   .nav-phone svg{width:16px;height:16px;color:var(--turquoise)}
   .nav-wa{padding:9px 15px;font-size:.85rem}
+  .mobile-lang{position:relative;display:none}
+  .ml-toggle{
+    display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);border:none;
+    color:#fff;font-weight:600;font-size:.82rem;padding:8px 10px;border-radius:9px;cursor:pointer;font-family:var(--body);
+  }
+  .ml-caret{width:13px;height:13px;transition:transform .2s}
+  .ml-toggle[aria-expanded="true"] .ml-caret{transform:rotate(180deg)}
+  .ml-dropdown{
+    position:absolute;top:calc(100% + 8px);right:0;background:var(--navy);border-radius:12px;
+    box-shadow:0 12px 28px rgba(0,0,0,.3);padding:6px;display:flex;flex-direction:column;gap:2px;
+    min-width:110px;opacity:0;visibility:hidden;transform:translateY(-6px);
+    transition:opacity .2s ease,transform .2s ease,visibility 0s .2s;z-index:120;
+  }
+  .ml-dropdown.open{opacity:1;visibility:visible;transform:translateY(0);transition:opacity .2s ease,transform .2s ease,visibility 0s}
+  .ml-dropdown button{
+    display:flex;align-items:center;gap:8px;background:none;border:none;color:rgba(255,255,255,.8);
+    font-weight:600;font-size:.85rem;padding:9px 10px;border-radius:8px;cursor:pointer;font-family:var(--body);text-align:left;
+  }
+  .ml-dropdown button:hover,.ml-dropdown button.active{background:rgba(255,255,255,.1);color:#fff}
   .burger{display:none;background:none;border:none;cursor:pointer;flex-direction:column;gap:5px;padding:8px}
   .burger span{width:24px;height:2px;background:#fff;border-radius:2px;transition:.3s}
+  .burger.is-open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+  .burger.is-open span:nth-child(2){opacity:0}
+  .burger.is-open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
 
   /* ===== HERO ===== */
   .hero{
@@ -591,7 +613,7 @@
   .foot-bottom .legal-links a:hover{color:var(--turquoise)}
 
   /* ===== FLOATING BUTTONS (WhatsApp + Email) ===== */
-  .fab-stack{position:fixed;bottom:26px;right:26px;z-index:200;display:flex;flex-direction:column;align-items:center;gap:14px}
+  .fab-stack{position:fixed;bottom:26px;right:26px;z-index:200;display:flex;flex-direction:column;align-items:center;gap:14px;transition:opacity .25s ease,transform .25s ease}
   .fab{
     width:60px;height:60px;border-radius:50%;
     display:grid;place-items:center;transition:transform .3s;
@@ -605,16 +627,23 @@
 
   /* ===== MOBILE MENU ===== */
   .mobile-menu{
-    position:fixed;inset:0;z-index:150;background:var(--navy);color:#fff;
-    display:flex;flex-direction:column;padding:90px 30px 40px;gap:6px;
-    transform:translateX(100%);transition:transform .35s ease;
+    position:fixed;top:76px;left:0;right:0;z-index:150;background:var(--navy);color:#fff;
+    display:flex;flex-direction:column;padding:18px 30px 28px;gap:4px;
+    max-height:calc(100vh - 76px);overflow-y:auto;
+    transform:translateY(-16px);opacity:0;visibility:hidden;
+    transition:transform .28s ease,opacity .25s ease,visibility 0s .28s;
+    box-shadow:0 16px 32px rgba(0,0,0,.3);border-top:1px solid rgba(255,255,255,.08);
   }
-  .mobile-menu.open{transform:translateX(0)}
-  .mobile-menu a{font-family:var(--display);font-size:1.5rem;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.1);color:#fff}
-  .mm-close{position:absolute;top:26px;right:26px;background:none;border:none;color:#fff;font-size:2rem;cursor:pointer;line-height:1}
-  .mm-lang{display:flex;gap:8px;margin-top:24px}
+  .mobile-menu.open{transform:translateY(0);opacity:1;visibility:visible;transition:transform .28s ease,opacity .25s ease,visibility 0s}
+  .mm-backdrop{
+    position:fixed;top:76px;left:0;right:0;bottom:0;z-index:149;background:rgba(10,20,32,.55);
+    opacity:0;visibility:hidden;transition:opacity .28s ease,visibility 0s .28s;
+  }
+  .mm-backdrop.open{opacity:1;visibility:visible;transition:opacity .28s ease,visibility 0s}
+  .mobile-menu a{font-family:var(--display);font-size:1.25rem;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.1);color:#fff}
+  .mm-close{display:none}
+  .mm-lang{display:flex;gap:8px;margin-top:20px}
   .mm-lang button{background:rgba(255,255,255,.1);border:none;color:#fff;padding:9px 14px;border-radius:8px;font-family:var(--body);font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
-  .mm-cta{margin-top:auto;display:flex;flex-direction:column;gap:12px}
 
   /* ===== RESPONSIVE ===== */
   @media(max-width:980px){
@@ -631,6 +660,7 @@
     .nav-menu,.nav-phone,.lang{display:none}
     .burger{display:flex}
     .nav-wa{display:none}
+    .mobile-lang{display:block}
   }
   @media(max-width:760px){
     .sec{padding:66px 0}
@@ -646,6 +676,20 @@
     .prop-grid.scrollable::-webkit-scrollbar{display:none}
     .prop-grid.scrollable .prop{flex:0 0 82%;scroll-snap-align:center}
     .prop-scroll-hint{display:block;text-align:center;font-size:.82rem;color:var(--muted);margin-top:14px}
+    /* Tipografía más contenida en móvil (los clamp() de arriba tenían un mínimo demasiado alto) */
+    .hero h1{font-size:1.9rem}
+    .hero-copy p{font-size:.95rem}
+    .sec-head h2{font-size:1.5rem}
+    .sec-head p{font-size:.95rem}
+    .val-copy h2{font-size:1.6rem}
+    .about-copy h2{font-size:1.5rem}
+    .news-copy h2{font-size:1.4rem}
+    .subpage-banner h1{font-size:1.6rem}
+    .subpage-banner p{font-size:.92rem}
+    .detail-title{font-size:1.4rem}
+    .detail-price{font-size:1.3rem}
+    h3{font-size:1.15rem}
+    .service-card h3,.why-card h3{font-size:1.05rem}
   }
   @media(max-width:440px){
     .trust-grid,.why-grid{grid-template-columns:1fr}
@@ -718,12 +762,26 @@
         <svg viewBox="0 0 24 24" fill="currentColor" width="17" height="17"><path d="M17.6 6.3A7.85 7.85 0 0 0 12 4a7.94 7.94 0 0 0-6.9 11.9L4 20l4.2-1.1A7.9 7.9 0 0 0 12 19.9 7.94 7.94 0 0 0 17.6 6.3zM12 18.5a6.6 6.6 0 0 1-3.4-.9l-.24-.15-2.5.65.67-2.43-.16-.25A6.6 6.6 0 1 1 12 18.5zm3.6-4.94c-.2-.1-1.17-.58-1.35-.64s-.31-.1-.44.1-.5.64-.62.77-.23.15-.43.05a5.4 5.4 0 0 1-1.6-1 6 6 0 0 1-1.1-1.37c-.12-.2 0-.31.09-.41s.2-.23.3-.35a1.3 1.3 0 0 0 .2-.34.37.37 0 0 0 0-.35c0-.1-.44-1.06-.6-1.45s-.32-.33-.44-.34h-.37a.72.72 0 0 0-.52.24 2.17 2.17 0 0 0-.68 1.62A3.77 3.77 0 0 0 8.1 12a8.63 8.63 0 0 0 3.3 2.9 3.7 3.7 0 0 0 2.28.48 1.98 1.98 0 0 0 1.3-.92 1.62 1.62 0 0 0 .11-.92c-.04-.09-.17-.14-.37-.24z"/></svg>
         WhatsApp
       </a>
+      <div class="mobile-lang" id="mobileLang">
+        <button class="ml-toggle" id="mlToggle" aria-label="Cambiar idioma" aria-expanded="false">
+          <span class="flag" id="mlFlag"><svg viewBox="0 0 20 20"><use href="#fl-es"/></svg></span>
+          <span id="mlCode">ES</span>
+          <svg class="ml-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="ml-dropdown" id="mlDropdown">
+          <button data-lang="es"><span class="flag"><svg viewBox="0 0 20 20"><use href="#fl-es"/></svg></span>ES</button>
+          <button data-lang="ca"><span class="flag"><svg viewBox="0 0 20 20"><use href="#fl-ca"/></svg></span>CA</button>
+          <button data-lang="fr"><span class="flag"><svg viewBox="0 0 20 20"><use href="#fl-fr"/></svg></span>FR</button>
+          <button data-lang="en"><span class="flag"><svg viewBox="0 0 20 20"><use href="#fl-en"/></svg></span>EN</button>
+        </div>
+      </div>
       <button class="burger" id="burger" aria-label="Abrir menú"><span></span><span></span><span></span></button>
     </div>
   </div>
 </header>
 
 <!-- MOBILE MENU -->
+<div class="mm-backdrop" id="mmBackdrop"></div>
 <div class="mobile-menu" id="mobileMenu">
   <button class="mm-close" id="mmClose" aria-label="Cerrar menú">&times;</button>
   <a href="#" data-page="comprar">Comprar</a>
@@ -732,11 +790,6 @@
   <a href="#" data-page="servicios">Servicios</a>
   <a href="#nosotros">Nosotros</a>
   <a href="#contacto">Contacto</a>
-  <div class="mm-lang"><button class="active"><span class="flag"><svg viewBox="0 0 20 20"><use href="#fl-es"/></svg></span>ES</button><button><span class="flag"><svg viewBox="0 0 20 20"><use href="#fl-ca"/></svg></span>CA</button><button><span class="flag"><svg viewBox="0 0 20 20"><use href="#fl-fr"/></svg></span>FR</button><button><span class="flag"><svg viewBox="0 0 20 20"><use href="#fl-en"/></svg></span>EN</button></div>
-  <div class="mm-cta">
-    <a href="tel:+34632251470" class="btn btn-ghost" style="color:#fff;border-color:rgba(255,255,255,.3)">Llamar · 632 25 14 70</a>
-    <a href="https://wa.me/34632251470" class="btn btn-wa" target="_blank" rel="noopener">WhatsApp</a>
-  </div>
 </div>
 
 <!-- ===== HERO ===== -->
@@ -2090,10 +2143,13 @@
   },{passive:true});
 
   // Mobile menu
-  const burger=document.getElementById('burger'),mm=document.getElementById('mobileMenu'),mmClose=document.getElementById('mmClose');
-  burger.addEventListener('click',()=>mm.classList.add('open'));
-  mmClose.addEventListener('click',()=>mm.classList.remove('open'));
-  mm.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>mm.classList.remove('open')));
+  const burger=document.getElementById('burger'),mm=document.getElementById('mobileMenu'),mmClose=document.getElementById('mmClose'),mmBackdrop=document.getElementById('mmBackdrop');
+  function openMobileMenu(){ mm.classList.add('open'); mmBackdrop.classList.add('open'); burger.classList.add('is-open'); }
+  function closeMobileMenu(){ mm.classList.remove('open'); mmBackdrop.classList.remove('open'); burger.classList.remove('is-open'); }
+  burger.addEventListener('click',()=>{ mm.classList.contains('open') ? closeMobileMenu() : openMobileMenu(); });
+  mmClose.addEventListener('click',closeMobileMenu);
+  mmBackdrop.addEventListener('click',closeMobileMenu);
+  mm.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeMobileMenu));
 
   // Search tabs
   document.querySelectorAll('.search-tabs button').forEach(b=>{
@@ -2159,9 +2215,12 @@
       el.setAttribute('placeholder',target);
     });
     document.documentElement.lang=lang;
-    document.querySelectorAll('.lang button, .foot-lang button, .mm-lang button').forEach(function(b){
+    document.querySelectorAll('.lang button, .foot-lang button, .ml-dropdown button').forEach(function(b){
       b.classList.toggle('active', b.textContent.trim().toLowerCase()===lang);
     });
+    var mlFlagUse=document.querySelector('#mlFlag use'), mlCode=document.getElementById('mlCode');
+    if(mlFlagUse) mlFlagUse.setAttribute('href','#fl-'+lang);
+    if(mlCode) mlCode.textContent=lang.toUpperCase();
     if(activeView==='detalle' && lastCard) fillFromCard(lastCard);
     var vchk2=document.getElementById('d-visit-check'), vbtn2=document.getElementById('d-cta-btn');
     if(vchk2 && vbtn2){
@@ -2170,18 +2229,34 @@
       vbtn2.textContent = vchk2.checked ? l2.visit : l2.ask;
     }
   }
-  document.querySelectorAll('.lang button, .foot-lang button, .mm-lang button').forEach(function(b){
+  document.querySelectorAll('.lang button, .foot-lang button, .ml-dropdown button').forEach(function(b){
     b.addEventListener('click',function(){
       var code=this.textContent.trim().toLowerCase();
       if(['es','ca','fr','en'].indexOf(code)>=0) applyLang(code);
     });
   });
 
+  // ===== Selector de idioma compacto (móvil) =====
+  (function(){
+    var toggle=document.getElementById('mlToggle'), dropdown=document.getElementById('mlDropdown');
+    if(!toggle||!dropdown) return;
+    function closeMl(){ dropdown.classList.remove('open'); toggle.setAttribute('aria-expanded','false'); }
+    function openMl(){ dropdown.classList.add('open'); toggle.setAttribute('aria-expanded','true'); }
+    toggle.addEventListener('click',function(e){
+      e.stopPropagation();
+      dropdown.classList.contains('open') ? closeMl() : openMl();
+    });
+    dropdown.querySelectorAll('button').forEach(function(b){ b.addEventListener('click', closeMl); });
+    document.addEventListener('click', function(e){
+      if(!dropdown.contains(e.target) && e.target!==toggle) closeMl();
+    });
+  })();
+
   // ===== Page router (Comprar / Alquilar / Detalle) =====
   const homeEl=document.getElementById('home');
   const subpages=document.querySelectorAll('.subpage');
   let activeView='home', previousView='home';
-  function closeMenu(){ mm.classList.remove('open'); }
+  function closeMenu(){ mm.classList.remove('open'); if(typeof mmBackdrop!=='undefined' && mmBackdrop) mmBackdrop.classList.remove('open'); if(typeof burger!=='undefined' && burger) burger.classList.remove('is-open'); }
   function showPage(name){
     homeEl.style.display='none';
     subpages.forEach(s=>s.style.display='none');
@@ -2189,7 +2264,7 @@
     if(p) p.style.display='block';
     activeView=name;
     header.classList.remove('header-hidden');
-    window.scrollTo(0,0);
+    window.scrollTo({top:0,left:0,behavior:'instant'});
     closeMenu();
   }
   function showHome(scrollId){
@@ -2200,8 +2275,8 @@
     if(scrollId){
       const el=document.getElementById(scrollId);
       if(el){ window.scrollTo({top: el.getBoundingClientRect().top + window.scrollY - 68, behavior:'auto'}); }
-      else { window.scrollTo(0,0); }
-    } else { window.scrollTo(0,0); }
+      else { window.scrollTo({top:0,left:0,behavior:'instant'}); }
+    } else { window.scrollTo({top:0,left:0,behavior:'instant'}); }
     closeMenu();
   }
 
