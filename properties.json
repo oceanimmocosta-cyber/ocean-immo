@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-08-07T00:59:49.104Z",
+  "actualizado": "2026-08-07T08:29:52.530Z",
   "propiedades": [
     {
       "referencia": "RLOC0002",
@@ -152,7 +152,7 @@
       "precio": "254520",
       "m2": 168,
       "habitaciones": 4,
-      "banos": 6,
+      "banos": 3,
       "fotos": [
         "https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1766757/image/image00001.jpg",
         "https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1766757/image/image00005.jpg",
@@ -275,7 +275,7 @@
       "precio": "995000",
       "m2": 308,
       "habitaciones": 4,
-      "banos": 6,
+      "banos": 3,
       "fotos": [
         "https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1765480/image/image00001.png",
         "https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1765480/image/image00002.png",
@@ -326,7 +326,7 @@
       "precio": "196200",
       "m2": 113,
       "habitaciones": 3,
-      "banos": 3,
+      "banos": 2,
       "fotos": [
         "https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1737172/image/image00026.jpg",
         "https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1737172/image/image00004.jpg",
@@ -1724,7 +1724,7 @@
       "precio": "175000",
       "m2": 66,
       "habitaciones": 1,
-      "banos": 2,
+      "banos": 1,
       "fotos": [
         "https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1747511/image/image00004.jpg",
         "https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1747511/image/image00022.jpg",
