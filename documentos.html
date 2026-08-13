@@ -112,6 +112,7 @@
   }
   .cat-btn:hover { background: var(--paper); }
   .cat-btn.active { background: var(--turquoise-light); color: #027e87; font-weight: 700; }
+  .cat-btn.indented { padding-left: 20px; }
   .cat-count { float: right; color: var(--text-faint); font-size: 11px; }
 
   .content {
@@ -267,34 +268,34 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const SECTIONS = [
-  { title: "Mandatos", cats: [
-    { id: "mandato_exclusiva_es", label: "Con exclusiva (ES)" },
-    { id: "mandato_sin_exclusiva_es", label: "Sin exclusiva (ES)" },
-    { id: "mandato_exclusiva_fr", label: "Con exclusiva (FR)" },
-    { id: "mandato_sin_exclusiva_fr", label: "Sin exclusiva (FR)" }
+// Cada entrada es un apartado suelto {type:'item'} o un grupo con subapartados {type:'group'}
+const SIDEBAR = [
+  { type: "item", id: "ofertas", label: "Ofertas" },
+  { type: "item", id: "arras", label: "Arras" },
+  { type: "item", id: "recibos", label: "Recibos" },
+  { type: "item", id: "cuenta_ocean_immo", label: "Nº cuenta OCEAN IMMO" },
+  { type: "group", title: "Mandatos Venta", items: [
+    { id: "mandato_con_exclu_es", label: "Con exclusiva ESP" },
+    { id: "mandato_sin_exclu_es", label: "Sin exclusiva ESP" },
+    { id: "mandato_con_exclu_fr", label: "Con exclusiva FR" },
+    { id: "mandato_sin_exclu_fr", label: "Sin exclusiva FR" }
   ]},
-  { title: "Operación", cats: [
-    { id: "ofertas", label: "Ofertas" },
-    { id: "arras", label: "Arras" },
-    { id: "recibos", label: "Recibos" },
-    { id: "cuenta_bancaria", label: "Número de cuenta OCEAN IMMO" }
+  { type: "group", title: "Captación", items: [
+    { id: "captacion_inmuebles", label: "Inmuebles" },
+    { id: "captacion_locales", label: "Locales" },
+    { id: "captacion_terrenos", label: "Terrenos" }
   ]},
-  { title: "Captación y visitas", cats: [
-    { id: "captacion", label: "Captación (inmuebles, locales, terrenos)" },
-    { id: "visitas", label: "Documentos de visitas" }
+  { type: "item", id: "documento_visita", label: "Documento de visita" },
+  { type: "group", title: "Documentos necesarios Hipoteca", items: [
+    { id: "hipoteca_autonomos_es", label: "Autónomos ESP" },
+    { id: "hipoteca_asalariados_es", label: "Asalariados ESP" },
+    { id: "hipoteca_autonomos_fr", label: "Autónomos FR" },
+    { id: "hipoteca_asalariados_fr", label: "Asalariados FR" }
   ]},
-  { title: "Documentación de compradores", cats: [
-    { id: "hipoteca", label: "Necesarios para hipoteca" },
-    { id: "autonomos_es", label: "Autónomos España" },
-    { id: "asalariados_es", label: "Asalariados España" },
-    { id: "autonomos_fr", label: "Autónomos Francia" },
-    { id: "asalariados_fr", label: "Asalariados Francia" },
-    { id: "nie", label: "Necesarios NIE" },
-    { id: "cambio_suministros", label: "Cambio de nombre suministros" }
-  ]}
+  { type: "item", id: "documentos_nie", label: "Documentos necesarios NIE" },
+  { type: "item", id: "cambio_nombre_suministros", label: "Autorización cambio nombre suministros" }
 ];
-const ALL_CATS = SECTIONS.flatMap(s => s.cats);
+const ALL_CATS = SIDEBAR.flatMap(s => s.type === "group" ? s.items : [{ id: s.id, label: s.label }]);
 function catLabel(id) { const c = ALL_CATS.find(c => c.id === id); return c ? c.label : id; }
 
 const CONFIG_KEY = "oceanimmo_config_v1";
@@ -359,18 +360,25 @@ function showToast(msg) {
 function renderSidebar() {
   const el = document.getElementById("sidebar");
   el.innerHTML = "";
-  SECTIONS.forEach(section => {
-    const h = document.createElement("h3");
-    h.textContent = section.title;
-    el.appendChild(h);
-    section.cats.forEach(cat => {
-      const btn = document.createElement("button");
-      btn.className = "cat-btn" + (cat.id === currentCat ? " active" : "");
-      const count = documents.filter(d => d.category === cat.id).length;
-      btn.innerHTML = `${escapeHtml(cat.label)}<span class="cat-count">${count}</span>`;
-      btn.addEventListener("click", () => { currentCat = cat.id; renderSidebar(); renderContent(); });
-      el.appendChild(btn);
-    });
+
+  function addItemButton(cat, indented) {
+    const btn = document.createElement("button");
+    btn.className = "cat-btn" + (cat.id === currentCat ? " active" : "") + (indented ? " indented" : "");
+    const count = documents.filter(d => d.category === cat.id).length;
+    btn.innerHTML = `${escapeHtml(cat.label)}<span class="cat-count">${count}</span>`;
+    btn.addEventListener("click", () => { currentCat = cat.id; renderSidebar(); renderContent(); });
+    el.appendChild(btn);
+  }
+
+  SIDEBAR.forEach(entry => {
+    if (entry.type === "item") {
+      addItemButton({ id: entry.id, label: entry.label }, false);
+    } else {
+      const h = document.createElement("h3");
+      h.textContent = entry.title;
+      el.appendChild(h);
+      entry.items.forEach(cat => addItemButton(cat, true));
+    }
   });
 }
 
