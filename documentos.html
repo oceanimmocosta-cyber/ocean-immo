@@ -100,7 +100,11 @@
   .sidebar h3:first-child { margin-top: 4px; }
   .cat-btn {
     all: initial;
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    box-sizing: border-box;
     cursor: pointer;
     width: 100%;
     font-family: 'Inter', sans-serif;
@@ -113,7 +117,12 @@
   .cat-btn:hover { background: var(--paper); }
   .cat-btn.active { background: var(--turquoise-light); color: #027e87; font-weight: 700; }
   .cat-btn.indented { padding-left: 20px; }
-  .cat-count { float: right; color: var(--text-faint); font-size: 11px; }
+  .cat-btn > span:first-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .cat-count { color: var(--text-faint); font-size: 11px; flex-shrink: 0; }
 
   .content {
     background: var(--card);
@@ -365,7 +374,7 @@ function renderSidebar() {
     const btn = document.createElement("button");
     btn.className = "cat-btn" + (cat.id === currentCat ? " active" : "") + (indented ? " indented" : "");
     const count = documents.filter(d => d.category === cat.id).length;
-    btn.innerHTML = `${escapeHtml(cat.label)}<span class="cat-count">${count}</span>`;
+    btn.innerHTML = `<span>${escapeHtml(cat.label)}</span><span class="cat-count">${count}</span>`;
     btn.addEventListener("click", () => { currentCat = cat.id; renderSidebar(); renderContent(); });
     el.appendChild(btn);
   }
