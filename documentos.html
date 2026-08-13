@@ -301,8 +301,10 @@ const SIDEBAR = [
     { id: "hipoteca_autonomos_fr", label: "Autónomos FR" },
     { id: "hipoteca_asalariados_fr", label: "Asalariados FR" }
   ]},
-  { type: "item", id: "documentos_nie", label: "Documentos necesarios NIE" },
-  { type: "item", id: "cambio_nombre_suministros", label: "Autorización cambio nombre suministros" }
+  { type: "group", title: "Autorizaciones", items: [
+    { id: "documentos_nie", label: "Documentos necesarios NIE" },
+    { id: "cambio_nombre_suministros", label: "Autorización cambio nombre suministros" }
+  ]}
 ];
 const ALL_CATS = SIDEBAR.flatMap(s => s.type === "group" ? s.items : [{ id: s.id, label: s.label }]);
 function catLabel(id) { const c = ALL_CATS.find(c => c.id === id); return c ? c.label : id; }
