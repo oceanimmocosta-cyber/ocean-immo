@@ -2383,6 +2383,7 @@
     var imgWrap=card.querySelector('.prop-img');
     var imgEl=card.querySelector('.prop-img img');
     var zone=(card.querySelector('.prop-zone')||{}).textContent||'';
+    var poblacion=card.getAttribute('data-poblacion')||'';
     var title=(card.querySelector('.prop-title')||{}).textContent||'';
     var priceHtml=(card.querySelector('.prop-price')||{}).innerHTML||'';
     var specsHtml=(card.querySelector('.prop-specs')||{}).innerHTML||'';
@@ -2416,7 +2417,9 @@
     var featsAttr=card.getAttribute('data-feats')||'';
     var customFeats=featsAttr ? featsAttr.split('|').filter(Boolean) : [];
     document.getElementById('d-features').innerHTML=buildFeats(zone,isVenta,yearBuilt,customFeats).map(function(f){return '<li>'+CHK+'<span>'+escHtml(f)+'</span></li>';}).join('');
-    document.getElementById('d-map').src='https://www.google.com/maps?q='+encodeURIComponent(zone+', Roses, Girona')+'&output=embed';
+    var mapPoblacion = poblacion || 'Roses';
+    var mapQuery = (zone && zone.trim().toLowerCase()!==mapPoblacion.trim().toLowerCase()) ? (zone+', '+mapPoblacion) : mapPoblacion;
+    document.getElementById('d-map').src='https://www.google.com/maps?q='+encodeURIComponent(mapQuery+', Girona')+'&output=embed';
     fillEnergyCert(card);
     var msg=document.getElementById('d-cta-msg'); if(msg) msg.value=buildMsg(refTxt||title);
     var propField=document.getElementById('d-cta-prop'); if(propField) propField.value=title+(refTxt?' – '+refTxt:'')+(zone?' ('+zone+')':'');
@@ -2571,9 +2574,10 @@
       var eEmiV = p.certEmisionesValor || '';
       var vendido = !!p.vendido;
       var soldBadge = vendido ? '<span class="sold-ribbon">Vendido</span>' : '';
+      var poblacion = p.poblacion || '';
 
       return '' +
-      '<article class="prop'+(vendido?' is-sold':'')+'" data-vendido="'+(vendido?'true':'false')+'" data-year="'+esc(year)+'" data-feats="'+esc(featsAttr)+'" data-e-consl="'+esc(eConsL)+'" data-e-consv="'+esc(eConsV)+'" data-e-emil="'+esc(eEmiL)+'" data-e-emiv="'+esc(eEmiV)+'">' +
+      '<article class="prop'+(vendido?' is-sold':'')+'" data-vendido="'+(vendido?'true':'false')+'" data-poblacion="'+esc(poblacion)+'" data-year="'+esc(year)+'" data-feats="'+esc(featsAttr)+'" data-e-consl="'+esc(eConsL)+'" data-e-consv="'+esc(eConsV)+'" data-e-emil="'+esc(eEmiL)+'" data-e-emiv="'+esc(eEmiV)+'">' +
         '<div class="prop-img" data-gallery="'+esc(gallery)+'" data-gallery-full="'+esc(galleryFullAttr)+'">' +
           '<img src="'+esc(galleryThumbs[0])+'" alt="'+esc(title)+'" loading="lazy" decoding="async">' +
           MINI_ARROWS +
