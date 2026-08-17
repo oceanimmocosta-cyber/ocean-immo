@@ -1,6 +1,40 @@
 {
-  "actualizado": "2026-08-16T21:12:39.163Z",
+  "actualizado": "2026-08-17T21:18:06.126Z",
   "propiedades": [
+    {
+      "referencia": "RUS0010",
+      "titulo": "TERRENO AGRÍCOLA EN CASTELLÓ D'EMPÚRIES CON VISTAS AL CASCO HISTÓRICO",
+      "descripcion": "En Castelló d'Empúries, en un entorno tranquilo rodeado de naturaleza, se encuentra este magnífico terreno agrícola destinado a huerto, que destaca por su sistema de riego natural y sus privilegiadas vistas al casco histórico y a la catedral.&#13;\n&#13;\nLo que lo hace realmente especial:&#13;\n&#13;\n· Terreno agrícola destinado a huerto&#13;\n· Sistema de riego mediante acequia o canal que recorre el propio terreno&#13;\n· Acceso a sistema de agua comunitario, compartido entre los usuarios de los huertos&#13;\n· Entorno tranquilo y en plena naturaleza&#13;\n· Vistas privilegiadas al casco histórico de Castelló d'Empúries y a su catedral&#13;\n&#13;\nUna oportunidad única para quienes buscan un espacio de cultivo con agua asegurada y un entorno de gran tranquilidad, a escasa distancia del núcleo histórico de Castelló d'Empúries. Su privilegiada ubicación, con vistas al casco antiguo y a la catedral, convierte este terreno en el lugar perfecto para disfrutar de la huerta y del paisaje durante todo el año.&#13;\n&#13;\n&#13;\nEl propietario de esta vivienda no tiene la consideración de gran tenedor.&#13;\nLos honorarios de agencia están incluidos en el precio de venta publicado. No&#13;\nobstante, los gastos derivados de la compraventa, como impuestos, gastos de&#13;\nnotaría y registro de la propiedad, corren a cargo del comprador y no están incluidos&#13;\nen el precio anunciado.[IW]",
+      "operacion": "Venta",
+      "zona": "Castelló d'Empúries",
+      "poblacion": "Castelló d'Empúries",
+      "tipo": "Finca rústica",
+      "precio": "8000",
+      "m2": null,
+      "habitaciones": "",
+      "banos": null,
+      "fotos": [
+        "https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1769762/image/image00001.jpg",
+        "https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1769762/image/image00002.jpg",
+        "https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1769762/image/image00003.jpg",
+        "https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1769762/image/image00004.jpg",
+        "https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1769762/image/image00005.jpg",
+        "https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1769762/image/image00006.jpg",
+        "https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1769762/image/image00007.jpg",
+        "https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1769762/image/image00008.jpg",
+        "https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1769762/image/image00009.jpg"
+      ],
+      "anioConstruccion": null,
+      "certEnergetica": "",
+      "certConsumoLetra": "",
+      "certConsumoValor": "",
+      "certEmisionesLetra": "",
+      "certEmisionesValor": "",
+      "caracteristicas": [],
+      "modalidad": null,
+      "etiquetas": [],
+      "vendido": false
+    },
     {
       "referencia": "RUS0008",
       "titulo": "Terreno de 374 m² en Palau-saverdera con dos pozos",
