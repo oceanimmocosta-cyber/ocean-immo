@@ -38,6 +38,17 @@ function textOf(node) {
   return String(node).trim();
 }
 
+// Toma el primer campo de superficie que tenga un valor numérico real (> 0),
+// en vez de simplemente "no vacío" (Inmoweb a veces manda "0" como texto, que
+// técnicamente no está vacío pero tampoco es un dato útil).
+function primeraSuperficieValida(...valores) {
+  for (const v of valores) {
+    const n = Number(v);
+    if (!isNaN(n) && n > 0) return v;
+  }
+  return null;
+}
+
 // Escapa texto antes de insertarlo en HTML (el email de aviso), para evitar que datos
 // externos de Inmoweb (título, zona...) puedan inyectar código en el correo enviado.
 function escHtml(s) {
@@ -100,7 +111,7 @@ async function main() {
       poblacion,
       tipo,
       precio: textOf(p.precio),
-      m2: p.superficies?.construida || p.superficies?.habitable || null,
+      m2: primeraSuperficieValida(p.superficies?.construida, p.superficies?.habitable, p.superficies?.parcela),
       habitaciones: p.dormitorios ?? null,
       banos: banosNum || null,
       fotos: imgs,
