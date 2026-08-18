@@ -170,6 +170,54 @@
   }
   .hidden { display: none !important; }
 
+  .reminders-wrap {
+    background: var(--gold-soft);
+    border: 1px solid var(--gold);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+  }
+  .reminders-title {
+    font-weight: 700;
+    font-size: 13.5px;
+    color: #8a6600;
+    margin-bottom: 8px;
+  }
+  .reminders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .reminder-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    font-size: 12.5px;
+    color: var(--text);
+    background: #fff;
+    border-radius: 8px;
+    padding: 7px 10px;
+  }
+  .reminder-item a {
+    flex-shrink: 0;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--turquoise);
+    text-decoration: none;
+  }
+  .reminder-item a:hover { text-decoration: underline; }
+  .reminder-overdue {
+    display: inline-block;
+    margin-left: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--danger);
+    background: var(--danger-soft);
+    padding: 1px 7px;
+    border-radius: 999px;
+  }
+
   /* --- Guion tab --- */
   .temp-tabs {
     display: flex;
@@ -485,6 +533,7 @@
 
   <!-- ===== REGISTRO DE LLAMADAS ===== -->
   <section id="tab-registro" class="panel">
+    <div id="reminders-wrap" class="reminders-wrap hidden"></div>
     <h3 style="font-family:'Playfair Display',serif; margin:0 0 4px; color:var(--navy);">Anotar una llamada</h3>
     <p style="font-size:12.5px; color:var(--text-soft); margin:0 0 16px;">Rellena esto justo después de colgar, mientras lo tienes fresco.</p>
 
@@ -523,6 +572,9 @@
           <option value="no-interesado">No interesado</option>
           <option value="buzon">No contesta / buzón de voz</option>
         </select>
+      </label>
+      <label id="wrap-rellamada" class="hidden">¿Cuándo volver a llamar?
+        <input type="date" id="f-fecha-rellamada" />
       </label>
       <label class="full">Notas de la llamada
         <textarea id="f-notas" rows="2" placeholder="Objeciones, precio que tiene en mente, mejor hora para volver a llamar..."></textarea>
@@ -665,6 +717,7 @@ async function loadCalls() {
   }
   renderStats();
   renderLog();
+  renderReminders();
 }
 
 function normalizeEntry(e) {
@@ -677,9 +730,58 @@ function normalizeEntry(e) {
     portal: e.portal || "",
     temp: e.temp || "fria",
     resultado: e.resultado || "buzon",
+    fecha_rellamada: e.fecha_rellamada || "",
     notas: e.notas || "",
     fecha: e.fecha || ""
   };
+}
+
+function gcalLink(entry) {
+  if (!entry.fecha_rellamada) return "";
+  const start = new Date(entry.fecha_rellamada + "T00:00:00");
+  const end = new Date(start);
+  end.setDate(end.getDate() + 1);
+  const fmt = (d) => d.toISOString().slice(0, 10).replace(/-/g, "");
+  const text = encodeURIComponent(`Llamar a ${entry.nombre || "propietario"}${entry.zona ? " (" + entry.zona + ")" : ""}`);
+  const details = encodeURIComponent(`Recordatorio OCEAN IMMO — volver a llamar.${entry.notas ? " Notas: " + entry.notas : ""}${entry.telefono ? " Tel: " + entry.telefono : ""}`);
+  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${text}&dates=${fmt(start)}/${fmt(end)}&details=${details}`;
+}
+
+function todayStr() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function renderReminders() {
+  const wrap = document.getElementById("reminders-wrap");
+  if (!wrap) return;
+  const today = todayStr();
+  const pending = calls
+    .filter(c => c.resultado === "rellamar" && c.fecha_rellamada)
+    .filter(c => c.fecha_rellamada <= today)
+    .sort((a, b) => a.fecha_rellamada.localeCompare(b.fecha_rellamada));
+
+  if (pending.length === 0) {
+    wrap.innerHTML = "";
+    wrap.classList.add("hidden");
+    return;
+  }
+  wrap.classList.remove("hidden");
+  wrap.innerHTML = `
+    <div class="reminders-title">📅 Tienes ${pending.length} llamada${pending.length > 1 ? "s" : ""} pendiente${pending.length > 1 ? "s" : ""} de volver a llamar</div>
+    <div class="reminders-list">
+      ${pending.map(c => `
+        <div class="reminder-item">
+          <span>
+            <strong>${escapeHtml(c.nombre || "—")}</strong>
+            ${c.zona ? " · " + escapeHtml(c.zona) : ""}
+            ${c.telefono ? " · " + escapeHtml(c.telefono) : ""}
+            ${c.fecha_rellamada < today ? '<span class="reminder-overdue">atrasada</span>' : ""}
+          </span>
+          <a href="${gcalLink(c)}" target="_blank" rel="noopener">+ Google Calendar</a>
+        </div>
+      `).join("")}
+    </div>
+  `;
 }
 
 async function addCallRemote(entry) {
@@ -714,6 +816,10 @@ function tempEmoji(t) {
   return t === "fria" ? "🧊" : t === "tibia" ? "🌤️" : "🔥";
 }
 
+document.getElementById("f-resultado").addEventListener("change", (ev) => {
+  document.getElementById("wrap-rellamada").classList.toggle("hidden", ev.target.value !== "rellamar");
+});
+
 document.getElementById("btn-guardar").addEventListener("click", async () => {
   if (!config) { showSetupModal(); return; }
   const nombre = document.getElementById("f-nombre").value.trim();
@@ -723,20 +829,29 @@ document.getElementById("btn-guardar").addEventListener("click", async () => {
     showToast("Añade al menos un nombre o una zona");
     return;
   }
+  const resultado = document.getElementById("f-resultado").value;
+  const fechaRellamada = resultado === "rellamar" ? document.getElementById("f-fecha-rellamada").value : "";
+  if (resultado === "rellamar" && !fechaRellamada) {
+    showToast("Indica cuándo hay que volver a llamar");
+    return;
+  }
   const entry = {
     id: Date.now() + "-" + Math.random().toString(36).slice(2, 7),
     usuario: config.usuario,
     nombre, telefono, zona,
     portal: document.getElementById("f-portal").value,
     temp: document.getElementById("f-temp").value,
-    resultado: document.getElementById("f-resultado").value,
+    resultado,
+    fecha_rellamada: fechaRellamada,
     notas: document.getElementById("f-notas").value.trim(),
     fecha: new Date().toISOString()
   };
   calls.unshift(entry);
   renderStats();
   renderLog();
-  ["f-nombre","f-telefono","f-zona","f-notas"].forEach(id => document.getElementById(id).value = "");
+  renderReminders();
+  ["f-nombre","f-telefono","f-zona","f-notas","f-fecha-rellamada"].forEach(id => document.getElementById(id).value = "");
+  document.getElementById("wrap-rellamada").classList.add("hidden");
   showToast("Guardando...");
   try {
     await addCallRemote(entry);
@@ -792,7 +907,7 @@ function renderLog() {
       <td><strong>${escapeHtml(c.nombre || "—")}</strong>${c.telefono ? `<br><span style="color:var(--text-faint);font-size:11.5px;">${escapeHtml(c.telefono)}</span>` : ""}</td>
       <td>${escapeHtml(c.zona || "—")}<br><span style="color:var(--text-faint);font-size:11px;">${escapeHtml(c.portal)}</span></td>
       <td><span class="pill pill-${c.temp}">${tempEmoji(c.temp)} ${c.temp}</span></td>
-      <td><span class="pill pill-${c.resultado}">${resultadoLabel(c.resultado)}</span></td>
+      <td><span class="pill pill-${c.resultado}">${resultadoLabel(c.resultado)}</span>${c.resultado === "rellamar" && c.fecha_rellamada ? `<br><a href="${gcalLink(c)}" target="_blank" rel="noopener" style="font-size:10.5px; color:var(--turquoise); text-decoration:none;">📅 ${c.fecha_rellamada}</a>` : ""}</td>
       <td style="max-width:200px; color:var(--text-soft); font-size:12.5px;">${escapeHtml(c.notas || "—")}</td>
       <td style="white-space:nowrap; color:var(--text-faint); font-size:12px;">${fecha}</td>
       <td><button class="del-btn" data-id="${c.id}">Eliminar</button></td>
@@ -829,9 +944,9 @@ document.getElementById("btn-export").addEventListener("click", () => {
     showToast("No hay llamadas que exportar todavía");
     return;
   }
-  const headers = ["nombre", "telefono", "zona", "portal", "temperatura", "resultado", "notas", "fecha"];
+  const headers = ["nombre", "telefono", "zona", "portal", "temperatura", "resultado", "fecha_rellamada", "notas", "fecha"];
   const rows = calls.map(c => [
-    c.nombre, c.telefono, c.zona, c.portal, c.temp, resultadoLabel(c.resultado), c.notas,
+    c.nombre, c.telefono, c.zona, c.portal, c.temp, resultadoLabel(c.resultado), c.fecha_rellamada || "", c.notas,
     new Date(c.fecha).toLocaleDateString("es-ES")
   ].map(v => `"${String(v || "").replace(/"/g, '""')}"`).join(","));
   const csv = [headers.join(","), ...rows].join("\n");
