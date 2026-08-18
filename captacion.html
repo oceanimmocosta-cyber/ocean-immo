@@ -435,6 +435,7 @@
 
   .pill-cita { background: var(--turquoise-light); color: #027e87; }
   .pill-interesado { background: #e8f5e9; color: #2e7d32; }
+  .pill-se-lo-piensa { background: var(--gold-soft); color: #8a6600; }
   .pill-no-interesado { background: var(--danger-soft); color: var(--danger); }
   .pill-rellamar { background: #eef1f3; color: #4a5a68; }
   .pill-buzon { background: #f1f2f4; color: #8b98a3; }
@@ -547,6 +548,17 @@
       <label>Zona / dirección
         <input type="text" id="f-zona" placeholder="Ej. Puig Rom, Roses" />
       </label>
+      <label>Tipo de inmueble
+        <select id="f-tipo-inmueble">
+          <option value="Casa">Casa</option>
+          <option value="Piso">Piso</option>
+          <option value="Terreno">Terreno</option>
+          <option value="Garaje">Garaje</option>
+          <option value="Amarre">Amarre</option>
+          <option value="Local">Local</option>
+          <option value="Otros">Otros</option>
+        </select>
+      </label>
       <label>Portal donde lo viste
         <select id="f-portal">
           <option value="Idealista">Idealista</option>
@@ -568,6 +580,7 @@
         <select id="f-resultado">
           <option value="cita">Cita conseguida</option>
           <option value="interesado">Interesado, sin cita aún</option>
+          <option value="se-lo-piensa">Se lo tiene que pensar</option>
           <option value="rellamar">Volver a llamar más adelante</option>
           <option value="no-interesado">No interesado</option>
           <option value="buzon">No contesta / buzón de voz</option>
@@ -596,9 +609,20 @@
         <option value="">Todos los resultados</option>
         <option value="cita">Cita conseguida</option>
         <option value="interesado">Interesado</option>
+        <option value="se-lo-piensa">Se lo tiene que pensar</option>
         <option value="rellamar">Volver a llamar</option>
         <option value="no-interesado">No interesado</option>
         <option value="buzon">Buzón de voz</option>
+      </select>
+      <select id="filter-tipo-inmueble">
+        <option value="">Todos los tipos</option>
+        <option value="Casa">Casa</option>
+        <option value="Piso">Piso</option>
+        <option value="Terreno">Terreno</option>
+        <option value="Garaje">Garaje</option>
+        <option value="Amarre">Amarre</option>
+        <option value="Local">Local</option>
+        <option value="Otros">Otros</option>
       </select>
       <button class="btn-primary" id="btn-export" style="background:var(--navy);">Exportar CSV</button>
     </div>
@@ -727,6 +751,7 @@ function normalizeEntry(e) {
     nombre: e.nombre || "",
     telefono: e.telefono || "",
     zona: e.zona || "",
+    tipo_inmueble: e.tipo_inmueble || "",
     portal: e.portal || "",
     temp: e.temp || "fria",
     resultado: e.resultado || "buzon",
@@ -805,6 +830,7 @@ function resultadoLabel(r) {
   const map = {
     cita: "Cita conseguida",
     interesado: "Interesado",
+    "se-lo-piensa": "Se lo tiene que pensar",
     rellamar: "Volver a llamar",
     "no-interesado": "No interesado",
     buzon: "Buzón de voz"
@@ -839,6 +865,7 @@ document.getElementById("btn-guardar").addEventListener("click", async () => {
     id: Date.now() + "-" + Math.random().toString(36).slice(2, 7),
     usuario: config.usuario,
     nombre, telefono, zona,
+    tipo_inmueble: document.getElementById("f-tipo-inmueble").value,
     portal: document.getElementById("f-portal").value,
     temp: document.getElementById("f-temp").value,
     resultado,
@@ -873,10 +900,12 @@ function renderLog() {
   const search = document.getElementById("search").value.trim().toLowerCase();
   const fTemp = document.getElementById("filter-temp").value;
   const fRes = document.getElementById("filter-resultado").value;
+  const fTipo = document.getElementById("filter-tipo-inmueble").value;
 
   const filtered = calls.filter(c => {
     if (fTemp && c.temp !== fTemp) return false;
     if (fRes && c.resultado !== fRes) return false;
+    if (fTipo && c.tipo_inmueble !== fTipo) return false;
     if (search) {
       const hay = `${c.nombre} ${c.zona}`.toLowerCase();
       if (!hay.includes(search)) return false;
@@ -905,7 +934,7 @@ function renderLog() {
     const fecha = new Date(c.fecha).toLocaleDateString("es-ES", { day: "2-digit", month: "2-digit", year: "numeric" });
     tr.innerHTML = `
       <td><strong>${escapeHtml(c.nombre || "—")}</strong>${c.telefono ? `<br><span style="color:var(--text-faint);font-size:11.5px;">${escapeHtml(c.telefono)}</span>` : ""}</td>
-      <td>${escapeHtml(c.zona || "—")}<br><span style="color:var(--text-faint);font-size:11px;">${escapeHtml(c.portal)}</span></td>
+      <td>${escapeHtml(c.zona || "—")}<br><span style="color:var(--text-faint);font-size:11px;">${c.tipo_inmueble ? escapeHtml(c.tipo_inmueble) + " · " : ""}${escapeHtml(c.portal)}</span></td>
       <td><span class="pill pill-${c.temp}">${tempEmoji(c.temp)} ${c.temp}</span></td>
       <td><span class="pill pill-${c.resultado}">${resultadoLabel(c.resultado)}</span>${c.resultado === "rellamar" && c.fecha_rellamada ? `<br><a href="${gcalLink(c)}" target="_blank" rel="noopener" style="font-size:10.5px; color:var(--turquoise); text-decoration:none;">📅 ${c.fecha_rellamada}</a>` : ""}</td>
       <td style="max-width:200px; color:var(--text-soft); font-size:12.5px;">${escapeHtml(c.notas || "—")}</td>
@@ -938,15 +967,16 @@ document.getElementById("log-body").addEventListener("click", async (ev) => {
 document.getElementById("search").addEventListener("input", renderLog);
 document.getElementById("filter-temp").addEventListener("change", renderLog);
 document.getElementById("filter-resultado").addEventListener("change", renderLog);
+document.getElementById("filter-tipo-inmueble").addEventListener("change", renderLog);
 
 document.getElementById("btn-export").addEventListener("click", () => {
   if (calls.length === 0) {
     showToast("No hay llamadas que exportar todavía");
     return;
   }
-  const headers = ["nombre", "telefono", "zona", "portal", "temperatura", "resultado", "fecha_rellamada", "notas", "fecha"];
+  const headers = ["nombre", "telefono", "zona", "tipo_inmueble", "portal", "temperatura", "resultado", "fecha_rellamada", "notas", "fecha"];
   const rows = calls.map(c => [
-    c.nombre, c.telefono, c.zona, c.portal, c.temp, resultadoLabel(c.resultado), c.fecha_rellamada || "", c.notas,
+    c.nombre, c.telefono, c.zona, c.tipo_inmueble || "", c.portal, c.temp, resultadoLabel(c.resultado), c.fecha_rellamada || "", c.notas,
     new Date(c.fecha).toLocaleDateString("es-ES")
   ].map(v => `"${String(v || "").replace(/"/g, '""')}"`).join(","));
   const csv = [headers.join(","), ...rows].join("\n");
