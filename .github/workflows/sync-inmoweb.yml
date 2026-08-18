@@ -26,6 +26,7 @@ jobs:
         run: node scripts/sync-inmoweb.mjs
         env:
           INMOWEB_KEY: ${{ secrets.INMOWEB_KEY }}
+          BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
 
       - name: Guardar cambios en el repositorio
         run: |
