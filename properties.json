@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-08-18T10:33:48.968Z",
+  "actualizado": "2026-08-18T16:18:39.017Z",
   "propiedades": [
     {
       "referencia": "RUS0010",
@@ -10,7 +10,7 @@
       "poblacion": "Castelló d'Empúries",
       "tipo": "Finca rústica",
       "precio": "8000",
-      "m2": null,
+      "m2": 130,
       "habitaciones": "",
       "banos": null,
       "fotos": [
@@ -44,7 +44,7 @@
       "poblacion": "Roses",
       "tipo": "Finca rústica",
       "precio": "17000",
-      "m2": null,
+      "m2": 374,
       "habitaciones": "",
       "banos": null,
       "fotos": [
@@ -183,7 +183,7 @@
       "poblacion": "Garriguella",
       "tipo": "Finca rústica",
       "precio": "45000",
-      "m2": null,
+      "m2": 15084,
       "habitaciones": "",
       "banos": null,
       "fotos": [
@@ -747,7 +747,7 @@
       "poblacion": "Empuriabrava",
       "tipo": "Solar Urbano",
       "precio": "72000",
-      "m2": null,
+      "m2": 106,
       "habitaciones": "",
       "banos": null,
       "fotos": [
@@ -1150,7 +1150,7 @@
       "poblacion": "Sant Martí de Llémana",
       "tipo": "Solar Urbano",
       "precio": "100000",
-      "m2": null,
+      "m2": 803,
       "habitaciones": "",
       "banos": null,
       "fotos": [
@@ -1211,7 +1211,7 @@
       "poblacion": "Palau-saverdera",
       "tipo": "Finca rústica",
       "precio": "55000",
-      "m2": null,
+      "m2": 7299,
       "habitaciones": "",
       "banos": null,
       "fotos": [
@@ -1310,7 +1310,7 @@
       "poblacion": "Pedret i Marzà",
       "tipo": "Finca rústica",
       "precio": "55000",
-      "m2": null,
+      "m2": 12900,
       "habitaciones": "",
       "banos": null,
       "fotos": [
@@ -1345,7 +1345,7 @@
       "poblacion": "Roses",
       "tipo": "Finca rústica",
       "precio": "67000",
-      "m2": null,
+      "m2": 7423,
       "habitaciones": "",
       "banos": null,
       "fotos": [
@@ -1870,7 +1870,7 @@
       "poblacion": "Vilajuïga",
       "tipo": "Finca rústica",
       "precio": "40000",
-      "m2": null,
+      "m2": 11068,
       "habitaciones": "",
       "banos": null,
       "fotos": [
@@ -1915,7 +1915,7 @@
       "poblacion": "Roses",
       "tipo": "Finca rústica",
       "precio": "35000",
-      "m2": null,
+      "m2": 4968,
       "habitaciones": "",
       "banos": null,
       "fotos": [
