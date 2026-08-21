@@ -2667,7 +2667,7 @@
           if(isNaN(hab)) hab = 0; // Inmoweb suele dejar este campo vacío en los estudios, en vez de "0"
           if(habMinNum===0){
             if(hab!==0) return false;
-            var tipoExcluido = ['garaje / parking','solar urbano','finca rústica'];
+            var tipoExcluido = ['garaje / parking','solar urbano','finca rústica','local comercial'];
             if(tipoExcluido.indexOf((p.tipo||'').trim().toLowerCase())>=0) return false;
           }
           else if(hab < habMinNum) return false;
