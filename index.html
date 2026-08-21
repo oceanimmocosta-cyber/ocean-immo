@@ -2664,7 +2664,7 @@
         }
         if(habMinNum!=null){
           var hab = parseInt(p.habitaciones,10);
-          if(isNaN(hab)) return false;
+          if(isNaN(hab)) hab = 0; // Inmoweb suele dejar este campo vacío en los estudios, en vez de "0"
           if(habMinNum===0){ if(hab!==0) return false; }
           else if(hab < habMinNum) return false;
         }
