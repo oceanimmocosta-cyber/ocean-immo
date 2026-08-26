@@ -2295,7 +2295,7 @@
     var customFeats=featsAttr ? featsAttr.split('|').filter(Boolean).map(decodeEntities) : [];
     var tipoAttr=(card.getAttribute('data-tipo')||'').trim().toLowerCase();
     var isTerreno = tipoAttr==='solar urbano' || tipoAttr==='finca rústica' || tipoAttr==='finca rustica';
-    var customDesc=decodeEntities(card.getAttribute('data-desc')||'');
+    var customDesc=decodeEntities(card.getAttribute('data-desc')||'').replace(/\[iw\]/gi,'').trim();
     var descHtml = customDesc ? customDesc.split(/\r\n|\r|\n/).map(function(s){return s.trim();}).filter(Boolean).map(function(p){return '<p>'+escHtml(p)+'</p>';}).join('') : (isTerreno ? '' : buildDesc(title,zone));
     document.getElementById('d-desc').innerHTML=descHtml;
     var descH2=document.getElementById('d-desc-h2');
