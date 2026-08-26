@@ -72,9 +72,18 @@ async function main() {
     const operacion = OP_MAP[opId] || 'Venta';
 
     const descs = toArray(p.descripciones?.descripcion);
-    const descEs = descs.find((d) => d['@_idioma'] === 'es') || descs[0] || {};
-    const titulo = textOf(descEs.titulo);
-    const descripcion = textOf(descEs.descripcion);
+    function descPorIdioma(lang) {
+      const d = descs.find((d) => d['@_idioma'] === lang);
+      return d ? { titulo: textOf(d.titulo), descripcion: textOf(d.descripcion) } : null;
+    }
+    const descEs = descPorIdioma('es') || (descs[0]
+      ? { titulo: textOf(descs[0].titulo), descripcion: textOf(descs[0].descripcion) }
+      : { titulo: '', descripcion: '' });
+    const descCa = descPorIdioma('ca');
+    const descFr = descPorIdioma('fr');
+    const descEn = descPorIdioma('en');
+    const titulo = descEs.titulo;
+    const descripcion = descEs.descripcion;
 
     const imgs = toArray(p.imagenes?.imagen)
       .map((i) => i['@_url'])
@@ -106,6 +115,12 @@ async function main() {
       referencia: textOf(p.referencia) || String(p['@_id'] || ''),
       titulo,
       descripcion,
+      tituloCa: descCa ? descCa.titulo : null,
+      descripcionCa: descCa ? descCa.descripcion : null,
+      tituloFr: descFr ? descFr.titulo : null,
+      descripcionFr: descFr ? descFr.descripcion : null,
+      tituloEn: descEn ? descEn.titulo : null,
+      descripcionEn: descEn ? descEn.descripcion : null,
       operacion,
       zona,
       poblacion,
