@@ -2045,6 +2045,14 @@
   // Escapa texto antes de insertarlo como HTML, para evitar inyección de código (XSS)
   // desde datos externos (Inmoweb, Airtable, etc.) que se copian de un atributo a otro.
   function escHtml(s){ var d=document.createElement('div'); d.textContent=(s==null?'':String(s)); return d.innerHTML; }
+  // Decodifica entidades HTML (&#13; &amp; &nbsp;...) que a veces llegan desde el feed
+  // de Inmoweb/Idealista dentro de los campos de texto, para no mostrarlas literalmente.
+  function decodeEntities(s){
+    if(s==null || s==='') return '';
+    var ta=document.createElement('textarea');
+    ta.innerHTML=String(s);
+    return ta.value;
+  }
 
   function buildFeats(z,v,year,custom,isTerreno){
     var B={
@@ -2284,11 +2292,11 @@
     if(ctaFormWrap) ctaFormWrap.style.display = vendido ? 'none' : '';
     var yearBuilt=card.getAttribute('data-year')||'';
     var featsAttr=card.getAttribute('data-feats')||'';
-    var customFeats=featsAttr ? featsAttr.split('|').filter(Boolean) : [];
+    var customFeats=featsAttr ? featsAttr.split('|').filter(Boolean).map(decodeEntities) : [];
     var tipoAttr=(card.getAttribute('data-tipo')||'').trim().toLowerCase();
     var isTerreno = tipoAttr==='solar urbano' || tipoAttr==='finca rústica' || tipoAttr==='finca rustica';
-    var customDesc=card.getAttribute('data-desc')||'';
-    var descHtml = customDesc ? customDesc.split(/\n+/).filter(Boolean).map(function(p){return '<p>'+escHtml(p)+'</p>';}).join('') : (isTerreno ? '' : buildDesc(title,zone));
+    var customDesc=decodeEntities(card.getAttribute('data-desc')||'');
+    var descHtml = customDesc ? customDesc.split(/\r\n|\r|\n/).map(function(s){return s.trim();}).filter(Boolean).map(function(p){return '<p>'+escHtml(p)+'</p>';}).join('') : (isTerreno ? '' : buildDesc(title,zone));
     document.getElementById('d-desc').innerHTML=descHtml;
     var descH2=document.getElementById('d-desc-h2');
     if(descH2) descH2.style.display = descHtml ? '' : 'none';
