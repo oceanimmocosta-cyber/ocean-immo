@@ -1375,7 +1375,7 @@
           <a href="#" data-detalle class="btn btn-ghost">Ver detalles</a>
         </div>
       </article>
-      <article class="prop">
+      <article class="prop" data-tipo="Solar Urbano" data-feats="Terreno urbano con proyecto y licencia de obra concedida|Superficie de 600 m²|Suministros de agua y electricidad en la parcela|Terreno llano y fácil acceso|Zona tranquila y bien comunicada|Ideal para construir vivienda unifamiliar">
         <div class="prop-img" data-gallery="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80|https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=900&q=80|https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=900&q=80|https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=900&q=80">
           <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80" alt="Parcela con proyecto y licencia">
           <button type="button" class="mini-gal-arrow mini-gal-prev" aria-label="Foto anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="m15 18-6-6 6-6"/></svg></button>
@@ -1733,7 +1733,7 @@
         <div class="detail-specs" id="d-specs"></div>
         <h2 class="detail-h2">Descripción</h2>
         <div class="detail-desc" id="d-desc"></div>
-        <h2 class="detail-h2">Características</h2>
+        <h2 class="detail-h2" id="d-features-h2">Características</h2>
         <ul class="detail-features" id="d-features"></ul>
         <div id="d-energy-wrap" style="display:none">
           <h2 class="detail-h2">Certificación energética</h2>
@@ -2046,7 +2046,7 @@
   // desde datos externos (Inmoweb, Airtable, etc.) que se copian de un atributo a otro.
   function escHtml(s){ var d=document.createElement('div'); d.textContent=(s==null?'':String(s)); return d.innerHTML; }
 
-  function buildFeats(z,v,year,custom){
+  function buildFeats(z,v,year,custom,isTerreno){
     var B={
       es:["Ubicación privilegiada en "+z,"A pocos minutos de la playa","Cocina equipada","Mucha luz natural","Armarios empotrados","Aire acondicionado","Cerca de comercios y servicios"],
       ca:["Ubicació privilegiada a "+z,"A pocs minuts de la platja","Cuina equipada","Molta llum natural","Armaris encastats","Aire condicionat","A prop de comerços i serveis"],
@@ -2055,9 +2055,13 @@
     };
     var L={es:"Certificado energético disponible",ca:"Certificat energètic disponible",fr:"Certificat énergétique disponible",en:"Energy certificate available"};
     var Y={es:"Año de construcción: ",ca:"Any de construcció: ",fr:"Année de construction : ",en:"Year built: "};
-    var a = (custom && custom.length) ? custom.slice() : (B[currentLang]||B.es).slice();
+    var hasCustom = custom && custom.length;
+    var a;
+    if(hasCustom){ a = custom.slice(); }
+    else if(isTerreno){ a = []; }
+    else { a = (B[currentLang]||B.es).slice(); }
     if(year){ a.unshift((Y[currentLang]||Y.es)+year); }
-    if(v && !(custom && custom.length)) a.push(L[currentLang]||L.es);
+    if(v && !hasCustom && !isTerreno) a.push(L[currentLang]||L.es);
     return a;
   }
   function buildMsg(r){
@@ -2282,7 +2286,12 @@
     var yearBuilt=card.getAttribute('data-year')||'';
     var featsAttr=card.getAttribute('data-feats')||'';
     var customFeats=featsAttr ? featsAttr.split('|').filter(Boolean) : [];
-    document.getElementById('d-features').innerHTML=buildFeats(zone,isVenta,yearBuilt,customFeats).map(function(f){return '<li>'+CHK+'<span>'+escHtml(f)+'</span></li>';}).join('');
+    var tipoAttr=(card.getAttribute('data-tipo')||'').trim().toLowerCase();
+    var isTerreno = tipoAttr==='solar urbano' || tipoAttr==='finca rústica' || tipoAttr==='finca rustica';
+    var feats = buildFeats(zone,isVenta,yearBuilt,customFeats,isTerreno);
+    document.getElementById('d-features').innerHTML=feats.map(function(f){return '<li>'+CHK+'<span>'+escHtml(f)+'</span></li>';}).join('');
+    var featsH2=document.getElementById('d-features-h2');
+    if(featsH2) featsH2.style.display = feats.length ? '' : 'none';
     var mapPoblacion = poblacion || 'Roses';
     var mapQuery = (zone && zone.trim().toLowerCase()!==mapPoblacion.trim().toLowerCase()) ? (zone+', '+mapPoblacion) : mapPoblacion;
     document.getElementById('d-map').src='https://www.google.com/maps?q='+encodeURIComponent(mapQuery+', Girona')+'&output=embed';
@@ -2441,9 +2450,10 @@
       var vendido = !!p.vendido;
       var soldBadge = vendido ? '<span class="sold-ribbon">Vendido</span>' : '';
       var poblacion = p.poblacion || '';
+      var tipoVal = p.tipo || '';
 
       return '' +
-      '<article class="prop'+(vendido?' is-sold':'')+'" data-vendido="'+(vendido?'true':'false')+'" data-poblacion="'+esc(poblacion)+'" data-year="'+esc(year)+'" data-feats="'+esc(featsAttr)+'" data-e-consl="'+esc(eConsL)+'" data-e-consv="'+esc(eConsV)+'" data-e-emil="'+esc(eEmiL)+'" data-e-emiv="'+esc(eEmiV)+'">' +
+      '<article class="prop'+(vendido?' is-sold':'')+'" data-vendido="'+(vendido?'true':'false')+'" data-poblacion="'+esc(poblacion)+'" data-tipo="'+esc(tipoVal)+'" data-year="'+esc(year)+'" data-feats="'+esc(featsAttr)+'" data-e-consl="'+esc(eConsL)+'" data-e-consv="'+esc(eConsV)+'" data-e-emil="'+esc(eEmiL)+'" data-e-emiv="'+esc(eEmiV)+'">' +
         '<div class="prop-img" data-gallery="'+esc(gallery)+'" data-gallery-full="'+esc(galleryFullAttr)+'">' +
           '<img src="'+esc(galleryThumbs[0])+'" alt="'+esc(title)+'" loading="lazy" decoding="async">' +
           MINI_ARROWS +
