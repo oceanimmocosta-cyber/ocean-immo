@@ -1375,7 +1375,7 @@
           <a href="#" data-detalle class="btn btn-ghost">Ver detalles</a>
         </div>
       </article>
-      <article class="prop" data-tipo="Solar Urbano" data-feats="Terreno urbano con proyecto y licencia de obra concedida|Superficie de 600 m²|Suministros de agua y electricidad en la parcela|Terreno llano y fácil acceso|Zona tranquila y bien comunicada|Ideal para construir vivienda unifamiliar">
+      <article class="prop" data-tipo="Solar Urbano" data-feats="Terreno urbano con proyecto y licencia de obra concedida|Superficie de 600 m²|Suministros de agua y electricidad en la parcela|Terreno llano y fácil acceso|Zona tranquila y bien comunicada|Ideal para construir vivienda unifamiliar" data-desc="">
         <div class="prop-img" data-gallery="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80|https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=900&q=80|https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=900&q=80|https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=900&q=80">
           <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80" alt="Parcela con proyecto y licencia">
           <button type="button" class="mini-gal-arrow mini-gal-prev" aria-label="Foto anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="m15 18-6-6 6-6"/></svg></button>
@@ -1731,7 +1731,7 @@
         <h1 class="detail-title" id="d-title"></h1>
         <div class="detail-price" id="d-price"></div>
         <div class="detail-specs" id="d-specs"></div>
-        <h2 class="detail-h2">Descripción</h2>
+        <h2 class="detail-h2" id="d-desc-h2">Descripción</h2>
         <div class="detail-desc" id="d-desc"></div>
         <h2 class="detail-h2" id="d-features-h2">Características</h2>
         <ul class="detail-features" id="d-features"></ul>
@@ -2282,12 +2282,16 @@
     var ctaFormWrap=document.getElementById('d-cta-form-wrap');
     if(soldNotice) soldNotice.style.display = vendido ? '' : 'none';
     if(ctaFormWrap) ctaFormWrap.style.display = vendido ? 'none' : '';
-    document.getElementById('d-desc').innerHTML=buildDesc(title,zone);
     var yearBuilt=card.getAttribute('data-year')||'';
     var featsAttr=card.getAttribute('data-feats')||'';
     var customFeats=featsAttr ? featsAttr.split('|').filter(Boolean) : [];
     var tipoAttr=(card.getAttribute('data-tipo')||'').trim().toLowerCase();
     var isTerreno = tipoAttr==='solar urbano' || tipoAttr==='finca rústica' || tipoAttr==='finca rustica';
+    var customDesc=card.getAttribute('data-desc')||'';
+    var descHtml = customDesc ? customDesc.split(/\n+/).filter(Boolean).map(function(p){return '<p>'+escHtml(p)+'</p>';}).join('') : (isTerreno ? '' : buildDesc(title,zone));
+    document.getElementById('d-desc').innerHTML=descHtml;
+    var descH2=document.getElementById('d-desc-h2');
+    if(descH2) descH2.style.display = descHtml ? '' : 'none';
     var feats = buildFeats(zone,isVenta,yearBuilt,customFeats,isTerreno);
     document.getElementById('d-features').innerHTML=feats.map(function(f){return '<li>'+CHK+'<span>'+escHtml(f)+'</span></li>';}).join('');
     var featsH2=document.getElementById('d-features-h2');
@@ -2443,6 +2447,7 @@
       var m2 = p.m2, hab = p.habitaciones, banos = p.banos;
       var year = p.anioConstruccion || '';
       var featsAttr = (p.caracteristicas||[]).join('|');
+      var descVal = p.descripcion || '';
       var eConsL = p.certConsumoLetra || p.certEnergetica || '';
       var eConsV = p.certConsumoValor || '';
       var eEmiL = p.certEmisionesLetra || '';
@@ -2453,7 +2458,7 @@
       var tipoVal = p.tipo || '';
 
       return '' +
-      '<article class="prop'+(vendido?' is-sold':'')+'" data-vendido="'+(vendido?'true':'false')+'" data-poblacion="'+esc(poblacion)+'" data-tipo="'+esc(tipoVal)+'" data-year="'+esc(year)+'" data-feats="'+esc(featsAttr)+'" data-e-consl="'+esc(eConsL)+'" data-e-consv="'+esc(eConsV)+'" data-e-emil="'+esc(eEmiL)+'" data-e-emiv="'+esc(eEmiV)+'">' +
+      '<article class="prop'+(vendido?' is-sold':'')+'" data-vendido="'+(vendido?'true':'false')+'" data-poblacion="'+esc(poblacion)+'" data-tipo="'+esc(tipoVal)+'" data-year="'+esc(year)+'" data-feats="'+esc(featsAttr)+'" data-desc="'+esc(descVal)+'" data-e-consl="'+esc(eConsL)+'" data-e-consv="'+esc(eConsV)+'" data-e-emil="'+esc(eEmiL)+'" data-e-emiv="'+esc(eEmiV)+'">' +
         '<div class="prop-img" data-gallery="'+esc(gallery)+'" data-gallery-full="'+esc(galleryFullAttr)+'">' +
           '<img src="'+esc(galleryThumbs[0])+'" alt="'+esc(title)+'" loading="lazy" decoding="async">' +
           MINI_ARROWS +
