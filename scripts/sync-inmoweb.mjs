@@ -67,24 +67,14 @@ async function main() {
   const data = parser.parse(xml);
   const propsRaw = toArray(data.properties?.propiedad);
 
-  // --- DIAGNÓSTICO TEMPORAL: qué códigos de idioma usa realmente Inmoweb ---
-  // (Se puede quitar este bloque una vez confirmemos los códigos correctos)
-  const idiomasVistos = new Set();
-  propsRaw.forEach((p) => {
-    toArray(p.descripciones?.descripcion).forEach((d) => {
-      idiomasVistos.add(d['@_idioma']);
-    });
-  });
-  console.log('Códigos de idioma detectados en el feed de Inmoweb:', [...idiomasVistos].join(', '));
-  // --- FIN DIAGNÓSTICO TEMPORAL ---
-
   const propiedades = propsRaw.map((p) => {
     const opId = String(p.operacion?.['@_id'] ?? '');
     const operacion = OP_MAP[opId] || 'Venta';
 
     const descs = toArray(p.descripciones?.descripcion);
-    // Inmoweb usa 'cat' (no 'ca') como código de idioma para catalán en el feed.
-    const IDIOMA_ALIASES = { ca: ['ca', 'cat'] };
+    // Inmoweb no siempre usa los códigos ISO estándar en el feed:
+    // catalán = 'cat' (no 'ca'), inglés = 'gb' (no 'en').
+    const IDIOMA_ALIASES = { ca: ['ca', 'cat'], en: ['en', 'gb'] };
     function descPorIdioma(lang) {
       const codigos = IDIOMA_ALIASES[lang] || [lang];
       const d = descs.find((d) => codigos.includes(d['@_idioma']));
