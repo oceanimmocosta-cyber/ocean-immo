@@ -1894,7 +1894,7 @@
     <div class="foot-grid">
       <div class="foot-brand">
         <div class="logo"><span class="oi-logo" role="img" aria-label="Ocean Immo · Costa Brava Real Estate"></span></div>
-        <p>Tu agencia inmobiliaria en Roses. Compraventa en la Costa Brava, con atención en cuatro idiomas.</p>
+        <p>Tu agencia inmobiliaria en Roses. Compraventa y alquiler en la Costa Brava, con atención en cuatro idiomas.</p>
         <div class="foot-socials">
           <a href="https://www.instagram.com/ocean.immo/" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
           <a href="https://www.facebook.com/ocean.immo" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 9h3V5h-3c-2.2 0-4 1.8-4 4v2H7v4h3v6h4v-6h3l1-4h-4V9c0-.6.4-1 1-1z"/></svg></a>
@@ -2182,6 +2182,69 @@
     return ta.value;
   }
 
+  // Traduce frases de características generadas por el script de sincronización
+  // (siempre en español) a los otros 3 idiomas. Si una frase no está contemplada,
+  // se deja tal cual en español antes que dejar el hueco en blanco.
+  var FEATURE_WORD_DICT = {
+    // valores variables (orientaciones, vistas, calefacción, mobiliario...)
+    'norte':{ca:'nord',fr:'nord',en:'north'}, 'sur':{ca:'sud',fr:'sud',en:'south'},
+    'este':{ca:'est',fr:'est',en:'east'}, 'oeste':{ca:'oest',fr:'ouest',en:'west'},
+    'noreste':{ca:'nord-est',fr:'nord-est',en:'northeast'}, 'noroeste':{ca:'nord-oest',fr:'nord-ouest',en:'northwest'},
+    'sureste':{ca:'sud-est',fr:'sud-est',en:'southeast'}, 'suroeste':{ca:'sud-oest',fr:'sud-ouest',en:'southwest'},
+    'mar':{ca:'mar',fr:'mer',en:'the sea'}, 'montana':{ca:'muntanya',fr:'montagne',en:'the mountains'},
+    'canal':{ca:'canal',fr:'canal',en:'the canal'}, 'despejadas':{ca:'obertes',fr:'dégagées',en:'open views'},
+    'panoramicas':{ca:'panoràmiques',fr:'panoramiques',en:'panoramic views'}, 'jardin':{ca:'jardí',fr:'jardin',en:'the garden'},
+    'piscina':{ca:'piscina',fr:'piscine',en:'the pool'},
+    'individual':{ca:'individual',fr:'individuel',en:'individual'}, 'central':{ca:'central',fr:'central',en:'central'},
+    'privada':{ca:'privada',fr:'privée',en:'private'}, 'comunitaria':{ca:'comunitària',fr:'collective',en:'communal'},
+    'privado':{ca:'privat',fr:'privé',en:'private'}, 'comunitario':{ca:'comunitari',fr:'collectif',en:'communal'},
+    'acristalada':{ca:'acristallada',fr:'vitrée',en:'glazed'}, 'no acristalada':{ca:'no acristallada',fr:'non vitrée',en:'not glazed'},
+  };
+  var FEATURE_PATTERNS = [
+    {re:/^Piscina (privada|comunitaria)$/i, tpl:{ca:'Piscina {1}',fr:'Piscine {1}',en:'{1} pool'}},
+    {re:/^Jardín (privado|comunitario)$/i, tpl:{ca:'Jardí {1}',fr:'Jardin {1}',en:'{1} garden'}},
+    {re:/^Vistas a (.+)$/i, tpl:{ca:'Vistes a {1}',fr:'Vue sur {1}',en:'Views of {1}'}},
+    {re:/^Orientación (.+)$/i, tpl:{ca:'Orientació {1}',fr:'Orientation {1}',en:'{1}-facing'}},
+    {re:/^Calefacción (.+)$/i, tpl:{ca:'Calefacció {1}',fr:'Chauffage {1}',en:'{1} heating'}},
+    {re:/^Terraza \((.+)\)$/i, tpl:{ca:'Terrassa ({1})',fr:'Terrasse ({1})',en:'Terrace ({1})'}},
+    {re:/^Garaje numerado$/i, tpl:{ca:'Garatge numerat',fr:'Garage numéroté',en:'Numbered garage'}},
+    {re:/^Parking numerado$/i, tpl:{ca:'Pàrquing numerat',fr:'Parking numéroté',en:'Numbered parking'}},
+  ];
+  var FEATURE_FIXED_DICT = {
+    'Garaje':{ca:'Garatge',fr:'Garage',en:'Garage'},
+    'Parking':{ca:'Pàrquing',fr:'Parking',en:'Parking'},
+    'Ascensor':{ca:'Ascensor',fr:'Ascenseur',en:'Lift'},
+    'Chimenea':{ca:'Xemeneia',fr:'Cheminée',en:'Fireplace'},
+    'Trastero':{ca:'Traster',fr:'Débarras',en:'Storage room'},
+    'Aire acondicionado':{ca:'Aire condicionat',fr:'Climatisation',en:'Air conditioning'},
+    'Armarios empotrados':{ca:'Armaris encastats',fr:'Placards intégrés',en:'Built-in wardrobes'},
+    'Puerta blindada':{ca:'Porta blindada',fr:'Porte blindée',en:'Reinforced door'},
+    'Primera línea de mar':{ca:'Primera línia de mar',fr:'Première ligne de mer',en:'Beachfront'},
+    'Solárium':{ca:'Solàrium',fr:'Solarium',en:'Solarium'},
+    'Amueblado':{ca:'Moblat',fr:'Meublé',en:'Furnished'},
+    'Semi amueblado':{ca:'Semi moblat',fr:'Semi meublé',en:'Partly furnished'},
+    'Doble acristalamiento':{ca:'Doble vidre',fr:'Double vitrage',en:'Double glazing'},
+    'Piscina Privada':{ca:'Piscina Privada',fr:'Piscine privée',en:'Private pool'},
+    'Piscina Comunitaria':{ca:'Piscina Comunitària',fr:'Piscine collective',en:'Communal pool'},
+    'Jardín privado':{ca:'Jardí privat',fr:'Jardin privé',en:'Private garden'},
+    'Jardín comunitario':{ca:'Jardí comunitari',fr:'Jardin collectif',en:'Communal garden'},
+  };
+  function translateFeature(phrase, lang){
+    if(lang==='es' || !phrase) return phrase;
+    if(FEATURE_FIXED_DICT[phrase] && FEATURE_FIXED_DICT[phrase][lang]) return FEATURE_FIXED_DICT[phrase][lang];
+    for(var i=0;i<FEATURE_PATTERNS.length;i++){
+      var pat=FEATURE_PATTERNS[i];
+      var m=phrase.match(pat.re);
+      if(m && pat.tpl[lang]){
+        var val=(m[1]||'').trim();
+        var valLower=val.toLowerCase();
+        var valTranslated=(FEATURE_WORD_DICT[valLower] && FEATURE_WORD_DICT[valLower][lang]) || val;
+        var result=pat.tpl[lang].replace('{1}', valTranslated);
+        return result.charAt(0).toUpperCase()+result.slice(1);
+      }
+    }
+    return phrase; // sin traducción contemplada: se muestra en español antes que en blanco
+  }
   function buildFeats(z,v,year,custom,isTerreno){
     var B={
       es:["Ubicación privilegiada en "+z,"A pocos minutos de la playa","Cocina equipada","Mucha luz natural","Armarios empotrados","Aire acondicionado","Cerca de comercios y servicios"],
@@ -2437,7 +2500,7 @@
     var descH2=document.getElementById('d-desc-h2');
     if(descH2) descH2.style.display = descHtml ? '' : 'none';
     var feats = buildFeats(zone,isVenta,yearBuilt,customFeats,isTerreno);
-    document.getElementById('d-features').innerHTML=feats.map(function(f){return '<li>'+CHK+'<span>'+escHtml(f)+'</span></li>';}).join('');
+    document.getElementById('d-features').innerHTML=feats.map(function(f){return '<li>'+CHK+'<span>'+escHtml(translateFeature(f,currentLang))+'</span></li>';}).join('');
     var featsH2=document.getElementById('d-features-h2');
     if(featsH2) featsH2.style.display = feats.length ? '' : 'none';
     var mapPoblacion = poblacion || 'Roses';
