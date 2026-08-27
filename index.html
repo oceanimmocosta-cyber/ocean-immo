@@ -2698,6 +2698,7 @@
       var vendido = !!p.vendido;
       var soldBadge = vendido ? '<span class="sold-ribbon">Vendido</span>' : '';
       var poblacion = p.poblacion || '';
+      if(zone.trim().toLowerCase()==='centro') zone = poblacion || 'Roses';
       var tipoVal = p.tipo || '';
 
       return '' +
