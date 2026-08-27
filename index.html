@@ -2680,6 +2680,7 @@
       var titleCa = p.tituloCa || '';
       var titleFr = p.tituloFr || '';
       var titleEn = p.tituloEn || '';
+      var titleShown = (currentLang==='ca' && titleCa) || (currentLang==='fr' && titleFr) || (currentLang==='en' && titleEn) || title;
       var zone = p.zona || '';
       var ref = p.referencia || '';
       var price = fmtPrice(p.precio);
@@ -2702,13 +2703,13 @@
       return '' +
       '<article class="prop'+(vendido?' is-sold':'')+'" data-vendido="'+(vendido?'true':'false')+'" data-poblacion="'+esc(poblacion)+'" data-tipo="'+esc(tipoVal)+'" data-year="'+esc(year)+'" data-feats="'+esc(featsAttr)+'" data-title-es="'+esc(title)+'" data-title-ca="'+esc(titleCa)+'" data-title-fr="'+esc(titleFr)+'" data-title-en="'+esc(titleEn)+'" data-desc="'+esc(descVal)+'" data-desc-ca="'+esc(descCaVal)+'" data-desc-fr="'+esc(descFrVal)+'" data-desc-en="'+esc(descEnVal)+'" data-m2="'+esc(m2||'')+'" data-hab="'+esc(hab||'')+'" data-banos="'+esc(banos||'')+'" data-e-consl="'+esc(eConsL)+'" data-e-consv="'+esc(eConsV)+'" data-e-emil="'+esc(eEmiL)+'" data-e-emiv="'+esc(eEmiV)+'">' +
         '<div class="prop-img" data-gallery="'+esc(gallery)+'" data-gallery-full="'+esc(galleryFullAttr)+'">' +
-          '<img src="'+esc(galleryThumbs[0])+'" alt="'+esc(title)+'" loading="lazy" decoding="async">' +
+          '<img src="'+esc(galleryThumbs[0])+'" alt="'+esc(titleShown)+'" loading="lazy" decoding="async">' +
           MINI_ARROWS +
           '<span class="prop-zone">'+esc(zone)+'</span><span class="prop-op '+opClass+'">'+opText+'</span>'+modBadge+soldBadge +
         '</div>' +
         '<div class="prop-body">' +
           '<div class="prop-price">'+esc(price)+priceSuffix+'</div>' +
-          '<div class="prop-title">'+esc(title)+'</div>' +
+          '<div class="prop-title">'+esc(titleShown)+'</div>' +
           '<div class="prop-ref">Ref. '+esc(ref)+'</div>' +
           '<div class="prop-specs">' + specsHtmlFor(m2,hab,banos,currentLang) + '</div>' +
           '<a href="#" data-detalle class="btn btn-ghost">Ver detalles</a>' +
@@ -2748,6 +2749,7 @@
       var start=(page-1)*PER_PAGE;
       gridEl.innerHTML = list.slice(start, start+PER_PAGE).map(buildCard).join('');
       initMiniGalleries(gridEl);
+      if(currentLang!=='es' && typeof applyLang==='function') applyLang(currentLang);
       if(paginationEl){
         paginationEl.innerHTML = buildPaginationHTML(page, totalPages);
         paginationEl.onclick = function(e){
@@ -2841,6 +2843,7 @@
           var featured = records.filter(function(p){ return !p.vendido; }).slice(0,6);
           homeGrid.innerHTML = featured.map(buildCard).join('');
           initMiniGalleries(homeGrid);
+          if(currentLang!=='es' && typeof applyLang==='function') applyLang(currentLang);
         }
 
         wireFilterSearch('comprar-f-buscar', 'comprar-f-poblacion', 'comprar-f-precio', ventas, comprarGrid, comprarPag, 'comprar-f-tipo', 'comprar-f-hab');
