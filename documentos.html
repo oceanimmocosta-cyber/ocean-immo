@@ -78,7 +78,16 @@
     gap: 20px;
   }
   @media (max-width: 760px) {
-    main { grid-template-columns: 1fr; }
+    main { grid-template-columns: 1fr; padding: 0 12px 40px; }
+    header { padding: 10px 16px; }
+    .brand-logo { height: 56px; }
+    .content-header { flex-wrap: wrap; }
+    .content { padding: 16px; }
+    .doc-item { flex-wrap: wrap; }
+    .doc-actions { width: 100%; justify-content: flex-start; }
+  }
+  @media (max-width: 400px) {
+    .brand-logo { height: 46px; }
   }
 
   .sidebar {
