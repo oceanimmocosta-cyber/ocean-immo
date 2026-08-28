@@ -218,6 +218,71 @@
     border-radius: 999px;
   }
 
+  .checker-wrap {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+  }
+  .checker-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    color: var(--navy);
+    margin: 0 0 10px;
+  }
+  .checker-row {
+    display: flex;
+    gap: 8px;
+  }
+  .checker-row input {
+    flex: 1;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 11px;
+    background: #fff;
+  }
+  .checker-row input:focus {
+    outline: 2px solid var(--turquoise);
+    outline-offset: 1px;
+  }
+  .checker-row .btn-primary { padding: 9px 18px; font-size: 12.5px; white-space: nowrap; }
+  #check-result { margin-top: 10px; }
+  .check-ok {
+    margin: 0;
+    font-size: 12.5px;
+    color: #2e7d32;
+    font-weight: 600;
+  }
+  .check-warn {
+    margin: 0 0 8px;
+    font-size: 12.5px;
+    color: #b5651d;
+    font-weight: 700;
+  }
+  .check-matches {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .check-match {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 12px;
+    color: var(--text);
+  }
+  .check-notas {
+    margin-top: 4px;
+    font-size: 11.5px;
+    color: var(--text-faint);
+    font-style: italic;
+  }
+  .check-loading { margin: 0; font-size: 12.5px; color: var(--text-faint); }
+
   /* --- Guion tab --- */
   .temp-tabs {
     display: flex;
@@ -535,7 +600,17 @@
   <!-- ===== REGISTRO DE LLAMADAS ===== -->
   <section id="tab-registro" class="panel">
     <div id="reminders-wrap" class="reminders-wrap hidden"></div>
-    <h3 style="font-family:'Playfair Display',serif; margin:0 0 4px; color:var(--navy);">Anotar una llamada</h3>
+
+    <div class="checker-wrap">
+      <h3 class="checker-title">🔎 Comprobar número antes de llamar</h3>
+      <div class="checker-row">
+        <input type="text" id="check-phone" placeholder="Escribe el teléfono..." />
+        <button class="btn-primary" id="check-btn" style="background:var(--navy);">Comprobar</button>
+      </div>
+      <div id="check-result"></div>
+    </div>
+
+    <h3 id="form-title" style="font-family:'Playfair Display',serif; margin:0 0 4px; color:var(--navy);">Anotar una llamada</h3>
     <p style="font-size:12.5px; color:var(--text-soft); margin:0 0 16px;">Rellena esto justo después de colgar, mientras lo tienes fresco.</p>
 
     <div class="form-grid">
@@ -594,6 +669,7 @@
       </label>
     </div>
     <div class="form-actions">
+      <button id="btn-cancelar-edicion" type="button" class="hidden" style="all:initial; cursor:pointer; font-size:12.5px; font-weight:700; color:var(--text-soft); margin-right:14px;">Cancelar edición</button>
       <button class="btn-primary" id="btn-guardar">Guardar llamada</button>
     </div>
 
@@ -814,6 +890,11 @@ async function addCallRemote(entry) {
   await fetch(config.apiUrl, { method: "POST", body: params });
 }
 
+async function updateCallRemote(entry) {
+  const params = new URLSearchParams({ action: "update", ...entry });
+  await fetch(config.apiUrl, { method: "POST", body: params });
+}
+
 async function deleteCallRemote(id) {
   const params = new URLSearchParams({ action: "delete", id });
   await fetch(config.apiUrl, { method: "POST", body: params });
@@ -842,9 +923,90 @@ function tempEmoji(t) {
   return t === "fria" ? "🧊" : t === "tibia" ? "🌤️" : "🔥";
 }
 
+/* ---------- Comprobar número (busca en TODAS las llamadas del equipo) ---------- */
+async function checkPhone() {
+  const raw = document.getElementById("check-phone").value.trim();
+  const resultEl = document.getElementById("check-result");
+  if (!raw) { resultEl.innerHTML = ""; return; }
+  if (!config) { showSetupModal(); return; }
+
+  resultEl.innerHTML = `<p class="check-loading">Comprobando...</p>`;
+  try {
+    const res = await fetch(`${config.apiUrl}?recurso=buscar_telefono&telefono=${encodeURIComponent(raw)}`);
+    const matches = await res.json();
+
+    if (!Array.isArray(matches) || matches.length === 0) {
+      resultEl.innerHTML = `<p class="check-ok">✓ Nadie del equipo ha contactado antes con este número.</p>`;
+      return;
+    }
+
+    resultEl.innerHTML = `
+      <p class="check-warn">⚠️ Este número ya se ha contactado ${matches.length} ${matches.length === 1 ? "vez" : "veces"}:</p>
+      <div class="check-matches">
+        ${matches.map(m => `
+          <div class="check-match">
+            <strong>${escapeHtml(m.usuario || "—")}</strong>
+            · ${m.fecha ? new Date(m.fecha).toLocaleDateString("es-ES", { day: "2-digit", month: "2-digit", year: "numeric" }) : "—"}
+            · <span class="pill pill-${escapeHtml(m.resultado || "buzon")}">${resultadoLabel(m.resultado)}</span>
+            ${m.nombre ? " · " + escapeHtml(m.nombre) : ""}
+            ${m.zona ? " · " + escapeHtml(m.zona) : ""}
+            ${m.notas ? `<div class="check-notas">${escapeHtml(m.notas)}</div>` : ""}
+          </div>
+        `).join("")}
+      </div>
+    `;
+  } catch (e) {
+    resultEl.innerHTML = `<p class="check-warn">No se pudo comprobar — revisa tu conexión.</p>`;
+  }
+}
+
+document.getElementById("check-btn").addEventListener("click", checkPhone);
+document.getElementById("check-phone").addEventListener("keydown", (ev) => {
+  if (ev.key === "Enter") checkPhone();
+});
+
 document.getElementById("f-resultado").addEventListener("change", (ev) => {
   document.getElementById("wrap-rellamada").classList.toggle("hidden", ev.target.value !== "rellamar");
 });
+
+let editingId = null;
+
+function startEdit(id) {
+  const c = calls.find(x => x.id === id);
+  if (!c) return;
+  editingId = id;
+
+  document.getElementById("f-nombre").value = c.nombre || "";
+  document.getElementById("f-telefono").value = c.telefono || "";
+  document.getElementById("f-zona").value = c.zona || "";
+  document.getElementById("f-tipo-inmueble").value = c.tipo_inmueble || "Casa";
+  document.getElementById("f-portal").value = c.portal || "Idealista";
+  document.getElementById("f-temp").value = c.temp || "fria";
+  document.getElementById("f-resultado").value = c.resultado || "cita";
+  document.getElementById("f-notas").value = c.notas || "";
+  document.getElementById("f-fecha-rellamada").value = c.fecha_rellamada || "";
+  document.getElementById("wrap-rellamada").classList.toggle("hidden", c.resultado !== "rellamar");
+
+  document.getElementById("btn-guardar").textContent = "Guardar cambios";
+  document.getElementById("btn-cancelar-edicion").classList.remove("hidden");
+  document.getElementById("form-title").textContent = "Editando llamada";
+  document.getElementById("form-title").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function cancelEdit() {
+  editingId = null;
+  ["f-nombre","f-telefono","f-zona","f-notas","f-fecha-rellamada"].forEach(id => document.getElementById(id).value = "");
+  document.getElementById("f-tipo-inmueble").value = "Casa";
+  document.getElementById("f-portal").value = "Idealista";
+  document.getElementById("f-temp").value = "fria";
+  document.getElementById("f-resultado").value = "cita";
+  document.getElementById("wrap-rellamada").classList.add("hidden");
+  document.getElementById("btn-guardar").textContent = "Guardar llamada";
+  document.getElementById("btn-cancelar-edicion").classList.add("hidden");
+  document.getElementById("form-title").textContent = "Anotar una llamada";
+}
+
+document.getElementById("btn-cancelar-edicion").addEventListener("click", cancelEdit);
 
 document.getElementById("btn-guardar").addEventListener("click", async () => {
   if (!config) { showSetupModal(); return; }
@@ -861,8 +1023,12 @@ document.getElementById("btn-guardar").addEventListener("click", async () => {
     showToast("Indica cuándo hay que volver a llamar");
     return;
   }
+
+  const isEditing = Boolean(editingId);
+  const existing = isEditing ? calls.find(c => c.id === editingId) : null;
+
   const entry = {
-    id: Date.now() + "-" + Math.random().toString(36).slice(2, 7),
+    id: isEditing ? editingId : (Date.now() + "-" + Math.random().toString(36).slice(2, 7)),
     usuario: config.usuario,
     nombre, telefono, zona,
     tipo_inmueble: document.getElementById("f-tipo-inmueble").value,
@@ -871,18 +1037,28 @@ document.getElementById("btn-guardar").addEventListener("click", async () => {
     resultado,
     fecha_rellamada: fechaRellamada,
     notas: document.getElementById("f-notas").value.trim(),
-    fecha: new Date().toISOString()
+    fecha: isEditing ? (existing ? existing.fecha : new Date().toISOString()) : new Date().toISOString()
   };
-  calls.unshift(entry);
+
+  if (isEditing) {
+    calls = calls.map(c => c.id === editingId ? entry : c);
+  } else {
+    calls.unshift(entry);
+  }
   renderStats();
   renderLog();
   renderReminders();
-  ["f-nombre","f-telefono","f-zona","f-notas","f-fecha-rellamada"].forEach(id => document.getElementById(id).value = "");
-  document.getElementById("wrap-rellamada").classList.add("hidden");
+
+  const wasEditing = isEditing;
+  cancelEdit();
   showToast("Guardando...");
   try {
-    await addCallRemote(entry);
-    showToast("Llamada guardada ✓");
+    if (wasEditing) {
+      await updateCallRemote(entry);
+    } else {
+      await addCallRemote(entry);
+    }
+    showToast(wasEditing ? "Cambios guardados ✓" : "Llamada guardada ✓");
   } catch (e) {
     showToast("No se pudo guardar en la Sheet — revisa tu conexión");
   }
@@ -939,7 +1115,10 @@ function renderLog() {
       <td><span class="pill pill-${c.resultado}">${resultadoLabel(c.resultado)}</span>${c.resultado === "rellamar" && c.fecha_rellamada ? `<br><a href="${gcalLink(c)}" target="_blank" rel="noopener" style="font-size:10.5px; color:var(--turquoise); text-decoration:none;">📅 ${c.fecha_rellamada}</a>` : ""}</td>
       <td style="max-width:200px; color:var(--text-soft); font-size:12.5px;">${escapeHtml(c.notas || "—")}</td>
       <td style="white-space:nowrap; color:var(--text-faint); font-size:12px;">${fecha}</td>
-      <td><button class="del-btn" data-id="${c.id}">Eliminar</button></td>
+      <td>
+        <button class="del-btn" data-id="${c.id}" style="color:var(--turquoise); margin-right:8px;" data-action="edit">Editar</button>
+        <button class="del-btn" data-id="${c.id}" data-action="delete">Eliminar</button>
+      </td>
     `;
     body.appendChild(tr);
   });
@@ -954,6 +1133,13 @@ document.getElementById("log-body").addEventListener("click", async (ev) => {
   const btn = ev.target.closest(".del-btn");
   if (!btn) return;
   const id = btn.getAttribute("data-id");
+  const action = btn.getAttribute("data-action");
+
+  if (action === "edit") {
+    startEdit(id);
+    return;
+  }
+
   calls = calls.filter(c => c.id !== id);
   renderStats();
   renderLog();
