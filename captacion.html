@@ -859,6 +859,7 @@ function normalizeEntry(e) {
 function gcalLink(entry) {
   if (!entry.fecha_rellamada) return "";
   const start = new Date(entry.fecha_rellamada + "T00:00:00");
+  if (isNaN(start.getTime())) return ""; // fecha con formato raro o incompleto: no rompemos el resto de la lista
   const end = new Date(start);
   end.setDate(end.getDate() + 1);
   const fmt = (d) => d.toISOString().slice(0, 10).replace(/-/g, "");
@@ -1130,21 +1131,26 @@ function renderLog() {
   emptyMsg.classList.add("hidden");
 
   filtered.forEach(c => {
-    const tr = document.createElement("tr");
-    const fecha = new Date(c.fecha).toLocaleDateString("es-ES", { day: "2-digit", month: "2-digit", year: "numeric" });
-    tr.innerHTML = `
-      <td><strong>${escapeHtml(c.nombre || "—")}</strong>${c.telefono ? `<br><span style="color:var(--text-faint);font-size:11.5px;">${escapeHtml(c.telefono)}</span>` : ""}</td>
-      <td>${escapeHtml(c.zona || "—")}<br><span style="color:var(--text-faint);font-size:11px;">${c.tipo_inmueble ? escapeHtml(c.tipo_inmueble) + " · " : ""}${escapeHtml(c.portal)}</span></td>
-      <td><span class="pill pill-${c.temp}">${tempEmoji(c.temp)} ${c.temp}</span></td>
-      <td><span class="pill pill-${c.resultado}">${resultadoLabel(c.resultado)}</span>${c.resultado === "rellamar" && c.fecha_rellamada ? `<br><a href="${gcalLink(c)}" target="_blank" rel="noopener" style="font-size:10.5px; color:var(--turquoise); text-decoration:none;">📅 ${c.fecha_rellamada}</a>` : ""}</td>
-      <td style="max-width:200px; color:var(--text-soft); font-size:12.5px;">${escapeHtml(c.notas || "—")}</td>
-      <td style="white-space:nowrap; color:var(--text-faint); font-size:12px;">${fecha}</td>
-      <td>
-        <button class="del-btn" data-id="${c.id}" style="color:var(--turquoise); margin-right:8px;" data-action="edit">Editar</button>
-        <button class="del-btn" data-id="${c.id}" data-action="delete">Eliminar</button>
-      </td>
-    `;
-    body.appendChild(tr);
+    try {
+      const tr = document.createElement("tr");
+      const fecha = new Date(c.fecha).toLocaleDateString("es-ES", { day: "2-digit", month: "2-digit", year: "numeric" });
+      tr.innerHTML = `
+        <td><strong>${escapeHtml(c.nombre || "—")}</strong>${c.telefono ? `<br><span style="color:var(--text-faint);font-size:11.5px;">${escapeHtml(c.telefono)}</span>` : ""}</td>
+        <td>${escapeHtml(c.zona || "—")}<br><span style="color:var(--text-faint);font-size:11px;">${c.tipo_inmueble ? escapeHtml(c.tipo_inmueble) + " · " : ""}${escapeHtml(c.portal)}</span></td>
+        <td><span class="pill pill-${c.temp}">${tempEmoji(c.temp)} ${c.temp}</span></td>
+        <td><span class="pill pill-${c.resultado}">${resultadoLabel(c.resultado)}</span>${c.resultado === "rellamar" && c.fecha_rellamada ? `<br><a href="${gcalLink(c)}" target="_blank" rel="noopener" style="font-size:10.5px; color:var(--turquoise); text-decoration:none;">📅 ${c.fecha_rellamada}</a>` : ""}</td>
+        <td style="max-width:200px; color:var(--text-soft); font-size:12.5px;">${escapeHtml(c.notas || "—")}</td>
+        <td style="white-space:nowrap; color:var(--text-faint); font-size:12px;">${fecha}</td>
+        <td>
+          <button class="del-btn" data-id="${c.id}" style="color:var(--turquoise); margin-right:8px;" data-action="edit">Editar</button>
+          <button class="del-btn" data-id="${c.id}" data-action="delete">Eliminar</button>
+        </td>
+      `;
+      body.appendChild(tr);
+    } catch (err) {
+      // Si una fila concreta tiene un dato inesperado, la saltamos sin romper el resto del listado
+      console.error("No se pudo mostrar una llamada:", c, err);
+    }
   });
 }
 
