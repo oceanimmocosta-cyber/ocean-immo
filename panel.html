@@ -63,7 +63,7 @@
 
   .cards {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr);
     gap: 20px;
   }
   @media (max-width: 640px) {
@@ -149,6 +149,13 @@
       <h2>Documentos</h2>
       <p>Biblioteca de plantillas y documentos de la agencia: mandatos, arras, ofertas, captación y más.</p>
       <span class="card-cta">Abrir documentos</span>
+    </a>
+
+    <a class="card" href="https://kelify.com/venta/pisos/particulares" target="_blank" rel="noopener">
+      <div class="card-icon">🔎</div>
+      <h2>Buscar particulares</h2>
+      <p>Buscador de Kelify con anuncios de particulares (sin agencia) en venta y alquiler — filtra por tu zona desde ahí.</p>
+      <span class="card-cta">Abrir Kelify</span>
     </a>
   </div>
 </main>
