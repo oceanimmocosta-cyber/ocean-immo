@@ -2858,6 +2858,22 @@
           applyFilters: applyFilters, renderPaginated: renderPaginated,
           buildCard: buildCard
         };
+
+        // Si esta página se ha generado/enlazado para abrir directamente una propiedad
+        // concreta (páginas individuales /propiedades/REF.html, o ?ref=REF), la abrimos
+        // automáticamente en la ficha de detalle en cuanto los datos están listos.
+        (function(){
+          var params = new URLSearchParams(location.search);
+          var targetRef = window.__OPEN_PROPERTY_REF || params.get('ref');
+          if(!targetRef) return;
+          var match = records.find(function(p){ return p.referencia === targetRef; });
+          if(!match) return;
+          var tmp = document.createElement('div');
+          tmp.style.display = 'none';
+          tmp.innerHTML = buildCard(match);
+          document.body.appendChild(tmp);
+          openProperty(tmp.firstElementChild);
+        })();
       })
       .catch(function(err){
         console.warn('No se pudo cargar properties.json, se muestran las propiedades de ejemplo.', err);
@@ -2980,4 +2996,5 @@
 
 </script>
 </body>
+</html>
 </html>
