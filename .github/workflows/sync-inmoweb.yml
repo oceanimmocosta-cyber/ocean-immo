@@ -28,10 +28,13 @@ jobs:
           INMOWEB_KEY: ${{ secrets.INMOWEB_KEY }}
           BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
 
+      - name: Generar páginas individuales por propiedad (SEO)
+        run: node scripts/generate-property-pages.mjs
+
       - name: Guardar cambios en el repositorio
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add properties.json
+          git add properties.json propiedades/
           git diff --staged --quiet || git commit -m "Actualización automática de propiedades desde Inmoweb"
           git push
