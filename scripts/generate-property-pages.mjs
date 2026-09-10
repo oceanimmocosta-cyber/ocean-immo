@@ -109,6 +109,12 @@ function main() {
       `<script>window.__OPEN_PROPERTY_REF=${JSON.stringify(p.referencia)};</script>\n</head>`
     );
 
+    // 4) Esta página vive en una subcarpeta (propiedades/), un nivel más adentro
+    //    que index.html en la raíz. Las rutas relativas del propio index.html
+    //    (properties.json, imgproxy, etc.) hay que subirlas un nivel para que
+    //    sigan apuntando al sitio correcto.
+    pagina = pagina.replace(/(["'(])\.\//g, '$1../');
+
     fs.writeFileSync(path.join(OUT_DIR, `${ref}.html`), pagina);
     generadas++;
   }
