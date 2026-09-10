@@ -2337,6 +2337,15 @@
   const subpages=document.querySelectorAll('.subpage');
   let activeView='home', previousView='home';
   function closeMenu(){ mm.classList.remove('open'); if(typeof mmBackdrop!=='undefined' && mmBackdrop) mmBackdrop.classList.remove('open'); if(typeof burger!=='undefined' && burger) burger.classList.remove('is-open'); }
+  var syncingFromPopstate = false;
+  function resetPropertyUrlIfNeeded(){
+    if(syncingFromPopstate) return;
+    if(/\/propiedades\//.test(location.pathname)){
+      var rootPath = location.pathname.replace(/propiedades\/[^/]+\.html$/, '');
+      history.pushState(null, '', rootPath || '/');
+    }
+    window.__cameFromPropertyLink = false;
+  }
   function showPage(name){
     homeEl.style.display='none';
     subpages.forEach(s=>s.style.display='none');
@@ -2346,6 +2355,7 @@
     header.classList.remove('header-hidden');
     window.scrollTo({top:0,left:0,behavior:'instant'});
     closeMenu();
+    if(name!=='detalle') resetPropertyUrlIfNeeded();
   }
   function showHome(scrollId){
     subpages.forEach(s=>s.style.display='none');
@@ -2358,6 +2368,7 @@
       else { window.scrollTo({top:0,left:0,behavior:'instant'}); }
     } else { window.scrollTo({top:0,left:0,behavior:'instant'}); }
     closeMenu();
+    resetPropertyUrlIfNeeded();
   }
 
   // Fill the detail page from a card (used on open and on language change)
@@ -2905,6 +2916,7 @@
   }, true);
 
   window.addEventListener('popstate', function(){
+    syncingFromPopstate = true;
     var m = location.pathname.match(/\/propiedades\/([^/]+)\.html$/);
     if(m && window.__propertyData){
       var ref = decodeURIComponent(m[1]);
@@ -2915,10 +2927,12 @@
         var tmp=document.createElement('div');
         tmp.innerHTML = pd.buildCard(found);
         openProperty(tmp.firstElementChild);
+        syncingFromPopstate = false;
         return;
       }
     }
     if(previousView==='comprar'||previousView==='alquilar') showPage(previousView); else showHome();
+    syncingFromPopstate = false;
   });
 
   document.addEventListener('click', function(e){
@@ -2995,10 +3009,6 @@
       e.preventDefault();
       if(window.__cameFromPropertyLink){ history.back(); return; }
       if(previousView==='comprar'||previousView==='alquilar') showPage(previousView); else showHome();
-      if(/\/propiedades\//.test(location.pathname)){
-        var rootPath=location.pathname.replace(/propiedades\/[^/]+\.html$/,'');
-        history.pushState(null,'',rootPath||'/');
-      }
       return;
     }
     const page=t.getAttribute('data-page');
