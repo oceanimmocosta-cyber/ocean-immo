@@ -2828,7 +2828,7 @@
       });
     }
 
-    fetch('./properties.json', { cache: 'no-store' })
+    fetch('../properties.json', { cache: 'no-store' })
       .then(function(r){ if(!r.ok) throw new Error('properties.json error ' + r.status); return r.json(); })
       .then(function(data){
         var records = (data && data.propiedades) || [];
