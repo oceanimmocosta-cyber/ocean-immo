@@ -2338,6 +2338,16 @@
   let activeView='home', previousView='home';
   function closeMenu(){ mm.classList.remove('open'); if(typeof mmBackdrop!=='undefined' && mmBackdrop) mmBackdrop.classList.remove('open'); if(typeof burger!=='undefined' && burger) burger.classList.remove('is-open'); }
   var syncingFromPopstate = false;
+  var TIPO_SLUGS = {
+    'Piso': 'piso',
+    'Ático': 'atico',
+    'Dúplex': 'duplex',
+    'Estudio': 'estudio',
+    'Casa / Chalet,Casa adosada': 'casa',
+    'Finca rústica,Solar Urbano': 'terreno',
+    'Garaje / Parking': 'garaje',
+    'Local Comercial': 'local'
+  };
   function resetPropertyUrlIfNeeded(){
     if(syncingFromPopstate) return;
     if(/\/propiedades\//.test(location.pathname)){
@@ -2822,7 +2832,7 @@
         return true;
       });
     }
-    function wireFilterSearch(buttonId, poblacionId, precioId, masterList, gridEl, paginationEl, tipoId, habId){
+    function wireFilterSearch(buttonId, poblacionId, precioId, masterList, gridEl, paginationEl, tipoId, habId, urlBase){
       var btn=document.getElementById(buttonId);
       var poblacionSel=document.getElementById(poblacionId);
       var precioSel=document.getElementById(precioId);
@@ -2831,9 +2841,22 @@
       if(!btn) return;
       btn.addEventListener('click', function(e){
         e.preventDefault();
-        var filtered = applyFilters(masterList, poblacionSel?poblacionSel.value:'', precioSel?precioSel.value:'', tipoSel?tipoSel.value:'', habSel?habSel.value:'');
+        var poblacionVal=poblacionSel?poblacionSel.value:'';
+        var precioVal=precioSel?precioSel.value:'';
+        var tipoVal=tipoSel?tipoSel.value:'';
+        var habVal=habSel?habSel.value:'';
+        var filtered = applyFilters(masterList, poblacionVal, precioVal, tipoVal, habVal);
         renderPaginated(filtered, gridEl, paginationEl, 1);
         gridEl.scrollIntoView({behavior:'smooth', block:'start'});
+        if(urlBase){
+          // Solo hay página propia para "un tipo sin más filtros". Si se combina con
+          // población/precio/habitaciones, no existe esa URL exacta, así que nos
+          // quedamos en la genérica (evita páginas "fantasma" sin contenido real detrás).
+          var onlyTipo = tipoVal && !poblacionVal && !precioVal && !habVal;
+          var slug = onlyTipo ? (TIPO_SLUGS[tipoVal]||null) : null;
+          var url = slug ? urlBase+'/'+slug+'.html' : urlBase+'.html';
+          history.pushState({ocListing:true}, '', url);
+        }
       });
     }
 
@@ -2865,7 +2888,7 @@
           if(currentLang!=='es' && typeof applyLang==='function') applyLang(currentLang);
         }
 
-        wireFilterSearch('comprar-f-buscar', 'comprar-f-poblacion', 'comprar-f-precio', ventas, comprarGrid, comprarPag, 'comprar-f-tipo', 'comprar-f-hab');
+        wireFilterSearch('comprar-f-buscar', 'comprar-f-poblacion', 'comprar-f-precio', ventas, comprarGrid, comprarPag, 'comprar-f-tipo', 'comprar-f-hab', 'comprar');
         wireFilterSearch('alquilar-f-buscar', 'alquilar-f-poblacion', 'alquilar-f-precio', alquileres, alquilarGrid, alquilarPag, 'alquilar-f-tipo', 'alquilar-f-hab');
 
         // Expuesto para que el buscador de la portada también pueda filtrar
@@ -3048,6 +3071,11 @@
           var pageTipo=document.getElementById(page+'-f-tipo');
           if(pageTipo) pageTipo.value=filterTipo;
         }
+      }
+      if(page==='comprar'){
+        var listingSlug = filterTipo ? (TIPO_SLUGS[filterTipo]||null) : null;
+        var listingUrl = listingSlug ? 'comprar/'+listingSlug+'.html' : 'comprar.html';
+        history.pushState({ocListing:true}, '', listingUrl);
       }
       return;
     }
