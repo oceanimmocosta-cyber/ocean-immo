@@ -35,6 +35,30 @@ function slugRef(ref) {
   return String(ref || '').replace(/[^a-zA-Z0-9_-]/g, '');
 }
 
+// Agrupa el tipo de propiedad tal como lo manda Inmoweb en uno de los 8 "cajones"
+// que ya usamos en el menú Comprar, solo para poder construir la miga de pan.
+function tipoBreadcrumb(pTipo) {
+  const t = (pTipo || '').toLowerCase();
+  if (t.includes('piso')) return { slug: 'piso', label: 'Pisos' };
+  if (t.includes('ático') || t.includes('atico')) return { slug: 'atico', label: 'Áticos' };
+  if (t.includes('dúplex') || t.includes('duplex')) return { slug: 'duplex', label: 'Dúplex' };
+  if (t.includes('estudio')) return { slug: 'estudio', label: 'Estudios' };
+  if (t.includes('casa') || t.includes('chalet')) return { slug: 'casa', label: 'Casas y chalets' };
+  if (t.includes('finca') || t.includes('solar') || t.includes('rústica') || t.includes('rustica') || t.includes('urbano')) return { slug: 'terreno', label: 'Terrenos' };
+  if (t.includes('garaje') || t.includes('parking')) return { slug: 'garaje', label: 'Garajes y parkings' };
+  if (t.includes('local')) return { slug: 'local', label: 'Locales comerciales' };
+  return null;
+}
+
+function precioNumerico(n) {
+  const num = typeof n === 'string' ? parseFloat(n.replace(/[^\d.,-]/g, '').replace(',', '.')) : n;
+  return isNaN(num) ? null : Math.round(num);
+}
+
+function jsonLd(obj) {
+  return `<script type="application/ld+json">${JSON.stringify(obj)}</script>`;
+}
+
 function main() {
   const raw = JSON.parse(fs.readFileSync('properties.json', 'utf8'));
   const propiedades = raw.propiedades || [];
@@ -101,6 +125,60 @@ function main() {
       `<meta name="description" content="${descripcionCorta}">`,
       `<meta name="description" content="${descripcionCorta}">\n${ogTags}`
     );
+
+    // 2.5) Datos estructurados (Schema.org / JSON-LD): la ficha del inmueble en sí
+    //      (precio, superficie, ubicación...) y la miga de pan (Inicio > Comprar > Tipo > Ficha),
+    //      para que Google (y buscadores/IA que lean datos estructurados) entiendan la página.
+    const precioNum = precioNumerico(p.precio);
+    const m2Num = p.m2 ? Number(p.m2) : null;
+    const breadcrumbTipo = tipoBreadcrumb(p.tipo);
+
+    const listingLd = jsonLd({
+      '@context': 'https://schema.org',
+      '@type': 'RealEstateListing',
+      name: p.titulo || undefined,
+      description: descripcionLimpia || undefined,
+      url,
+      image: (p.fotos || []).slice(0, 8),
+      datePosted: raw.actualizado || undefined,
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: p.poblacion || undefined,
+        addressRegion: 'Girona',
+        addressCountry: 'ES',
+      },
+      floorSize: m2Num ? { '@type': 'QuantitativeValue', value: m2Num, unitCode: 'MTK' } : undefined,
+      numberOfRooms: p.habitaciones ? Number(p.habitaciones) || undefined : undefined,
+      numberOfBathroomsTotal: p.banos ? Number(p.banos) || undefined : undefined,
+      offers: {
+        '@type': 'Offer',
+        price: precioNum || undefined,
+        priceCurrency: 'EUR',
+        availability: vendido ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock',
+        url,
+      },
+    });
+
+    const breadcrumbItems = [
+      { '@type': 'ListItem', position: 1, name: 'Inicio', item: `${SITE_URL}/` },
+      { '@type': 'ListItem', position: 2, name: 'Comprar', item: `${SITE_URL}/comprar.html` },
+    ];
+    if (breadcrumbTipo) {
+      breadcrumbItems.push({
+        '@type': 'ListItem', position: 3, name: breadcrumbTipo.label,
+        item: `${SITE_URL}/comprar/${breadcrumbTipo.slug}.html`,
+      });
+    }
+    breadcrumbItems.push({
+      '@type': 'ListItem', position: breadcrumbItems.length + 1, name: p.titulo || ref,
+    });
+    const breadcrumbLd = jsonLd({
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: breadcrumbItems,
+    });
+
+    pagina = pagina.replace('</head>', `${listingLd}\n${breadcrumbLd}\n</head>`);
 
     // 3) Variable que la propia web (index.html) detecta al cargar para abrir
     //    automáticamente la ficha de esta propiedad, justo antes de </head>.
