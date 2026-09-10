@@ -3007,7 +3007,6 @@
     }
     if(t.hasAttribute('data-back')){
       e.preventDefault();
-      if(window.__cameFromPropertyLink){ history.back(); return; }
       if(previousView==='comprar'||previousView==='alquilar') showPage(previousView); else showHome();
       return;
     }
