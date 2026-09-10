@@ -1,38 +1,47 @@
-// Genera las páginas de listado con URL propia:
-//   - comprar.html                (todas las propiedades en venta)
-//   - comprar/piso.html, comprar/terreno.html, etc. (una por cada tipo)
+// Genera una página HTML por cada propiedad (propiedades/<referencia>.html) que es
+// EXACTAMENTE el mismo index.html de la web (mismo header, footer, estilos, JS...),
+// solo que:
+//   1) lleva las etiquetas <title>/<meta description>/Open Graph propias de esa
+//      propiedad (para SEO y para que la vista previa de WhatsApp/redes muestre
+//      foto, título y precio correctos), y
+//   2) al cargar, se abre automáticamente en la ficha de detalle de esa propiedad
+//      (usando el mismo mecanismo openProperty()/fillFromCard() de la propia web).
 //
-// Igual que generate-property-pages.mjs: parte del index.html real de la web
-// (mismo header, footer, estilos...) y solo cambia el <title>/<meta description>
-// e inyecta una variable que la propia web detecta al cargar para abrir
-// directamente el listado correspondiente (con su filtro de tipo, si aplica).
-//
-// Se ejecuta DESPUÉS de sync-inmoweb.mjs, desde la raíz del repositorio.
+// Se ejecuta DESPUÉS de sync-inmoweb.mjs en el mismo workflow de GitHub Actions,
+// y debe ejecutarse desde la raíz del repositorio (donde está index.html).
 import fs from 'fs';
 import path from 'path';
 
+const SITE_URL = 'https://oceanimmocosta-cyber.github.io/ocean-immo';
+const OUT_DIR = 'propiedades';
 const INDEX_FILE = 'index.html';
-
-// Mismos valores de "tipo" que usa el desplegable de Comprar en el propio index.html
-// (data-filter-tipo). Si añades un tipo nuevo ahí, añádelo aquí también.
-const TIPOS = [
-  { slug: 'piso', tipoFilter: 'Piso', label: 'Pisos' },
-  { slug: 'atico', tipoFilter: 'Ático', label: 'Áticos' },
-  { slug: 'duplex', tipoFilter: 'Dúplex', label: 'Dúplex' },
-  { slug: 'estudio', tipoFilter: 'Estudio', label: 'Estudios' },
-  { slug: 'casa', tipoFilter: 'Casa / Chalet,Casa adosada', label: 'Casas y chalets' },
-  { slug: 'terreno', tipoFilter: 'Finca rústica,Solar Urbano', label: 'Terrenos' },
-  { slug: 'garaje', tipoFilter: 'Garaje / Parking', label: 'Garajes y parkings' },
-  { slug: 'local', tipoFilter: 'Local Comercial', label: 'Locales comerciales' },
-];
 
 function esc(s) {
   return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
+function limpiarTexto(s) {
+  if (!s) return '';
+  return String(s).replace(/&#13;/g, '\n').replace(/\[iw\]/gi, '').trim();
+}
+
+function fmtPrecio(n) {
+  const num = typeof n === 'string' ? parseFloat(n.replace(/[^\d.,-]/g, '').replace(',', '.')) : n;
+  if (isNaN(num)) return String(n ?? '');
+  return Math.round(num).toLocaleString('es-ES') + ' €';
+}
+
+function slugRef(ref) {
+  return String(ref || '').replace(/[^a-zA-Z0-9_-]/g, '');
+}
+
 function main() {
+  const raw = JSON.parse(fs.readFileSync('properties.json', 'utf8'));
+  const propiedades = raw.propiedades || [];
   const indexHtml = fs.readFileSync(INDEX_FILE, 'utf8');
 
+  // Localizamos, dentro del index.html real, el <title> y el <meta description>
+  // originales para poder sustituirlos por los de cada propiedad.
   const tituloOriginalMatch = indexHtml.match(/<title>[^<]*<\/title>/);
   const descOriginalMatch = indexHtml.match(/<meta name="description" content="[^"]*">/);
   if (!tituloOriginalMatch || !descOriginalMatch) {
@@ -42,39 +51,75 @@ function main() {
     );
   }
 
-  // Página /comprar.html (sin filtro de tipo), al mismo nivel que index.html.
-  {
-    const titulo = 'Propiedades en venta en Roses y Costa Brava';
-    const descripcion = 'Pisos, casas, terrenos y locales en venta en Roses y la Costa Brava. Cartera actualizada a diario, con atención en español, catalán, francés e inglés.';
-    let pagina = indexHtml;
-    pagina = pagina.replace(tituloOriginalMatch[0], `<title>${esc(titulo)} · Ocean Immo</title>`);
-    pagina = pagina.replace(descOriginalMatch[0], `<meta name="description" content="${esc(descripcion)}">`);
-    pagina = pagina.replace(
-      '</head>',
-      `<script>window.__OPEN_PAGE=${JSON.stringify('comprar')};</script>\n</head>`
-    );
-    fs.writeFileSync('comprar.html', pagina);
+  fs.mkdirSync(OUT_DIR, { recursive: true });
+
+  // Limpia páginas de propiedades que ya no existen en el feed.
+  const refsActuales = new Set(propiedades.map((p) => slugRef(p.referencia) + '.html'));
+  if (fs.existsSync(OUT_DIR)) {
+    for (const f of fs.readdirSync(OUT_DIR)) {
+      if (f.endsWith('.html') && !refsActuales.has(f)) {
+        fs.unlinkSync(path.join(OUT_DIR, f));
+      }
+    }
   }
 
-  // Páginas /comprar/<tipo>.html, un nivel más adentro: hay que subir las rutas
-  // relativas del propio index.html (properties.json, etc.) un nivel, igual que
-  // hacemos en generate-property-pages.mjs para propiedades/.
-  fs.mkdirSync('comprar', { recursive: true });
-  for (const t of TIPOS) {
-    const titulo = `${t.label} en venta en Roses y Costa Brava`;
-    const descripcion = `${t.label} en venta en Roses y alrededores (Costa Brava). Cartera actualizada a diario por Ocean Immo, con atención en cuatro idiomas.`;
+  let generadas = 0;
+  for (const p of propiedades) {
+    const ref = slugRef(p.referencia);
+    if (!ref) continue;
+
+    const titulo = esc(p.titulo || 'Propiedad en venta');
+    const precio = fmtPrecio(p.precio);
+    const descripcionLimpia = limpiarTexto(p.descripcion);
+    const descripcionCorta = esc(descripcionLimpia.replace(/\n+/g, ' ').slice(0, 160));
+    const foto = (p.fotos && p.fotos[0]) || '';
+    const url = `${SITE_URL}/${OUT_DIR}/${ref}.html`;
+    const vendido = !!p.vendido;
+
     let pagina = indexHtml;
-    pagina = pagina.replace(tituloOriginalMatch[0], `<title>${esc(titulo)} · Ocean Immo</title>`);
-    pagina = pagina.replace(descOriginalMatch[0], `<meta name="description" content="${esc(descripcion)}">`);
+
+    // 1) Título y descripción propios de la propiedad.
+    pagina = pagina.replace(tituloOriginalMatch[0], `<title>${titulo} · ${precio} · Ocean Immo</title>`);
+    pagina = pagina.replace(
+      descOriginalMatch[0],
+      `<meta name="description" content="${descripcionCorta}">`
+    );
+
+    // 2) Etiquetas Open Graph / Twitter Card + canonical + robots, insertadas justo
+    //    después del <meta name="description"> ya sustituido.
+    const ogTags = [
+      `<link rel="canonical" href="${url}">`,
+      `<meta property="og:type" content="website">`,
+      `<meta property="og:title" content="${titulo} · ${precio}">`,
+      `<meta property="og:description" content="${descripcionCorta}">`,
+      foto ? `<meta property="og:image" content="${esc(foto)}">` : '',
+      `<meta property="og:url" content="${url}">`,
+      `<meta name="twitter:card" content="summary_large_image">`,
+      `<meta name="robots" content="${vendido ? 'noindex,follow' : 'index,follow'}">`,
+    ].filter(Boolean).join('\n');
+    pagina = pagina.replace(
+      `<meta name="description" content="${descripcionCorta}">`,
+      `<meta name="description" content="${descripcionCorta}">\n${ogTags}`
+    );
+
+    // 3) Variable que la propia web (index.html) detecta al cargar para abrir
+    //    automáticamente la ficha de esta propiedad, justo antes de </head>.
     pagina = pagina.replace(
       '</head>',
-      `<script>window.__OPEN_PAGE=${JSON.stringify('comprar')};window.__OPEN_TIPO_FILTER=${JSON.stringify(t.tipoFilter)};</script>\n</head>`
+      `<script>window.__OPEN_PROPERTY_REF=${JSON.stringify(p.referencia)};</script>\n</head>`
     );
+
+    // 4) Esta página vive en una subcarpeta (propiedades/), un nivel más adentro
+    //    que index.html en la raíz. Las rutas relativas del propio index.html
+    //    (properties.json, imgproxy, etc.) hay que subirlas un nivel para que
+    //    sigan apuntando al sitio correcto.
     pagina = pagina.replace(/(["'(])\.\//g, '$1../');
-    fs.writeFileSync(path.join('comprar', `${t.slug}.html`), pagina);
+
+    fs.writeFileSync(path.join(OUT_DIR, `${ref}.html`), pagina);
+    generadas++;
   }
 
-  console.log(`Generadas comprar.html y ${TIPOS.length} páginas por tipo en comprar/`);
+  console.log(`Generadas ${generadas} páginas individuales en ${OUT_DIR}/ (a partir de ${INDEX_FILE})`);
 }
 
 main();
