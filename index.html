@@ -2348,10 +2348,12 @@
     'Garaje / Parking': 'garaje',
     'Local Comercial': 'local'
   };
+  var SLUG_TIPOS = {};
+  Object.keys(TIPO_SLUGS).forEach(function(k){ SLUG_TIPOS[TIPO_SLUGS[k]] = k; });
   function resetPropertyUrlIfNeeded(){
     if(syncingFromPopstate) return;
-    if(/\/propiedades\//.test(location.pathname)){
-      var rootPath = location.pathname.replace(/propiedades\/[^/]+\.html$/, '');
+    if(/\/propiedades\/[^/]+\.html$/.test(location.pathname) || /\/comprar\/[^/]+\.html$/.test(location.pathname) || /\/comprar\.html$/.test(location.pathname)){
+      var rootPath = location.pathname.replace(/(propiedades\/[^/]+\.html|comprar\/[^/]+\.html|comprar\.html)$/, '');
       history.pushState(null, '', rootPath || '/');
     }
     window.__cameFromPropertyLink = false;
@@ -2365,7 +2367,7 @@
     header.classList.remove('header-hidden');
     window.scrollTo({top:0,left:0,behavior:'instant'});
     closeMenu();
-    if(name!=='detalle') resetPropertyUrlIfNeeded();
+    if(name!=='detalle' && name!=='comprar') resetPropertyUrlIfNeeded();
   }
   function showHome(scrollId){
     subpages.forEach(s=>s.style.display='none');
@@ -2975,6 +2977,26 @@
         syncingFromPopstate = false;
         return;
       }
+    }
+    var mc = location.pathname.match(/\/comprar\/([^/]+)\.html$/);
+    if(mc && window.__propertyData){
+      var slug = decodeURIComponent(mc[1]);
+      var tipoFilter = SLUG_TIPOS[slug];
+      showPage('comprar');
+      if(tipoFilter){
+        var pd2 = window.__propertyData;
+        var filtered2 = pd2.applyFilters(pd2.ventas, '', '', tipoFilter, '');
+        pd2.renderPaginated(filtered2, pd2.comprarGrid, pd2.comprarPag, 1);
+        var tipoSel2=document.getElementById('comprar-f-tipo');
+        if(tipoSel2) tipoSel2.value=tipoFilter;
+      }
+      syncingFromPopstate = false;
+      return;
+    }
+    if(/\/comprar\.html$/.test(location.pathname)){
+      showPage('comprar');
+      syncingFromPopstate = false;
+      return;
     }
     if(previousView==='comprar'||previousView==='alquilar') showPage(previousView); else showHome();
     syncingFromPopstate = false;
