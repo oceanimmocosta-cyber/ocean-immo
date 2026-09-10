@@ -12,6 +12,21 @@ import fs from 'fs';
 import path from 'path';
 
 const INDEX_FILE = 'index.html';
+const SITE_URL = 'https://oceanimmocosta-cyber.github.io/ocean-immo';
+
+function jsonLd(obj) {
+  return `<script type="application/ld+json">${JSON.stringify(obj)}</script>`;
+}
+function breadcrumbLd(items) {
+  return jsonLd({
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((it, i) => ({
+      '@type': 'ListItem', position: i + 1, name: it.name, ...(it.url ? { item: it.url } : {}),
+    })),
+  });
+}
+
 
 // Mismos valores de "tipo" que usa el desplegable de Comprar en el propio index.html
 // (data-filter-tipo). Si añades un tipo nuevo ahí, añádelo aquí también.
@@ -53,6 +68,11 @@ function main() {
       '</head>',
       `<script>window.__OPEN_PAGE=${JSON.stringify('servicios')};</script>\n</head>`
     );
+    const bc = breadcrumbLd([
+      { name: 'Inicio', url: `${SITE_URL}/` },
+      { name: 'Servicios' },
+    ]);
+    pagina = pagina.replace('</head>', `${bc}\n</head>`);
     fs.writeFileSync('servicios.html', pagina);
   }
 
@@ -67,6 +87,11 @@ function main() {
       '</head>',
       `<script>window.__OPEN_PAGE=${JSON.stringify('comprar')};</script>\n</head>`
     );
+    const bc = breadcrumbLd([
+      { name: 'Inicio', url: `${SITE_URL}/` },
+      { name: 'Comprar' },
+    ]);
+    pagina = pagina.replace('</head>', `${bc}\n</head>`);
     fs.writeFileSync('comprar.html', pagina);
   }
 
@@ -84,6 +109,12 @@ function main() {
       '</head>',
       `<script>window.__OPEN_PAGE=${JSON.stringify('comprar')};window.__OPEN_TIPO_FILTER=${JSON.stringify(t.tipoFilter)};</script>\n</head>`
     );
+    const bc = breadcrumbLd([
+      { name: 'Inicio', url: `${SITE_URL}/` },
+      { name: 'Comprar', url: `${SITE_URL}/comprar.html` },
+      { name: t.label },
+    ]);
+    pagina = pagina.replace('</head>', `${bc}\n</head>`);
     pagina = pagina.replace(/(["'(])\.\//g, '$1../');
     fs.writeFileSync(path.join('comprar', `${t.slug}.html`), pagina);
   }
