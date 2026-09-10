@@ -2904,6 +2904,28 @@
             history.replaceState({ocProperty:true}, '', 'propiedades/'+encodeURIComponent(targetRef)+'.html');
           }
         })();
+
+        // Si esta página se ha generado para abrir directamente el listado de
+        // "Comprar" (opcionalmente filtrado por tipo: /comprar.html, /comprar/piso.html...),
+        // lo hacemos en cuanto los datos están listos.
+        (function(){
+          var targetPage = window.__OPEN_PAGE;
+          if(!targetPage) return;
+          showPage(targetPage);
+          var filterTipo = window.__OPEN_TIPO_FILTER;
+          if(filterTipo && window.__propertyData){
+            var pd = window.__propertyData;
+            var list = targetPage==='alquilar' ? pd.alquileres : pd.ventas;
+            var grid = targetPage==='alquilar' ? pd.alquilarGrid : pd.comprarGrid;
+            var pag = targetPage==='alquilar' ? pd.alquilarPag : pd.comprarPag;
+            if(list && grid){
+              var filtered = pd.applyFilters(list, '', '', filterTipo, '');
+              pd.renderPaginated(filtered, grid, pag, 1);
+              var pageTipo=document.getElementById(targetPage+'-f-tipo');
+              if(pageTipo) pageTipo.value=filterTipo;
+            }
+          }
+        })();
       })
       .catch(function(err){
         console.warn('No se pudo cargar properties.json, se muestran las propiedades de ejemplo.', err);
@@ -3016,7 +3038,6 @@
     }
     if(t.hasAttribute('data-back')){
       e.preventDefault();
-      if(window.__cameFromPropertyLink){ history.back(); return; }
       if(previousView==='comprar'||previousView==='alquilar') showPage(previousView); else showHome();
       return;
     }
