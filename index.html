@@ -2594,6 +2594,13 @@
     if(ctaSuccess){ ctaSuccess.style.display='none'; }
   }
   function openProperty(card){ lastCard=card; fillFromCard(card); resetVisitToggle(); showPage('detalle'); }
+  function propertyUrlFor(card){
+    var refTxt=((card.querySelector('.prop-ref')||{}).textContent||'').trim();
+    var ref=refTxt.replace(/^Ref\.\s*/i,'').trim();
+    if(!ref) return null;
+    var base = /\/propiedades\//.test(location.pathname) ? '' : 'propiedades/';
+    return base+encodeURIComponent(ref)+'.html';
+  }
 
   // ===== Mini photo gallery on property cards (grid thumbnails) =====
   function initMiniGalleries(root){
@@ -2873,6 +2880,9 @@
           tmp.innerHTML = buildCard(match);
           document.body.appendChild(tmp);
           openProperty(tmp.firstElementChild);
+          if(params.get('ref') && !/\/propiedades\//.test(location.pathname)){
+            history.replaceState({ocProperty:true}, '', 'propiedades/'+encodeURIComponent(targetRef)+'.html');
+          }
         })();
       })
       .catch(function(err){
@@ -2894,12 +2904,33 @@
     if(dotsWrap){ [].forEach.call(dotsWrap.children, function(d,i){ d.classList.toggle('active', i===idx); }); }
   }, true);
 
+  window.addEventListener('popstate', function(){
+    var m = location.pathname.match(/\/propiedades\/([^/]+)\.html$/);
+    if(m && window.__propertyData){
+      var ref = decodeURIComponent(m[1]);
+      var pd = window.__propertyData;
+      var all = (pd.ventas||[]).concat(pd.alquileres||[]);
+      var found = all.find(function(p){ return p.referencia === ref; });
+      if(found){
+        var tmp=document.createElement('div');
+        tmp.innerHTML = pd.buildCard(found);
+        openProperty(tmp.firstElementChild);
+        return;
+      }
+    }
+    if(previousView==='comprar'||previousView==='alquilar') showPage(previousView); else showHome();
+  });
+
   document.addEventListener('click', function(e){
-    // Property card -> open detail (button "Ver detalles", image or title)
     const propTrigger=e.target.closest('[data-detalle],.prop-img,.prop-title');
     if(propTrigger){
       const card=propTrigger.closest('.prop');
-      if(card){ e.preventDefault(); previousView=activeView; openProperty(card); return; }
+      if(card){
+        e.preventDefault(); previousView=activeView; openProperty(card);
+        var purl=propertyUrlFor(card);
+        if(purl){ history.pushState({ocProperty:true}, '', purl); window.__cameFromPropertyLink=true; }
+        return;
+      }
     }
     const t=e.target.closest('[data-page],[data-home],[data-back],a');
     if(!t) return;
@@ -2921,6 +2952,8 @@
           var cardEl=tmp.firstElementChild;
           previousView='home';
           openProperty(cardEl);
+          var purl2=propertyUrlFor(cardEl);
+          if(purl2){ history.pushState({ocProperty:true}, '', purl2); window.__cameFromPropertyLink=true; }
           return;
         } else {
           if(refError) refError.classList.add('show');
@@ -2960,7 +2993,12 @@
     }
     if(t.hasAttribute('data-back')){
       e.preventDefault();
+      if(window.__cameFromPropertyLink){ history.back(); return; }
       if(previousView==='comprar'||previousView==='alquilar') showPage(previousView); else showHome();
+      if(/\/propiedades\//.test(location.pathname)){
+        var rootPath=location.pathname.replace(/propiedades\/[^/]+\.html$/,'');
+        history.pushState(null,'',rootPath||'/');
+      }
       return;
     }
     const page=t.getAttribute('data-page');
