@@ -42,6 +42,20 @@ function main() {
     );
   }
 
+  // Página /servicios.html (sin filtro), al mismo nivel que index.html.
+  {
+    const titulo = 'Servicios inmobiliarios en Roses: NIE, cédula, certificado energético';
+    const descripcion = 'Valoraciones gratuitas, gestión de NIE, cédula de habitabilidad, certificado energético, seguros e hipotecas. Ocean Immo te acompaña en todo el proceso en Roses y la Costa Brava.';
+    let pagina = indexHtml;
+    pagina = pagina.replace(tituloOriginalMatch[0], `<title>${esc(titulo)} · Ocean Immo</title>`);
+    pagina = pagina.replace(descOriginalMatch[0], `<meta name="description" content="${esc(descripcion)}">`);
+    pagina = pagina.replace(
+      '</head>',
+      `<script>window.__OPEN_PAGE=${JSON.stringify('servicios')};</script>\n</head>`
+    );
+    fs.writeFileSync('servicios.html', pagina);
+  }
+
   // Página /comprar.html (sin filtro de tipo), al mismo nivel que index.html.
   {
     const titulo = 'Propiedades en venta en Roses y Costa Brava';
