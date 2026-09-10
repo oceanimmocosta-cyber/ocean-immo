@@ -3097,16 +3097,28 @@
       e.preventDefault();
       showPage(page);
       const filterTipo=t.getAttribute('data-filter-tipo');
-      if(filterTipo && window.__propertyData){
+      if(window.__propertyData && (page==='comprar'||page==='alquilar')){
         var pd=window.__propertyData;
         var list = page==='alquilar' ? pd.alquileres : pd.ventas;
         var grid = page==='alquilar' ? pd.alquilarGrid : pd.comprarGrid;
         var pag = page==='alquilar' ? pd.alquilarPag : pd.comprarPag;
         if(list && grid){
-          var filtered = pd.applyFilters(list, '', '', filterTipo, '');
+          // Siempre re-aplicamos el filtro (aunque sea vacío), para no dejar
+          // "pegado" un tipo/población/precio de una visita anterior a esta página.
+          var filtered = pd.applyFilters(list, '', '', filterTipo||'', '');
           pd.renderPaginated(filtered, grid, pag, 1);
           var pageTipo=document.getElementById(page+'-f-tipo');
-          if(pageTipo) pageTipo.value=filterTipo;
+          if(pageTipo) pageTipo.value=filterTipo||'';
+          var pagePob=document.getElementById(page+'-f-poblacion');
+          if(pagePob) pagePob.value='';
+          var pageHab=document.getElementById(page+'-f-hab');
+          if(pageHab) pageHab.value='';
+          var pagePrecio=document.getElementById(page+'-f-precio');
+          if(pagePrecio){
+            pagePrecio.value='';
+            var pw=pagePrecio.closest('.price-slider');
+            if(pw && pw.__syncFromHidden) pw.__syncFromHidden();
+          }
         }
       }
       if(page==='comprar'){
