@@ -2352,9 +2352,9 @@
   Object.keys(TIPO_SLUGS).forEach(function(k){ SLUG_TIPOS[TIPO_SLUGS[k]] = k; });
   function resetPropertyUrlIfNeeded(){
     if(syncingFromPopstate) return;
-    if(/\/propiedades\/[^/]+\.html$/.test(location.pathname) || /\/comprar\/[^/]+\.html$/.test(location.pathname) || /\/comprar\.html$/.test(location.pathname)){
-      var rootPath = location.pathname.replace(/(propiedades\/[^/]+\.html|comprar\/[^/]+\.html|comprar\.html)$/, '');
-      history.pushState(null, '', rootPath || '/');
+    var m = location.pathname.match(/^(.*\/)(propiedades\/|comprar\/|comprar\.html)/);
+    if(m){
+      history.pushState(null, '', m[1] || '/');
     }
     window.__cameFromPropertyLink = false;
   }
@@ -3070,11 +3070,22 @@
           if(pageHab) pageHab.value=hab;
         }
       }
+      if(target==='comprar'){
+        var heroOnlyTipo = tipo && !poblacion && !precio && !hab;
+        var heroSlug = heroOnlyTipo ? (TIPO_SLUGS[tipo]||null) : null;
+        var heroUrl = heroSlug ? 'comprar/'+heroSlug+'.html' : 'comprar.html';
+        history.pushState({ocListing:true}, '', heroUrl);
+      }
       return;
     }
     if(t.hasAttribute('data-back')){
       e.preventDefault();
-      if(previousView==='comprar'||previousView==='alquilar') showPage(previousView); else showHome();
+      if(previousView==='comprar'||previousView==='alquilar'){
+        showPage(previousView);
+        if(previousView==='comprar') history.pushState({ocListing:true}, '', 'comprar.html');
+      } else {
+        showHome();
+      }
       return;
     }
     const page=t.getAttribute('data-page');
