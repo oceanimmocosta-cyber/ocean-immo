@@ -115,7 +115,7 @@
   .nav-dropdown{
     position:absolute;top:calc(100% + 14px);left:50%;transform:translateX(-50%) translateY(6px);
     background:#fff;border-radius:var(--radius-md);box-shadow:0 18px 40px rgba(11,42,58,.22);
-    padding:10px;min-width:220px;display:grid;grid-template-columns:1fr 1fr;gap:2px;
+    padding:10px;min-width:200px;display:grid;grid-template-columns:1fr;gap:2px;
     opacity:0;visibility:hidden;transition:opacity .18s ease,transform .18s ease,visibility 0s .18s;
     z-index:50;
   }
@@ -663,6 +663,7 @@
 
   /* ===== FLOATING BUTTONS (WhatsApp + Email) ===== */
   .fab-stack{position:fixed;bottom:26px;right:26px;z-index:200;display:flex;flex-direction:column;align-items:center;gap:14px;transition:opacity .25s ease,transform .25s ease}
+  body.mm-open .fab-stack{opacity:0;visibility:hidden;pointer-events:none}
   .fab{
     width:60px;height:60px;border-radius:50%;
     display:grid;place-items:center;transition:transform .3s;
@@ -677,7 +678,7 @@
   /* ===== MOBILE MENU ===== */
   .mobile-menu{
     position:fixed;top:76px;left:0;right:0;z-index:150;background:var(--navy);color:#fff;
-    display:flex;flex-direction:column;padding:18px 30px 28px;gap:4px;
+    display:flex;flex-direction:column;padding:18px 30px 18px;gap:4px;
     max-height:calc(100vh - 76px);overflow-y:auto;
     transform:translateY(-16px);opacity:0;visibility:hidden;
     transition:transform .28s ease,opacity .25s ease,visibility 0s .28s;
@@ -685,11 +686,12 @@
   }
   .mobile-menu.open{transform:translateY(0);opacity:1;visibility:visible;transition:transform .28s ease,opacity .25s ease,visibility 0s}
   .mm-backdrop{
-    position:fixed;top:76px;left:0;right:0;bottom:0;z-index:149;background:rgba(10,20,32,.55);
-    opacity:0;visibility:hidden;transition:opacity .28s ease,visibility 0s .28s;
+    position:fixed;top:76px;left:0;right:0;bottom:0;z-index:149;background:transparent;
+    opacity:0;visibility:hidden;transition:visibility 0s .28s;
   }
-  .mm-backdrop.open{opacity:1;visibility:visible;transition:opacity .28s ease,visibility 0s}
+  .mm-backdrop.open{opacity:1;visibility:visible;transition:visibility 0s}
   .mobile-menu a{font-family:var(--display);font-size:1.25rem;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.1);color:#fff}
+  .mobile-menu a:last-of-type{border-bottom:none}
   .mm-close{display:none}
   .mm-lang{display:flex;gap:8px;margin-top:20px}
   .mm-lang button{background:rgba(255,255,255,.1);border:none;color:#fff;padding:9px 14px;border-radius:8px;font-family:var(--body);font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
@@ -710,6 +712,9 @@
     .burger{display:flex}
     .nav-wa{display:none}
     .mobile-lang{display:block}
+    .nav{gap:12px}
+    header .wrap.nav{padding-left:24px;padding-right:24px}
+    .nav-right{margin-left:auto}
   }
   @media(max-width:760px){
     .sec{padding:66px 0}
@@ -2086,15 +2091,16 @@
   window.addEventListener('scroll',()=>{
     const y=window.scrollY;
     header.classList.toggle('scrolled', y>20);
-    if(y>lastY && y>140){ header.classList.add('header-hidden'); }
+    if(mm.classList.contains('open')){ /* no ocultar la cabecera con el menú móvil abierto */ }
+    else if(y>lastY && y>140){ header.classList.add('header-hidden'); }
     else { header.classList.remove('header-hidden'); }
     lastY=y;
   },{passive:true});
 
   // Mobile menu
   const burger=document.getElementById('burger'),mm=document.getElementById('mobileMenu'),mmClose=document.getElementById('mmClose'),mmBackdrop=document.getElementById('mmBackdrop');
-  function openMobileMenu(){ mm.classList.add('open'); mmBackdrop.classList.add('open'); burger.classList.add('is-open'); }
-  function closeMobileMenu(){ mm.classList.remove('open'); mmBackdrop.classList.remove('open'); burger.classList.remove('is-open'); }
+  function openMobileMenu(){ mm.classList.add('open'); mmBackdrop.classList.add('open'); burger.classList.add('is-open'); document.body.classList.add('mm-open'); }
+  function closeMobileMenu(){ mm.classList.remove('open'); mmBackdrop.classList.remove('open'); burger.classList.remove('is-open'); document.body.classList.remove('mm-open'); }
   burger.addEventListener('click',()=>{ mm.classList.contains('open') ? closeMobileMenu() : openMobileMenu(); });
   mmClose.addEventListener('click',closeMobileMenu);
   mmBackdrop.addEventListener('click',closeMobileMenu);
@@ -2337,13 +2343,30 @@
   const homeEl=document.getElementById('home');
   const subpages=document.querySelectorAll('.subpage');
   let activeView='home', previousView='home';
-  function closeMenu(){ mm.classList.remove('open'); if(typeof mmBackdrop!=='undefined' && mmBackdrop) mmBackdrop.classList.remove('open'); if(typeof burger!=='undefined' && burger) burger.classList.remove('is-open'); }
+  function closeMenu(){ mm.classList.remove('open'); if(typeof mmBackdrop!=='undefined' && mmBackdrop) mmBackdrop.classList.remove('open'); if(typeof burger!=='undefined' && burger) burger.classList.remove('is-open'); document.body.classList.remove('mm-open'); }
   var syncingFromPopstate = false;
+  var TIPO_SLUGS = {
+    'Piso': 'piso',
+    'Ático': 'atico',
+    'Dúplex': 'duplex',
+    'Estudio': 'estudio',
+    'Casa / Chalet,Casa adosada': 'casa',
+    'Finca rústica,Solar Urbano': 'terreno',
+    'Garaje / Parking': 'garaje',
+    'Local Comercial': 'local'
+  };
+  var SLUG_TIPOS = {};
+  Object.keys(TIPO_SLUGS).forEach(function(k){ SLUG_TIPOS[TIPO_SLUGS[k]] = k; });
+  function siteRootPath(){
+    var m = location.pathname.match(/^(.*\/)(propiedades\/|comprar\/|comprar\.html|servicios\.html)/);
+    if(m) return m[1];
+    return location.pathname.replace(/index\.html$/, '');
+  }
   function resetPropertyUrlIfNeeded(){
     if(syncingFromPopstate) return;
-    if(/\/propiedades\//.test(location.pathname)){
-      var rootPath = location.pathname.replace(/propiedades\/[^/]+\.html$/, '');
-      history.pushState(null, '', rootPath || '/');
+    var m = location.pathname.match(/^(.*\/)(propiedades\/|comprar\/|comprar\.html|servicios\.html)/);
+    if(m){
+      history.pushState(null, '', m[1] || '/');
     }
     window.__cameFromPropertyLink = false;
   }
@@ -2356,7 +2379,7 @@
     header.classList.remove('header-hidden');
     window.scrollTo({top:0,left:0,behavior:'instant'});
     closeMenu();
-    if(name!=='detalle') resetPropertyUrlIfNeeded();
+    if(name!=='detalle' && name!=='comprar' && name!=='servicios') resetPropertyUrlIfNeeded();
   }
   function showHome(scrollId){
     subpages.forEach(s=>s.style.display='none');
@@ -2610,8 +2633,7 @@
     var refTxt=((card.querySelector('.prop-ref')||{}).textContent||'').trim();
     var ref=refTxt.replace(/^Ref\.\s*/i,'').trim();
     if(!ref) return null;
-    var base = /\/propiedades\//.test(location.pathname) ? '' : 'propiedades/';
-    return base+encodeURIComponent(ref)+'.html';
+    return siteRootPath()+'propiedades/'+encodeURIComponent(ref)+'.html';
   }
 
   // ===== Mini photo gallery on property cards (grid thumbnails) =====
@@ -2823,7 +2845,7 @@
         return true;
       });
     }
-    function wireFilterSearch(buttonId, poblacionId, precioId, masterList, gridEl, paginationEl, tipoId, habId){
+    function wireFilterSearch(buttonId, poblacionId, precioId, masterList, gridEl, paginationEl, tipoId, habId, urlBase){
       var btn=document.getElementById(buttonId);
       var poblacionSel=document.getElementById(poblacionId);
       var precioSel=document.getElementById(precioId);
@@ -2832,9 +2854,22 @@
       if(!btn) return;
       btn.addEventListener('click', function(e){
         e.preventDefault();
-        var filtered = applyFilters(masterList, poblacionSel?poblacionSel.value:'', precioSel?precioSel.value:'', tipoSel?tipoSel.value:'', habSel?habSel.value:'');
+        var poblacionVal=poblacionSel?poblacionSel.value:'';
+        var precioVal=precioSel?precioSel.value:'';
+        var tipoVal=tipoSel?tipoSel.value:'';
+        var habVal=habSel?habSel.value:'';
+        var filtered = applyFilters(masterList, poblacionVal, precioVal, tipoVal, habVal);
         renderPaginated(filtered, gridEl, paginationEl, 1);
         gridEl.scrollIntoView({behavior:'smooth', block:'start'});
+        if(urlBase){
+          // Solo hay página propia para "un tipo sin más filtros". Si se combina con
+          // población/precio/habitaciones, no existe esa URL exacta, así que nos
+          // quedamos en la genérica (evita páginas "fantasma" sin contenido real detrás).
+          var onlyTipo = tipoVal && !poblacionVal && !precioVal && !habVal;
+          var slug = onlyTipo ? (TIPO_SLUGS[tipoVal]||null) : null;
+          var url = slug ? urlBase+'/'+slug+'.html' : urlBase+'.html';
+          history.pushState({ocListing:true}, '', siteRootPath()+url);
+        }
       });
     }
 
@@ -2866,7 +2901,7 @@
           if(currentLang!=='es' && typeof applyLang==='function') applyLang(currentLang);
         }
 
-        wireFilterSearch('comprar-f-buscar', 'comprar-f-poblacion', 'comprar-f-precio', ventas, comprarGrid, comprarPag, 'comprar-f-tipo', 'comprar-f-hab');
+        wireFilterSearch('comprar-f-buscar', 'comprar-f-poblacion', 'comprar-f-precio', ventas, comprarGrid, comprarPag, 'comprar-f-tipo', 'comprar-f-hab', 'comprar');
         wireFilterSearch('alquilar-f-buscar', 'alquilar-f-poblacion', 'alquilar-f-precio', alquileres, alquilarGrid, alquilarPag, 'alquilar-f-tipo', 'alquilar-f-hab');
 
         // Expuesto para que el buscador de la portada también pueda filtrar
@@ -2893,7 +2928,7 @@
           document.body.appendChild(tmp);
           openProperty(tmp.firstElementChild);
           if(params.get('ref') && !/\/propiedades\//.test(location.pathname)){
-            history.replaceState({ocProperty:true}, '', 'propiedades/'+encodeURIComponent(targetRef)+'.html');
+            history.replaceState({ocProperty:true}, '', siteRootPath()+'propiedades/'+encodeURIComponent(targetRef)+'.html');
           }
         })();
 
@@ -2953,6 +2988,31 @@
         syncingFromPopstate = false;
         return;
       }
+    }
+    var mc = location.pathname.match(/\/comprar\/([^/]+)\.html$/);
+    if(mc && window.__propertyData){
+      var slug = decodeURIComponent(mc[1]);
+      var tipoFilter = SLUG_TIPOS[slug];
+      showPage('comprar');
+      if(tipoFilter){
+        var pd2 = window.__propertyData;
+        var filtered2 = pd2.applyFilters(pd2.ventas, '', '', tipoFilter, '');
+        pd2.renderPaginated(filtered2, pd2.comprarGrid, pd2.comprarPag, 1);
+        var tipoSel2=document.getElementById('comprar-f-tipo');
+        if(tipoSel2) tipoSel2.value=tipoFilter;
+      }
+      syncingFromPopstate = false;
+      return;
+    }
+    if(/\/comprar\.html$/.test(location.pathname)){
+      showPage('comprar');
+      syncingFromPopstate = false;
+      return;
+    }
+    if(/\/servicios\.html$/.test(location.pathname)){
+      showPage('servicios');
+      syncingFromPopstate = false;
+      return;
     }
     if(previousView==='comprar'||previousView==='alquilar') showPage(previousView); else showHome();
     syncingFromPopstate = false;
@@ -3026,11 +3086,22 @@
           if(pageHab) pageHab.value=hab;
         }
       }
+      if(target==='comprar'){
+        var heroOnlyTipo = tipo && !poblacion && !precio && !hab;
+        var heroSlug = heroOnlyTipo ? (TIPO_SLUGS[tipo]||null) : null;
+        var heroUrl = heroSlug ? 'comprar/'+heroSlug+'.html' : 'comprar.html';
+        history.pushState({ocListing:true}, '', siteRootPath()+heroUrl);
+      }
       return;
     }
     if(t.hasAttribute('data-back')){
       e.preventDefault();
-      if(previousView==='comprar'||previousView==='alquilar') showPage(previousView); else showHome();
+      if(previousView==='comprar'||previousView==='alquilar'){
+        showPage(previousView);
+        if(previousView==='comprar') history.pushState({ocListing:true}, '', siteRootPath()+'comprar.html');
+      } else {
+        showHome();
+      }
       return;
     }
     const page=t.getAttribute('data-page');
@@ -3038,17 +3109,37 @@
       e.preventDefault();
       showPage(page);
       const filterTipo=t.getAttribute('data-filter-tipo');
-      if(filterTipo && window.__propertyData){
+      if(window.__propertyData && (page==='comprar'||page==='alquilar')){
         var pd=window.__propertyData;
         var list = page==='alquilar' ? pd.alquileres : pd.ventas;
         var grid = page==='alquilar' ? pd.alquilarGrid : pd.comprarGrid;
         var pag = page==='alquilar' ? pd.alquilarPag : pd.comprarPag;
         if(list && grid){
-          var filtered = pd.applyFilters(list, '', '', filterTipo, '');
+          // Siempre re-aplicamos el filtro (aunque sea vacío), para no dejar
+          // "pegado" un tipo/población/precio de una visita anterior a esta página.
+          var filtered = pd.applyFilters(list, '', '', filterTipo||'', '');
           pd.renderPaginated(filtered, grid, pag, 1);
           var pageTipo=document.getElementById(page+'-f-tipo');
-          if(pageTipo) pageTipo.value=filterTipo;
+          if(pageTipo) pageTipo.value=filterTipo||'';
+          var pagePob=document.getElementById(page+'-f-poblacion');
+          if(pagePob) pagePob.value='';
+          var pageHab=document.getElementById(page+'-f-hab');
+          if(pageHab) pageHab.value='';
+          var pagePrecio=document.getElementById(page+'-f-precio');
+          if(pagePrecio){
+            pagePrecio.value='';
+            var pw=pagePrecio.closest('.price-slider');
+            if(pw && pw.__syncFromHidden) pw.__syncFromHidden();
+          }
         }
+      }
+      if(page==='comprar'){
+        var listingSlug = filterTipo ? (TIPO_SLUGS[filterTipo]||null) : null;
+        var listingUrl = listingSlug ? 'comprar/'+listingSlug+'.html' : 'comprar.html';
+        history.pushState({ocListing:true}, '', siteRootPath()+listingUrl);
+      }
+      if(page==='servicios'){
+        history.pushState({ocListing:true}, '', siteRootPath()+'servicios.html');
       }
       return;
     }
