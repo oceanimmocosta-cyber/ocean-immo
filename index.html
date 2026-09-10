@@ -2350,6 +2350,11 @@
   };
   var SLUG_TIPOS = {};
   Object.keys(TIPO_SLUGS).forEach(function(k){ SLUG_TIPOS[TIPO_SLUGS[k]] = k; });
+  function siteRootPath(){
+    var m = location.pathname.match(/^(.*\/)(propiedades\/|comprar\/|comprar\.html)/);
+    if(m) return m[1];
+    return location.pathname.replace(/index\.html$/, '');
+  }
   function resetPropertyUrlIfNeeded(){
     if(syncingFromPopstate) return;
     var m = location.pathname.match(/^(.*\/)(propiedades\/|comprar\/|comprar\.html)/);
@@ -2621,8 +2626,7 @@
     var refTxt=((card.querySelector('.prop-ref')||{}).textContent||'').trim();
     var ref=refTxt.replace(/^Ref\.\s*/i,'').trim();
     if(!ref) return null;
-    var base = /\/propiedades\//.test(location.pathname) ? '' : 'propiedades/';
-    return base+encodeURIComponent(ref)+'.html';
+    return siteRootPath()+'propiedades/'+encodeURIComponent(ref)+'.html';
   }
 
   // ===== Mini photo gallery on property cards (grid thumbnails) =====
@@ -2857,7 +2861,7 @@
           var onlyTipo = tipoVal && !poblacionVal && !precioVal && !habVal;
           var slug = onlyTipo ? (TIPO_SLUGS[tipoVal]||null) : null;
           var url = slug ? urlBase+'/'+slug+'.html' : urlBase+'.html';
-          history.pushState({ocListing:true}, '', url);
+          history.pushState({ocListing:true}, '', siteRootPath()+url);
         }
       });
     }
@@ -2917,7 +2921,7 @@
           document.body.appendChild(tmp);
           openProperty(tmp.firstElementChild);
           if(params.get('ref') && !/\/propiedades\//.test(location.pathname)){
-            history.replaceState({ocProperty:true}, '', 'propiedades/'+encodeURIComponent(targetRef)+'.html');
+            history.replaceState({ocProperty:true}, '', siteRootPath()+'propiedades/'+encodeURIComponent(targetRef)+'.html');
           }
         })();
 
@@ -3074,7 +3078,7 @@
         var heroOnlyTipo = tipo && !poblacion && !precio && !hab;
         var heroSlug = heroOnlyTipo ? (TIPO_SLUGS[tipo]||null) : null;
         var heroUrl = heroSlug ? 'comprar/'+heroSlug+'.html' : 'comprar.html';
-        history.pushState({ocListing:true}, '', heroUrl);
+        history.pushState({ocListing:true}, '', siteRootPath()+heroUrl);
       }
       return;
     }
@@ -3082,7 +3086,7 @@
       e.preventDefault();
       if(previousView==='comprar'||previousView==='alquilar'){
         showPage(previousView);
-        if(previousView==='comprar') history.pushState({ocListing:true}, '', 'comprar.html');
+        if(previousView==='comprar') history.pushState({ocListing:true}, '', siteRootPath()+'comprar.html');
       } else {
         showHome();
       }
@@ -3108,7 +3112,7 @@
       if(page==='comprar'){
         var listingSlug = filterTipo ? (TIPO_SLUGS[filterTipo]||null) : null;
         var listingUrl = listingSlug ? 'comprar/'+listingSlug+'.html' : 'comprar.html';
-        history.pushState({ocListing:true}, '', listingUrl);
+        history.pushState({ocListing:true}, '', siteRootPath()+listingUrl);
       }
       return;
     }
