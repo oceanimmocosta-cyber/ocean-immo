@@ -2723,12 +2723,14 @@
 
     function esc(s){ var d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
 
-    // Sirve las fotos a través de un proxy gratuito que las redimensiona y comprime,
-    // en vez de descargar el archivo original (a menudo varios MB) tal cual.
+    // Antes servíamos las fotos a través de un proxy externo gratuito (images.weserv.nl)
+    // que las redimensionaba y comprimía. Se ha desactivado porque ese servicio bloquea
+    // el rastreo de Google (su propio robots.txt impide que Googlebot descargue las
+    // imágenes), lo cual le impedía indexarlas. De momento servimos la foto tal cual
+    // viene de Inmoweb; la optimización de peso se abordará aparte con una solución
+    // propia (por ejemplo, redimensionando en el propio proceso de sincronización).
     function imgProxy(url, width){
-      if(!url) return url;
-      var clean = url.replace(/^https?:\/\//,'');
-      return 'https://images.weserv.nl/?url='+encodeURIComponent(clean)+'&w='+width+'&output=webp&q=78';
+      return url;
     }
 
     function fmtPrice(n){
