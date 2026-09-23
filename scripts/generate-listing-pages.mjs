@@ -41,6 +41,47 @@ const TIPOS = [
   { slug: 'local', tipoFilter: 'Local Comercial', label: 'Locales comerciales' },
 ];
 
+// Servicios con página propia dentro de servicios/<slug>.html. Cada uno necesita
+// tener su subpágina ya escrita en index.html con id="page-servicio-<slug>".
+const SERVICIOS = [
+  {
+    slug: 'certificado-energetico',
+    label: 'Certificado energético',
+    titulo: 'Certificado energético en Roses y Costa Brava',
+    descripcion: 'Gestionamos el certificado de eficiencia energética de tu vivienda en Roses y la Costa Brava: visita técnica, registro ante el ICAEN y entrega del documento.',
+  },
+  {
+    slug: 'nie',
+    label: 'Gestión del NIE',
+    titulo: 'Gestión del NIE en Roses y Costa Brava',
+    descripcion: 'Te acompañamos en todo el trámite del NIE en Roses y la Costa Brava, paso imprescindible para comprar, trabajar o instalarte en España.',
+  },
+  {
+    slug: 'cedula-habitabilidad',
+    label: 'Cédula de habitabilidad',
+    titulo: 'Cédula de habitabilidad en Roses y Costa Brava',
+    descripcion: 'Gestionamos la cédula de habitabilidad de tu vivienda en Roses y la Costa Brava, documento clave para vender, alquilar o dar de alta los suministros.',
+  },
+  {
+    slug: 'valoracion-gratuita',
+    label: 'Valoración gratuita',
+    titulo: 'Valoración gratuita de tu vivienda en Roses y Costa Brava',
+    descripcion: 'Valoración gratuita y sin compromiso de tu propiedad en Roses y la Costa Brava, basada en ventas reales recientes de la zona.',
+  },
+  {
+    slug: 'seguros-hogar',
+    label: 'Seguros',
+    titulo: 'Seguros en Roses y Costa Brava: hogar, vida, coche y más',
+    descripcion: 'Te ayudamos a contratar cualquier tipo de seguro en Roses y la Costa Brava: hogar, vida, comunidad, coche, salud y decesos, con las mejores condiciones.',
+  },
+  {
+    slug: 'hipotecas',
+    label: 'Hipotecas',
+    titulo: 'Hipotecas en Roses y Costa Brava | Hipoteca joven al 100%',
+    descripcion: 'Hipotecas en Roses y la Costa Brava, para residentes y extranjeros. Asesoramiento financiero y broker hipotecario, incluida la hipoteca joven hasta el 100%.',
+  },
+];
+
 function esc(s) {
   return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
@@ -120,6 +161,27 @@ function main() {
   }
 
   console.log(`Generadas comprar.html y ${TIPOS.length} páginas por tipo en comprar/`);
+
+  // Páginas /servicios/<slug>.html, un nivel más adentro que servicios.html.
+  fs.mkdirSync('servicios', { recursive: true });
+  for (const s of SERVICIOS) {
+    let pagina = indexHtml;
+    pagina = pagina.replace(tituloOriginalMatch[0], `<title>${esc(s.titulo)} · Ocean Immo</title>`);
+    pagina = pagina.replace(descOriginalMatch[0], `<meta name="description" content="${esc(s.descripcion)}">`);
+    pagina = pagina.replace(
+      '</head>',
+      `<script>window.__OPEN_PAGE=${JSON.stringify('servicio-' + s.slug)};</script>\n</head>`
+    );
+    const bc = breadcrumbLd([
+      { name: 'Inicio', url: `${SITE_URL}/` },
+      { name: 'Servicios', url: `${SITE_URL}/servicios.html` },
+      { name: s.label },
+    ]);
+    pagina = pagina.replace('</head>', `${bc}\n</head>`);
+    pagina = pagina.replace(/(["'(])\.\//g, '$1../');
+    fs.writeFileSync(path.join('servicios', `${s.slug}.html`), pagina);
+  }
+  console.log(`Generadas ${SERVICIOS.length} páginas de servicio en servicios/`);
 }
 
 main();
