@@ -3205,6 +3205,17 @@
       });
     }
 
+    // Si esta página se generó para abrir directamente un listado/servicio o una
+    // propiedad concreta, cambiamos de vista YA (antes de esperar a properties.json),
+    // para que no se llegue a ver la portada ni un instante al recargar la página.
+    (function(){
+      if(window.__OPEN_PROPERTY_REF){
+        showPage('detalle');
+      } else if(window.__OPEN_PAGE){
+        showPage(window.__OPEN_PAGE);
+      }
+    })();
+
     fetch('./properties.json', { cache: 'no-store' })
       .then(function(r){ if(!r.ok) throw new Error('properties.json error ' + r.status); return r.json(); })
       .then(function(data){
