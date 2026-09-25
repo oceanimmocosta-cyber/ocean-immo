@@ -182,9 +182,13 @@ function main() {
 
     // 3) Variable que la propia web (index.html) detecta al cargar para abrir
     //    automáticamente la ficha de esta propiedad, justo antes de </head>.
+    //    El <style> de al lado oculta la portada y muestra ya la ficha ANTES de que
+    //    el navegador llegue a pintar el <body>, para que no se vea ni un instante
+    //    la página de inicio al cargar o recargar esta URL directamente.
     pagina = pagina.replace(
       '</head>',
-      `<script>window.__OPEN_PROPERTY_REF=${JSON.stringify(p.referencia)};</script>\n</head>`
+      `<script>window.__OPEN_PROPERTY_REF=${JSON.stringify(p.referencia)};</script>\n` +
+      `<style id="oc-preload">#home{display:none}#page-detalle{display:block}</style>\n</head>`
     );
 
     // 4) Esta página vive en una subcarpeta (propiedades/), un nivel más adentro
