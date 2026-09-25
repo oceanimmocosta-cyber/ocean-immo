@@ -41,7 +41,11 @@
     background:var(--white);
     line-height:1.6;
     -webkit-font-smoothing:antialiased;
-    overflow-x:hidden;
+    /* overflow-x:hidden en <body> rompe silenciosamente el position:sticky (crea un
+       contenedor de scroll propio). overflow-x:clip evita el desbordamiento horizontal
+       igual, pero sin ese efecto secundario, así la ficha de contacto sí se queda fija. */
+    overflow-x:clip;
+    overflow-y:visible;
   }
   h1,h2,h3,h4{font-family:var(--display);font-weight:600;line-height:1.14;color:var(--navy);letter-spacing:-.01em}
   a{text-decoration:none;color:inherit}
@@ -2702,6 +2706,20 @@
     }
     window.__cameFromPropertyLink = false;
   }
+  // Mismos títulos que se usan al generar cada página estática (servicios.html,
+  // comprar.html, servicios/<slug>.html...), para poder ponerlos también al navegar
+  // dentro de la propia web (sin recargar), donde si no la pestaña se quedaba con
+  // el título de la página anterior.
+  var PAGE_TITLES={
+    'comprar':'Propiedades en venta en Roses y Costa Brava · Ocean Immo',
+    'servicios':'Servicios inmobiliarios en Roses: NIE, cédula, certificado energético · Ocean Immo',
+    'servicio-certificado-energetico':'Certificado energético en Roses y Costa Brava · Ocean Immo',
+    'servicio-nie':'Gestión del NIE en Roses y Costa Brava · Ocean Immo',
+    'servicio-cedula-habitabilidad':'Cédula de habitabilidad en Roses y Costa Brava · Ocean Immo',
+    'servicio-valoracion-gratuita':'Valoración gratuita de tu vivienda en Roses y Costa Brava · Ocean Immo',
+    'servicio-seguros-hogar':'Seguros en Roses y Costa Brava: hogar, vida, coche y más · Ocean Immo',
+    'servicio-hipotecas':'Hipotecas en Roses y Costa Brava | Hipoteca joven al 100% · Ocean Immo'
+  };
   function showPage(name){
     homeEl.style.display='none';
     subpages.forEach(s=>s.style.display='none');
@@ -2711,6 +2729,7 @@
     header.classList.remove('header-hidden');
     window.scrollTo({top:0,left:0,behavior:'instant'});
     closeMenu();
+    if(PAGE_TITLES[name]) document.title=PAGE_TITLES[name];
     if(name!=='detalle' && name!=='comprar' && name!=='servicios' && name.indexOf('servicio-')!==0) resetPropertyUrlIfNeeded();
   }
   function showHome(scrollId){
@@ -2718,6 +2737,10 @@
     homeEl.style.display='';
     activeView='home';
     header.classList.remove('header-hidden');
+    // En páginas generadas (comprar.html, propiedades/REF.html...) el <title> de la
+    // pestaña viene sobrescrito para esa página en concreto; al volver a inicio hay
+    // que restaurar el título real de la portada, si no se queda con el anterior.
+    document.title='Ocean Immo · Tu hogar junto al mar en la Costa Brava | Inmobiliaria en Roses';
     if(typeof window.resetTrustStats==='function'){ window.resetTrustStats(); }
     if(scrollId){
       const el=document.getElementById(scrollId);
@@ -2961,7 +2984,12 @@
     }
     if(ctaSuccess){ ctaSuccess.style.display='none'; }
   }
-  function openProperty(card){ lastCard=card; fillFromCard(card); resetVisitToggle(); showPage('detalle'); }
+  function openProperty(card){
+    lastCard=card; fillFromCard(card); resetVisitToggle(); showPage('detalle');
+    var t=(document.getElementById('d-title')||{}).textContent||'';
+    var pr=(document.getElementById('d-price')||{}).textContent||'';
+    if(t) document.title=(pr ? t+' · '+pr+' · Ocean Immo' : t+' · Ocean Immo');
+  }
   function propertyUrlFor(card){
     var refTxt=((card.querySelector('.prop-ref')||{}).textContent||'').trim();
     var ref=refTxt.replace(/^Ref\.\s*/i,'').trim();

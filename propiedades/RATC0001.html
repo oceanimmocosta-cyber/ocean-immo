@@ -49,7 +49,11 @@
     background:var(--white);
     line-height:1.6;
     -webkit-font-smoothing:antialiased;
-    overflow-x:hidden;
+    /* overflow-x:hidden en <body> rompe silenciosamente el position:sticky (crea un
+       contenedor de scroll propio). overflow-x:clip evita el desbordamiento horizontal
+       igual, pero sin ese efecto secundario, así la ficha de contacto sí se queda fija. */
+    overflow-x:clip;
+    overflow-y:visible;
   }
   h1,h2,h3,h4{font-family:var(--display);font-weight:600;line-height:1.14;color:var(--navy);letter-spacing:-.01em}
   a{text-decoration:none;color:inherit}
@@ -819,7 +823,7 @@
   ]
 }
 </script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"RealEstateListing","name":"¡ ÁTICO EN EL CENTRO CON TERRAZA Y VISTAS A LA BAHÍA DE ROSES !","description":"En el corazón de Roses, a tan solo unos pasos de la playa, se encuentra este exclusivo ático que destaca por su luminosidad, su gran terraza con vistas a la bahía y el encanto mediterráneo que lo impregna todo.\n\n\n\nLo que lo hace realmente especial:\n\n\n\n· 3 habitaciones dobles amplias, una de ellas en suite\n\n· 2 baños completos\n\n· Salón muy soleado con chimenea, cálido y acogedor durante todo el año\n\n· Cocina totalmente equipada\n\n· 2 patios interiores que aportan luz y ventilación natural\n\n· Gran terraza con zona de barbacoa e impresionantes vistas a la bahía de Roses\n\n· Edificio muy bien cuidado con ascensor y zona tranquila\n\n· Posibilidad de adquirir trastero de 17 m²\n\n· Aparcamiento para motos con acceso directo a la calle mediante rampa\n\n\n\nUna oportunidad única para vivir o invertir en uno de los enclaves más emblemáticos de la Costa Brava. La gran terraza con barbacoa y vistas a la bahía convierte este ático en un refugio mediterráneo incomparable, en cualquier época del año.\n\n\n\nLos honorarios de agencia están incluidos en el precio de venta publicado. No obstante, los gastos derivados de la compraventa, como impuestos, gastos de notaría y registro de la propiedad, corren a cargo del comprador y no están incluidos en el precio anunciado.","url":"https://oceanimmocosta-cyber.github.io/ocean-immo/propiedades/RATC0001.html","image":["https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1653741/image/26141ba1-648d-4080-9078-31f0d157d180.jpg","https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1653741/image/fee04f69-1ecf-4e29-85e2-3076071a51ee.jpg","https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1653741/image/8e7aa094-b9ad-45ec-b9a2-325ed3d2fc8c.jpg","https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1653741/image/img_4130.jpg","https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1653741/image/img_4129.jpg","https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1653741/image/img_4177.jpg","https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1653741/image/img_4136.jpg","https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1653741/image/img_4137.jpg"],"datePosted":"2026-09-25T10:57:21.370Z","address":{"@type":"PostalAddress","addressLocality":"Roses","addressRegion":"Girona","addressCountry":"ES"},"floorSize":{"@type":"QuantitativeValue","value":140,"unitCode":"MTK"},"numberOfRooms":3,"numberOfBathroomsTotal":2,"offers":{"@type":"Offer","price":420000,"priceCurrency":"EUR","availability":"https://schema.org/InStock","url":"https://oceanimmocosta-cyber.github.io/ocean-immo/propiedades/RATC0001.html"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"RealEstateListing","name":"¡ ÁTICO EN EL CENTRO CON TERRAZA Y VISTAS A LA BAHÍA DE ROSES !","description":"En el corazón de Roses, a tan solo unos pasos de la playa, se encuentra este exclusivo ático que destaca por su luminosidad, su gran terraza con vistas a la bahía y el encanto mediterráneo que lo impregna todo.\n\n\n\nLo que lo hace realmente especial:\n\n\n\n· 3 habitaciones dobles amplias, una de ellas en suite\n\n· 2 baños completos\n\n· Salón muy soleado con chimenea, cálido y acogedor durante todo el año\n\n· Cocina totalmente equipada\n\n· 2 patios interiores que aportan luz y ventilación natural\n\n· Gran terraza con zona de barbacoa e impresionantes vistas a la bahía de Roses\n\n· Edificio muy bien cuidado con ascensor y zona tranquila\n\n· Posibilidad de adquirir trastero de 17 m²\n\n· Aparcamiento para motos con acceso directo a la calle mediante rampa\n\n\n\nUna oportunidad única para vivir o invertir en uno de los enclaves más emblemáticos de la Costa Brava. La gran terraza con barbacoa y vistas a la bahía convierte este ático en un refugio mediterráneo incomparable, en cualquier época del año.\n\n\n\nLos honorarios de agencia están incluidos en el precio de venta publicado. No obstante, los gastos derivados de la compraventa, como impuestos, gastos de notaría y registro de la propiedad, corren a cargo del comprador y no están incluidos en el precio anunciado.","url":"https://oceanimmocosta-cyber.github.io/ocean-immo/propiedades/RATC0001.html","image":["https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1653741/image/26141ba1-648d-4080-9078-31f0d157d180.jpg","https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1653741/image/fee04f69-1ecf-4e29-85e2-3076071a51ee.jpg","https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1653741/image/8e7aa094-b9ad-45ec-b9a2-325ed3d2fc8c.jpg","https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1653741/image/img_4130.jpg","https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1653741/image/img_4129.jpg","https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1653741/image/img_4177.jpg","https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1653741/image/img_4136.jpg","https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1653741/image/img_4137.jpg"],"datePosted":"2026-09-25T15:54:10.686Z","address":{"@type":"PostalAddress","addressLocality":"Roses","addressRegion":"Girona","addressCountry":"ES"},"floorSize":{"@type":"QuantitativeValue","value":140,"unitCode":"MTK"},"numberOfRooms":3,"numberOfBathroomsTotal":2,"offers":{"@type":"Offer","price":420000,"priceCurrency":"EUR","availability":"https://schema.org/InStock","url":"https://oceanimmocosta-cyber.github.io/ocean-immo/propiedades/RATC0001.html"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Inicio","item":"https://oceanimmocosta-cyber.github.io/ocean-immo/"},{"@type":"ListItem","position":2,"name":"Comprar","item":"https://oceanimmocosta-cyber.github.io/ocean-immo/comprar.html"},{"@type":"ListItem","position":3,"name":"Áticos","item":"https://oceanimmocosta-cyber.github.io/ocean-immo/comprar/atico.html"},{"@type":"ListItem","position":4,"name":"¡ ÁTICO EN EL CENTRO CON TERRAZA Y VISTAS A LA BAHÍA DE ROSES !"}]}</script>
 <script>window.__OPEN_PROPERTY_REF="RATC0001";</script>
 <style id="oc-preload">#home{display:none}#page-detalle{display:block}</style>
@@ -2711,6 +2715,20 @@
     }
     window.__cameFromPropertyLink = false;
   }
+  // Mismos títulos que se usan al generar cada página estática (servicios.html,
+  // comprar.html, servicios/<slug>.html...), para poder ponerlos también al navegar
+  // dentro de la propia web (sin recargar), donde si no la pestaña se quedaba con
+  // el título de la página anterior.
+  var PAGE_TITLES={
+    'comprar':'Propiedades en venta en Roses y Costa Brava · Ocean Immo',
+    'servicios':'Servicios inmobiliarios en Roses: NIE, cédula, certificado energético · Ocean Immo',
+    'servicio-certificado-energetico':'Certificado energético en Roses y Costa Brava · Ocean Immo',
+    'servicio-nie':'Gestión del NIE en Roses y Costa Brava · Ocean Immo',
+    'servicio-cedula-habitabilidad':'Cédula de habitabilidad en Roses y Costa Brava · Ocean Immo',
+    'servicio-valoracion-gratuita':'Valoración gratuita de tu vivienda en Roses y Costa Brava · Ocean Immo',
+    'servicio-seguros-hogar':'Seguros en Roses y Costa Brava: hogar, vida, coche y más · Ocean Immo',
+    'servicio-hipotecas':'Hipotecas en Roses y Costa Brava | Hipoteca joven al 100% · Ocean Immo'
+  };
   function showPage(name){
     homeEl.style.display='none';
     subpages.forEach(s=>s.style.display='none');
@@ -2720,6 +2738,7 @@
     header.classList.remove('header-hidden');
     window.scrollTo({top:0,left:0,behavior:'instant'});
     closeMenu();
+    if(PAGE_TITLES[name]) document.title=PAGE_TITLES[name];
     if(name!=='detalle' && name!=='comprar' && name!=='servicios' && name.indexOf('servicio-')!==0) resetPropertyUrlIfNeeded();
   }
   function showHome(scrollId){
@@ -2727,6 +2746,10 @@
     homeEl.style.display='';
     activeView='home';
     header.classList.remove('header-hidden');
+    // En páginas generadas (comprar.html, propiedades/REF.html...) el <title> de la
+    // pestaña viene sobrescrito para esa página en concreto; al volver a inicio hay
+    // que restaurar el título real de la portada, si no se queda con el anterior.
+    document.title='Ocean Immo · Tu hogar junto al mar en la Costa Brava | Inmobiliaria en Roses';
     if(typeof window.resetTrustStats==='function'){ window.resetTrustStats(); }
     if(scrollId){
       const el=document.getElementById(scrollId);
@@ -2970,7 +2993,12 @@
     }
     if(ctaSuccess){ ctaSuccess.style.display='none'; }
   }
-  function openProperty(card){ lastCard=card; fillFromCard(card); resetVisitToggle(); showPage('detalle'); }
+  function openProperty(card){
+    lastCard=card; fillFromCard(card); resetVisitToggle(); showPage('detalle');
+    var t=(document.getElementById('d-title')||{}).textContent||'';
+    var pr=(document.getElementById('d-price')||{}).textContent||'';
+    if(t) document.title=(pr ? t+' · '+pr+' · Ocean Immo' : t+' · Ocean Immo');
+  }
   function propertyUrlFor(card){
     var refTxt=((card.querySelector('.prop-ref')||{}).textContent||'').trim();
     var ref=refTxt.replace(/^Ref\.\s*/i,'').trim();
