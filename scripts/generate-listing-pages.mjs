@@ -107,7 +107,8 @@ function main() {
     pagina = pagina.replace(descOriginalMatch[0], `<meta name="description" content="${esc(descripcion)}">`);
     pagina = pagina.replace(
       '</head>',
-      `<script>window.__OPEN_PAGE=${JSON.stringify('servicios')};</script>\n</head>`
+      `<script>window.__OPEN_PAGE=${JSON.stringify('servicios')};</script>\n` +
+      `<style id="oc-preload">#home{display:none}#page-servicios{display:block}</style>\n</head>`
     );
     const bc = breadcrumbLd([
       { name: 'Inicio', url: `${SITE_URL}/` },
@@ -126,7 +127,8 @@ function main() {
     pagina = pagina.replace(descOriginalMatch[0], `<meta name="description" content="${esc(descripcion)}">`);
     pagina = pagina.replace(
       '</head>',
-      `<script>window.__OPEN_PAGE=${JSON.stringify('comprar')};</script>\n</head>`
+      `<script>window.__OPEN_PAGE=${JSON.stringify('comprar')};</script>\n` +
+      `<style id="oc-preload">#home{display:none}#page-comprar{display:block}</style>\n</head>`
     );
     const bc = breadcrumbLd([
       { name: 'Inicio', url: `${SITE_URL}/` },
@@ -148,7 +150,8 @@ function main() {
     pagina = pagina.replace(descOriginalMatch[0], `<meta name="description" content="${esc(descripcion)}">`);
     pagina = pagina.replace(
       '</head>',
-      `<script>window.__OPEN_PAGE=${JSON.stringify('comprar')};window.__OPEN_TIPO_FILTER=${JSON.stringify(t.tipoFilter)};</script>\n</head>`
+      `<script>window.__OPEN_PAGE=${JSON.stringify('comprar')};window.__OPEN_TIPO_FILTER=${JSON.stringify(t.tipoFilter)};</script>\n` +
+      `<style id="oc-preload">#home{display:none}#page-comprar{display:block}</style>\n</head>`
     );
     const bc = breadcrumbLd([
       { name: 'Inicio', url: `${SITE_URL}/` },
@@ -170,7 +173,8 @@ function main() {
     pagina = pagina.replace(descOriginalMatch[0], `<meta name="description" content="${esc(s.descripcion)}">`);
     pagina = pagina.replace(
       '</head>',
-      `<script>window.__OPEN_PAGE=${JSON.stringify('servicio-' + s.slug)};</script>\n</head>`
+      `<script>window.__OPEN_PAGE=${JSON.stringify('servicio-' + s.slug)};</script>\n` +
+      `<style id="oc-preload">#home{display:none}#page-servicio-${s.slug}{display:block}</style>\n</head>`
     );
     const bc = breadcrumbLd([
       { name: 'Inicio', url: `${SITE_URL}/` },
