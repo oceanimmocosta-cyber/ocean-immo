@@ -3214,6 +3214,11 @@
       } else if(window.__OPEN_PAGE){
         showPage(window.__OPEN_PAGE);
       }
+      // Esa vista ya está decidida: quitamos la regla CSS que ocultaba la portada
+      // (metida en <head> solo para el primer pintado) para que a partir de ahora
+      // mandar de nuevo a inicio (p.ej. al hacer clic en el logo) vuelva a funcionar.
+      var preloadStyle=document.getElementById('oc-preload');
+      if(preloadStyle) preloadStyle.remove();
     })();
 
     fetch('./properties.json', { cache: 'no-store' })
