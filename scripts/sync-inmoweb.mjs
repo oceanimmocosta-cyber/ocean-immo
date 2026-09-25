@@ -185,7 +185,10 @@ async function main() {
 }
 
 const SITE_URL = 'https://oceanimmocosta-cyber.github.io/ocean-immo/';
-const BREVO_LIST_ID = 5;
+// Lista real donde el formulario de suscripción de la web mete a la gente
+// (comprobado en Brevo: "Su primera lista", ID 2). La lista "Suscriptores
+// Ocean Immo" (ID 5) se creó aparte y nunca ha recibido contactos del formulario.
+const BREVO_LIST_ID = 2;
 
 function fmtPrecio(n) {
   const num = typeof n === 'string' ? parseFloat(n.replace(/[^\d.,-]/g, '').replace(',', '.')) : n;
