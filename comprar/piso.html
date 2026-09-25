@@ -702,7 +702,7 @@
   /* ===== MOBILE MENU ===== */
   .mobile-menu{
     position:fixed;top:76px;left:0;right:0;z-index:150;background:var(--navy);color:#fff;
-    display:flex;flex-direction:column;padding:18px 30px 18px;gap:4px;
+    display:flex;flex-direction:column;padding:8px 30px 8px;gap:4px;
     max-height:calc(100vh - 76px);overflow-y:auto;
     transform:translateY(-16px);opacity:0;visibility:hidden;
     transition:transform .28s ease,opacity .25s ease,visibility 0s .28s;
@@ -771,7 +771,7 @@
   }
   @media(max-width:440px){
     .trust-grid,.why-grid{grid-template-columns:1fr}
-    .founders{flex-direction:column;align-items:stretch}
+    .founders{flex-direction:column;align-items:flex-start}
     .fab-stack{bottom:18px;right:18px;gap:10px}
     .fab{width:52px;height:52px}
     .fab svg{width:24px;height:24px}
@@ -2382,11 +2382,13 @@
     });
   })();
 
-  // ===== Trust bar: fade-in + count-up animation (runs once, first time visible) =====
+  // ===== Trust bar: fade-in + count-up animation (replays each time it becomes visible again) =====
   (function(){
     var items=document.querySelectorAll('.trust-item');
-    if(!items.length) return;
+    var trustEl=document.querySelector('.trust');
+    if(!items.length || !trustEl) return;
     var played=false;
+    var anims=[]; // running rAF ids, so a replay can cancel any in-flight count
     function easeOutCubic(t){ return 1-Math.pow(1-t,3); }
     function animateCount(el){
       var target=parseInt(el.getAttribute('data-target'),10)||0;
@@ -2395,20 +2397,31 @@
         if(!start) start=ts;
         var progress=Math.min((ts-start)/duration,1);
         el.textContent=Math.round(easeOutCubic(progress)*target);
-        if(progress<1) requestAnimationFrame(step);
+        if(progress<1){ var id=requestAnimationFrame(step); anims.push(id); }
         else el.textContent=target;
       }
-      requestAnimationFrame(step);
+      var id=requestAnimationFrame(step);
+      anims.push(id);
     }
     function playOnce(){
       if(played) return; played=true;
       items.forEach(function(it){ it.classList.add('in-view'); });
       document.querySelectorAll('.trust .count').forEach(function(c){ animateCount(c); });
     }
+    // Resets state so the animation can play again next time the trust bar
+    // becomes visible (e.g. after leaving the home page and coming back).
+    function resetTrustStats(){
+      played=false;
+      anims.forEach(function(id){ cancelAnimationFrame(id); });
+      anims=[];
+      items.forEach(function(it){ it.classList.remove('in-view'); });
+      document.querySelectorAll('.trust .count').forEach(function(c){ c.textContent='0'; });
+    }
+    window.resetTrustStats=resetTrustStats;
     var io=new IntersectionObserver(function(entries){
       entries.forEach(function(e){ if(e.isIntersecting) playOnce(); });
     },{threshold:.3});
-    io.observe(document.querySelector('.trust'));
+    io.observe(trustEl);
   })();
 
   // Header: shadow on scroll + hide on scroll down / show on scroll up
@@ -2712,6 +2725,7 @@
     homeEl.style.display='';
     activeView='home';
     header.classList.remove('header-hidden');
+    if(typeof window.resetTrustStats==='function'){ window.resetTrustStats(); }
     if(scrollId){
       const el=document.getElementById(scrollId);
       if(el){ window.scrollTo({top: el.getBoundingClientRect().top + window.scrollY - 68, behavior:'auto'}); }
