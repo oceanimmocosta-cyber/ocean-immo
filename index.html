@@ -684,6 +684,12 @@
   }
   .detail-side{position:static}
   .cta-card{background:var(--sand);border:1px solid var(--line);border-radius:var(--radius-lg);padding:28px;box-shadow:var(--shadow-sm)}
+  .cta-card.cta-highlight{animation:ctaPulse 1.6s ease}
+  @keyframes ctaPulse{
+    0%{box-shadow:0 0 0 0 rgba(3,155,165,.4)}
+    25%{box-shadow:0 0 0 10px rgba(3,155,165,0)}
+    100%{box-shadow:0 0 0 0 rgba(3,155,165,0)}
+  }
   .cta-card h3{font-size:1.3rem;margin-bottom:8px}
   .cta-card .cta-ref{font-size:.92rem;color:var(--muted);margin-bottom:20px}
   .cta-card .field{margin-bottom:14px}
@@ -2470,7 +2476,7 @@
           </div>
         </div>
         </fieldset>
-        <p class="mortgage-disclaimer">Estimación orientativa sin validez contractual. La cuota real depende del banco, tu perfil financiero y las condiciones del momento.<br><a href="#" id="m-asesor-link">Habla con nuestro asesor hipotecario</a></p>
+        <p class="mortgage-disclaimer">Estimación orientativa sin validez contractual. La cuota real depende del banco, tu perfil financiero y las condiciones del momento.<br><a href="#contacto" id="m-asesor-link">Habla con nuestro asesor hipotecario</a></p>
       </div>
       <div class="mortgage-modal-foot">
         <button type="button" class="btn btn-turquoise" id="m-calc-btn">Calcular</button>
@@ -2998,7 +3004,7 @@
     if(typeof window.resetTrustStats==='function'){ window.resetTrustStats(); }
     if(scrollId){
       const el=document.getElementById(scrollId);
-      if(el){ window.scrollTo({top: el.getBoundingClientRect().top + window.scrollY - 68, behavior:'auto'}); }
+      if(el){ window.scrollTo({top: el.getBoundingClientRect().top + window.scrollY - 68, behavior:'instant'}); }
       else { window.scrollTo({top:0,left:0,behavior:'instant'}); }
     } else { window.scrollTo({top:0,left:0,behavior:'instant'}); }
     closeMenu();
@@ -3218,9 +3224,9 @@
       if(asesorLink){
         asesorLink.addEventListener('click', function(e){
           e.preventDefault();
+          e.stopPropagation();
           closeMortgageModal();
-          showPage('servicio-hipotecas');
-          window.scrollTo(0,0);
+          showHome('contacto');
         });
       }
       var trigger=document.getElementById('d-mortgage-trigger');
