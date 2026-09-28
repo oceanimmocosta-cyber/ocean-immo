@@ -611,7 +611,7 @@
   .share-email{background:#6b7a8f}
   .share-copy{background:var(--sand);color:var(--ink)}
   @media(max-width:480px){
-    .share-popover{left:auto;right:0;padding:7px 10px;gap:7px}
+    .share-popover{padding:7px 10px;gap:7px}
     .share-opt{width:28px;height:28px}
     .share-opt svg{width:15px;height:15px}
   }
@@ -3263,10 +3263,27 @@
     if(shareCopiedTimer) clearTimeout(shareCopiedTimer);
     shareCopiedTimer=setTimeout(function(){ tip.classList.remove('show'); }, 2200);
   }
+  function positionSharePopover(){
+    var pop=document.getElementById('d-share-popover');
+    if(!pop) return;
+    pop.style.left='0';
+    pop.style.right='auto';
+    var rect=pop.getBoundingClientRect();
+    var margin=10, vw=window.innerWidth;
+    if(rect.right>vw-margin){
+      var overflow=rect.right-(vw-margin);
+      pop.style.left=(-overflow)+'px';
+    }
+    rect=pop.getBoundingClientRect();
+    if(rect.left<margin){
+      pop.style.left=(parseFloat(pop.style.left||'0')+(margin-rect.left))+'px';
+    }
+  }
   function toggleSharePopover(force){
     var pop=document.getElementById('d-share-popover');
     if(!pop) return;
     var willOpen = typeof force==='boolean' ? force : !pop.classList.contains('open');
+    if(willOpen) positionSharePopover();
     pop.classList.toggle('open', willOpen);
   }
   function closeSharePopover(){ toggleSharePopover(false); }
