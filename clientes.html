@@ -688,7 +688,7 @@ function catLabel(id) {
 async function loadClientes() {
   if (!config) return;
   try {
-    const res = await fetch(`${config.apiUrl}?recurso=clientes`);
+    const res = await fetch(`${config.apiUrl}?recurso=clientes&usuario=${encodeURIComponent(config.usuario)}`);
     clientes = await res.json();
   } catch (e) {
     clientes = [];
@@ -1054,7 +1054,7 @@ async function updateEstadoRapido(cliente, nuevoEstado) {
     tipo_inmueble: cliente.tipo_inmueble || "",
     estado: nuevoEstado,
     notas: cliente.notas || "",
-    usuario: config.usuario
+    usuario: cliente.usuario || config.usuario
   });
   try {
     await fetch(config.apiUrl + "?recurso=clientes", { method: "POST", body: params });
