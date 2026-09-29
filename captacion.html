@@ -980,18 +980,41 @@ document.getElementById("user-chip").addEventListener("click", () => {
 // ============ REGISTRO DE LLAMADAS (sincronizado vía Google Sheets, filtrado por usuario) ============
 let calls = [];
 
+const CACHE_PREFIX = "oceanimmo_cache_v1_";
+function readCache(key) {
+  try {
+    const raw = sessionStorage.getItem(CACHE_PREFIX + key);
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) { return null; }
+}
+function writeCache(key, data) {
+  try { sessionStorage.setItem(CACHE_PREFIX + key, JSON.stringify(data)); } catch (e) {}
+}
+
 async function loadCalls() {
   if (!config) return;
+  const cacheKey = "llamadas_" + config.usuario;
+  const cached = readCache(cacheKey);
+  if (cached) {
+    // Mostramos al instante lo último visto mientras se actualiza en segundo plano.
+    calls = cached;
+    renderStats();
+    renderLog();
+    renderReminders();
+  }
   try {
     const url = `${config.apiUrl}?usuario=${encodeURIComponent(config.usuario)}`;
     const res = await fetch(url);
     if (!res.ok) throw new Error("HTTP " + res.status);
     const data = await res.json();
     calls = Array.isArray(data) ? data.map(normalizeEntry).sort((a, b) => b.fecha.localeCompare(a.fecha)) : [];
+    writeCache(cacheKey, calls);
   } catch (e) {
     console.error("Error al cargar llamadas", e);
-    showToast("No se pudo conectar con la Google Sheet. Revisa la URL.");
-    calls = [];
+    if (!cached) {
+      showToast("No se pudo conectar con la Google Sheet. Revisa la URL.");
+      calls = [];
+    }
   }
   renderStats();
   renderLog();
