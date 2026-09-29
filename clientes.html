@@ -685,14 +685,35 @@ function catLabel(id) {
 }
 
 /* ---------- Carga de clientes ---------- */
+const CACHE_PREFIX = "oceanimmo_cache_v1_";
+function readCache(key) {
+  try {
+    const raw = sessionStorage.getItem(CACHE_PREFIX + key);
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) { return null; }
+}
+function writeCache(key, data) {
+  try { sessionStorage.setItem(CACHE_PREFIX + key, JSON.stringify(data)); } catch (e) {}
+}
+
 async function loadClientes() {
   if (!config) return;
+  const cacheKey = "clientes_" + config.usuario;
+  const cached = readCache(cacheKey);
+  if (cached) {
+    // Mostramos al instante lo último visto mientras se actualiza en segundo plano.
+    clientes = cached;
+    renderClientList();
+  }
   try {
     const res = await fetch(`${config.apiUrl}?recurso=clientes&usuario=${encodeURIComponent(config.usuario)}`);
     clientes = await res.json();
+    writeCache(cacheKey, clientes);
   } catch (e) {
-    clientes = [];
-    showToast("No se pudo conectar con el backend");
+    if (!cached) {
+      clientes = [];
+      showToast("No se pudo conectar con el backend");
+    }
   }
   renderClientList();
 }
