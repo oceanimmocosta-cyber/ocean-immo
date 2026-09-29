@@ -3292,7 +3292,7 @@
     var shareTitle=title || 'Propiedad';
     var shareText=title + (refTxt ? ' – '+refTxt : '') + ' | Ocean Immo';
     var links={
-      'd-share-whatsapp':'https://api.whatsapp.com/send?text='+encodeURIComponent(shareText+' '+url),
+      'd-share-whatsapp':'https://api.whatsapp.com/send?text='+encodeURIComponent(url),
       'd-share-messenger':'fb-messenger://share/?link='+encodeURIComponent(url),
       'd-share-facebook':'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(url),
       'd-share-x':'https://twitter.com/intent/tweet?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(shareText),
