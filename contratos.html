@@ -290,25 +290,26 @@
   .contract-sign-block.full { width: 100%; margin-top: 24px; }
 
   .print-letterhead { display: none; }
+  .contract-table { width: 100%; border-collapse: collapse; }
+  .contract-table td { padding: 0; border: none; }
 
   @media print {
     .oi-nav, .form-card, .topbar-row, .output-toolbar, .intro, .no-print { display: none !important; }
     body { background: #fff; }
     .oi-main { margin: 0; }
     main { max-width: none; padding: 0; margin: 0; }
-    /* El margen de página se repite automáticamente en cada hoja: deja hueco arriba para la cabecera fija */
-    @page { margin: 210px 52px 40px; }
+    /* Márgenes normales: la cabecera repetida la aporta el <thead> de la tabla, no el margen de página */
+    @page { margin: 20px 52px 30px; }
     .contract-page { box-shadow: none; border-radius: 0; padding: 0; }
-    /* La cabecera de dentro del contrato se oculta: se sustituye por la fija de abajo, que se repite en cada hoja impresa */
+    /* La cabecera de dentro del contrato se oculta: se sustituye por la del <thead>, que el navegador repite en cada hoja impresa */
     .contract-page .contract-letterhead { display: none !important; }
+    thead.print-letterhead-row { display: table-header-group; }
     .print-letterhead {
       display: flex !important;
       justify-content: space-between;
       align-items: center;
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      background: #fff;
-      padding: 20px 52px 14px;
+      padding: 0 0 14px;
+      margin-bottom: 18px;
       border-bottom: 1px solid #ccc;
     }
     .print-letterhead img { height: 140px; width: auto; }
@@ -773,11 +774,19 @@
           <button class="btn-secondary" id="btn-copiar">📋 Copiar texto</button>
           <button class="btn-generar" id="btn-imprimir">🖨️ Descargar / Imprimir PDF</button>
         </div>
-        <div class="print-letterhead" id="print-letterhead">
-          <img id="print-letterhead-logo" alt="OCEAN IMMO" />
-          <div class="contact">+34 632 251 470<br>www.oceanimmocosta.com<br>oceanimmocosta@gmail.com</div>
-        </div>
-        <div class="contract-page" id="contract-content"></div>
+        <table class="contract-table">
+          <thead class="print-letterhead-row">
+            <tr><td>
+              <div class="print-letterhead" id="print-letterhead">
+                <img id="print-letterhead-logo" alt="OCEAN IMMO" />
+                <div class="contact">+34 632 251 470<br>www.oceanimmocosta.com<br>oceanimmocosta@gmail.com</div>
+              </div>
+            </td></tr>
+          </thead>
+          <tbody>
+            <tr><td class="contract-page" id="contract-content"></td></tr>
+          </tbody>
+        </table>
       </div>
     </main>
   </div>
