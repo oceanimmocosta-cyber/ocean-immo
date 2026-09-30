@@ -240,7 +240,8 @@
   .checkbox-row input { width: 16px; height: 16px; }
   .checkbox-row label { font-size: 13px; color: var(--text); cursor: pointer; }
 
-  .form-actions { margin-top: 20px; display: flex; gap: 10px; }
+  .form-actions { margin-top: 20px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+  .form-actions .checkbox-row { margin: 0; }
   .btn-generar {
     all: initial; cursor: pointer; background: var(--turquoise); color: #fff;
     font-family: 'Inter', sans-serif; font-size: 13.5px; font-weight: 700;
@@ -452,6 +453,10 @@
 
         <div class="form-actions">
           <button class="btn-generar" id="btn-generar">Generar contrato</button>
+          <div class="checkbox-row">
+            <input type="checkbox" id="f-firmar-oi" checked />
+            <label for="f-firmar-oi">✍️ Firmar como Ocean Immo</label>
+          </div>
         </div>
       </div>
 
@@ -512,6 +517,10 @@
 
         <div class="form-actions">
           <button class="btn-generar" id="btn-generar-oferta">Generar oferta</button>
+          <div class="checkbox-row">
+            <input type="checkbox" id="fo-firmar-oi" checked />
+            <label for="fo-firmar-oi">✍️ Firmar como Ocean Immo</label>
+          </div>
         </div>
       </div>
 
@@ -554,6 +563,10 @@
 
         <div class="form-actions">
           <button class="btn-generar" id="btn-generar-mandato">Generar mandato</button>
+          <div class="checkbox-row">
+            <input type="checkbox" id="fm-firmar-oi" checked />
+            <label for="fm-firmar-oi">✍️ Firmar como Ocean Immo</label>
+          </div>
         </div>
       </div>
 
@@ -604,6 +617,10 @@
 
         <div class="form-actions">
           <button class="btn-generar" id="btn-generar-mandato-ex">Generar mandato</button>
+          <div class="checkbox-row">
+            <input type="checkbox" id="fme-firmar-oi" checked />
+            <label for="fme-firmar-oi">✍️ Firmar como Ocean Immo</label>
+          </div>
         </div>
       </div>
 
@@ -646,6 +663,10 @@
 
         <div class="form-actions">
           <button class="btn-generar" id="btn-generar-mandato-fr">Générer le mandat</button>
+          <div class="checkbox-row">
+            <input type="checkbox" id="fmfr-firmar-oi" checked />
+            <label for="fmfr-firmar-oi">✍️ Signer en tant qu'Ocean Immo</label>
+          </div>
         </div>
       </div>
 
@@ -688,6 +709,10 @@
 
         <div class="form-actions">
           <button class="btn-generar" id="btn-generar-mandato-ex-fr">Générer le mandat</button>
+          <div class="checkbox-row">
+            <input type="checkbox" id="fmefr-firmar-oi" checked />
+            <label for="fmefr-firmar-oi">✍️ Signer en tant qu'Ocean Immo</label>
+          </div>
         </div>
       </div>
 
@@ -782,16 +807,15 @@
 
         <div class="form-actions">
           <button class="btn-generar" id="btn-generar-arras-fr">Generar contrato bilingüe</button>
+          <div class="checkbox-row">
+            <input type="checkbox" id="far-firmar-oi" checked />
+            <label for="far-firmar-oi">✍️ Firmar como Ocean Immo</label>
+          </div>
         </div>
       </div>
 
       <div class="output-wrap" id="output-wrap">
         <div class="output-toolbar">
-          <div class="checkbox-row" style="margin:0;">
-            <input type="checkbox" id="chk-firmar-oi" checked />
-            <label for="chk-firmar-oi">✍️ Firmar documento (como Ocean Immo)</label>
-          </div>
-          <div style="flex:1;"></div>
           <button class="btn-secondary" id="btn-copiar">📋 Copiar texto</button>
           <button class="btn-generar" id="btn-imprimir">🖨️ Descargar / Imprimir PDF</button>
         </div>
@@ -1181,7 +1205,7 @@ function eurosFr(n) {
 
 /* ---------- Generar contrato ---------- */
 document.getElementById("btn-generar").addEventListener("click", () => {
-  const stampHtml = document.getElementById("chk-firmar-oi").checked ? `<img src="data:image/png;base64,${STAMP_B64}" class="agency-stamp" alt="Firma Ocean Immo" />` : "";
+  const stampHtml = document.getElementById("f-firmar-oi").checked ? `<img src="data:image/png;base64,${STAMP_B64}" class="agency-stamp" alt="Firma Ocean Immo" />` : "";
   const v1n = document.getElementById("f-v1-nombre").value.trim();
   const v1d = document.getElementById("f-v1-dni").value.trim();
   const hayV2 = document.getElementById("f-hay-v2").checked;
@@ -1302,7 +1326,7 @@ document.getElementById("btn-generar").addEventListener("click", () => {
 
 /* ---------- Generar oferta de compra ---------- */
 document.getElementById("btn-generar-oferta").addEventListener("click", () => {
-  const stampHtml = document.getElementById("chk-firmar-oi").checked ? `<img src="data:image/png;base64,${STAMP_B64}" class="agency-stamp" alt="Firma Ocean Immo" />` : "";
+  const stampHtml = document.getElementById("fo-firmar-oi").checked ? `<img src="data:image/png;base64,${STAMP_B64}" class="agency-stamp" alt="Firma Ocean Immo" />` : "";
   const lugar = document.getElementById("fo-lugar").value.trim() || "Roses";
   const fecha = document.getElementById("fo-fecha").value;
   const direccion = document.getElementById("fo-direccion").value.trim();
@@ -1390,7 +1414,7 @@ document.getElementById("btn-generar-oferta").addEventListener("click", () => {
 });
 
 document.getElementById("btn-generar-mandato").addEventListener("click", () => {
-  const stampHtml = document.getElementById("chk-firmar-oi").checked ? `<img src="data:image/png;base64,${STAMP_B64}" class="agency-stamp" alt="Firma Ocean Immo" />` : "";
+  const stampHtml = document.getElementById("fm-firmar-oi").checked ? `<img src="data:image/png;base64,${STAMP_B64}" class="agency-stamp" alt="Firma Ocean Immo" />` : "";
   const fecha = document.getElementById("fm-fecha").value;
   const nombre = document.getElementById("fm-nombre").value.trim();
   const dni = document.getElementById("fm-dni").value.trim();
@@ -1471,7 +1495,7 @@ document.getElementById("btn-generar-mandato").addEventListener("click", () => {
 });
 
 document.getElementById("btn-generar-mandato-ex").addEventListener("click", () => {
-  const stampHtml = document.getElementById("chk-firmar-oi").checked ? `<img src="data:image/png;base64,${STAMP_B64}" class="agency-stamp" alt="Firma Ocean Immo" />` : "";
+  const stampHtml = document.getElementById("fme-firmar-oi").checked ? `<img src="data:image/png;base64,${STAMP_B64}" class="agency-stamp" alt="Firma Ocean Immo" />` : "";
   const fecha = document.getElementById("fme-fecha").value;
   const nombre = document.getElementById("fme-nombre").value.trim();
   const dni = document.getElementById("fme-dni").value.trim();
@@ -1553,7 +1577,7 @@ document.getElementById("btn-generar-mandato-ex").addEventListener("click", () =
 });
 
 document.getElementById("btn-generar-mandato-fr").addEventListener("click", () => {
-  const stampHtml = document.getElementById("chk-firmar-oi").checked ? `<img src="data:image/png;base64,${STAMP_B64}" class="agency-stamp" alt="Firma Ocean Immo" />` : "";
+  const stampHtml = document.getElementById("fmfr-firmar-oi").checked ? `<img src="data:image/png;base64,${STAMP_B64}" class="agency-stamp" alt="Firma Ocean Immo" />` : "";
   const fecha = document.getElementById("fmfr-fecha").value;
   const nombre = document.getElementById("fmfr-nombre").value.trim();
   const dni = document.getElementById("fmfr-dni").value.trim();
@@ -1632,7 +1656,7 @@ document.getElementById("btn-generar-mandato-fr").addEventListener("click", () =
 });
 
 document.getElementById("btn-generar-mandato-ex-fr").addEventListener("click", () => {
-  const stampHtml = document.getElementById("chk-firmar-oi").checked ? `<img src="data:image/png;base64,${STAMP_B64}" class="agency-stamp" alt="Firma Ocean Immo" />` : "";
+  const stampHtml = document.getElementById("fmefr-firmar-oi").checked ? `<img src="data:image/png;base64,${STAMP_B64}" class="agency-stamp" alt="Firma Ocean Immo" />` : "";
   const fecha = document.getElementById("fmefr-fecha").value;
   const nombre = document.getElementById("fmefr-nombre").value.trim();
   const dni = document.getElementById("fmefr-dni").value.trim();
@@ -1712,7 +1736,7 @@ document.getElementById("btn-generar-mandato-ex-fr").addEventListener("click", (
 
 /* ---------- Generar contrato de arras bilingüe ES/FR ---------- */
 document.getElementById("btn-generar-arras-fr").addEventListener("click", () => {
-  const stampHtml = document.getElementById("chk-firmar-oi").checked ? `<img src="data:image/png;base64,${STAMP_B64}" class="agency-stamp" alt="Firma Ocean Immo" />` : "";
+  const stampHtml = document.getElementById("far-firmar-oi").checked ? `<img src="data:image/png;base64,${STAMP_B64}" class="agency-stamp" alt="Firma Ocean Immo" />` : "";
   const v1n = document.getElementById("far-v1-nombre").value.trim();
   const v1d = document.getElementById("far-v1-dni").value.trim();
   const hayV2 = document.getElementById("far-hay-v2").checked;
