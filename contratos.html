@@ -296,7 +296,9 @@
     body { background: #fff; }
     .oi-main { margin: 0; }
     main { max-width: none; padding: 0; margin: 0; }
-    .contract-page { box-shadow: none; border-radius: 0; padding: 210px 52px 20px; }
+    /* El margen de página se repite automáticamente en cada hoja: deja hueco arriba para la cabecera fija */
+    @page { margin: 210px 52px 40px; }
+    .contract-page { box-shadow: none; border-radius: 0; padding: 0; }
     /* La cabecera de dentro del contrato se oculta: se sustituye por la fija de abajo, que se repite en cada hoja impresa */
     .contract-page .contract-letterhead { display: none !important; }
     .print-letterhead {
