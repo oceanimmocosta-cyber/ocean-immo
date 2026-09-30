@@ -433,12 +433,19 @@
             <input type="number" id="f-arras" min="0" step="1" placeholder="Ej. 10000" />
           </div>
           <div class="field">
-            <label>Plazo para denegación hipotecaria (días)</label>
-            <input type="number" id="f-plazo-hipoteca" min="0" step="1" value="30" />
-          </div>
-          <div class="field">
             <label>Fecha límite para la escritura</label>
             <input type="date" id="f-fecha-escritura" />
+          </div>
+        </div>
+
+        <div class="checkbox-row">
+          <input type="checkbox" id="f-con-hipoteca" checked />
+          <label for="f-con-hipoteca">La operación está condicionada a la obtención de financiación hipotecaria</label>
+        </div>
+        <div class="form-grid" id="f-hipoteca-wrap">
+          <div class="field">
+            <label>Plazo para denegación hipotecaria (días)</label>
+            <input type="number" id="f-plazo-hipoteca" min="0" step="1" value="30" />
           </div>
         </div>
 
@@ -756,12 +763,19 @@
             <input type="number" id="far-arras" min="0" step="1" placeholder="Ej. 10000" />
           </div>
           <div class="field">
-            <label>Plazo para denegación hipotecaria (días)</label>
-            <input type="number" id="far-plazo-hipoteca" min="0" step="1" value="30" />
-          </div>
-          <div class="field">
             <label>Fecha límite para la escritura</label>
             <input type="date" id="far-fecha-escritura" />
+          </div>
+        </div>
+
+        <div class="checkbox-row">
+          <input type="checkbox" id="far-con-hipoteca" checked />
+          <label for="far-con-hipoteca">La operación está condicionada a la obtención de financiación hipotecaria</label>
+        </div>
+        <div class="form-grid" id="far-hipoteca-wrap">
+          <div class="field">
+            <label>Plazo para denegación hipotecaria (días)</label>
+            <input type="number" id="far-plazo-hipoteca" min="0" step="1" value="30" />
           </div>
         </div>
 
@@ -929,6 +943,10 @@ document.getElementById("f-hay-v2").addEventListener("change", (ev) => {
   document.getElementById("f-v2-wrap").classList.toggle("hidden", !ev.target.checked);
 });
 
+document.getElementById("f-con-hipoteca").addEventListener("change", (ev) => {
+  document.getElementById("f-hipoteca-wrap").classList.toggle("hidden", !ev.target.checked);
+});
+
 document.getElementById("fo-cliente").addEventListener("change", (ev) => {
   const c = clientes.find(x => x.id === ev.target.value);
   if (!c) return;
@@ -981,6 +999,10 @@ document.getElementById("far-cliente").addEventListener("change", (ev) => {
 
 document.getElementById("far-hay-v2").addEventListener("change", (ev) => {
   document.getElementById("far-v2-wrap").classList.toggle("hidden", !ev.target.checked);
+});
+
+document.getElementById("far-con-hipoteca").addEventListener("change", (ev) => {
+  document.getElementById("far-hipoteca-wrap").classList.toggle("hidden", !ev.target.checked);
 });
 
 /* ---------- Pestañas ---------- */
@@ -1163,6 +1185,7 @@ document.getElementById("btn-generar").addEventListener("click", () => {
   const catastral = document.getElementById("f-catastral").value.trim();
   const precio = document.getElementById("f-precio").value;
   const arras = document.getElementById("f-arras").value;
+  const conHipoteca = document.getElementById("f-con-hipoteca").checked;
   const plazoHipoteca = document.getElementById("f-plazo-hipoteca").value;
   const fechaContrato = document.getElementById("f-fecha-contrato").value;
   const fechaEscritura = document.getElementById("f-fecha-escritura").value;
@@ -1179,6 +1202,13 @@ document.getElementById("btn-generar").addEventListener("click", () => {
   const vendedoraTexto = hayV2 && v2n && v2d
     ? `D./Dña. <b>${escapeHtml(v1n)}</b>, mayor de edad, con DNI/NIE/PASAPORTE nº <b>${escapeHtml(v1d)}</b>, y D./Dña. <b>${escapeHtml(v2n)}</b>, mayor de edad, con DNI/NIE/PASAPORTE nº <b>${escapeHtml(v2d)}</b>, en adelante &ldquo;la parte vendedora&rdquo;.`
     : `D./Dña. <b>${escapeHtml(v1n)}</b>, mayor de edad, con DNI/NIE/PASAPORTE nº <b>${escapeHtml(v1d)}</b>, en adelante &ldquo;la parte vendedora&rdquo;.`;
+
+  const clausulaHipoteca = conHipoteca
+    ? `<div class="contract-clause-title">Condición suspensiva por financiación hipotecaria</div>
+    <p class="contract-p">En el caso de que la parte compradora no obtenga la concesión de la financiación hipotecaria necesaria para la adquisición del inmueble objeto de este contrato, deberá justificarlo mediante la correspondiente denegación bancaria por escrito, la cual deberá presentarse en un plazo máximo de <b>${plazoHipoteca || "___"} días</b> (${plazoHipoteca ? numeroALetras(plazoHipoteca) : "___________"} días) desde la firma del presente contrato. En tal caso, las arras entregadas serán devueltas íntegramente a la parte compradora, sin que ello genere penalización ni obligación adicional para ninguna de las partes.</p>
+    <p class="contract-p">Si la parte compradora no inicia el proceso de solicitud en el plazo indicado, o no colabora activamente en su tramitación, esta cláusula quedará sin efecto y se aplicará lo dispuesto en la cláusula cuarta sobre arras penitenciales.</p>`
+    : `<div class="contract-clause-title">Financiación</div>
+    <p class="contract-p">La presente operación no está condicionada a la obtención de financiación hipotecaria. La parte compradora declara disponer de los medios económicos necesarios para hacer frente al pago del precio pactado, por lo que no será de aplicación ninguna condición suspensiva por denegación de préstamo hipotecario.</p>`;
 
   const html = `
     <div class="contract-letterhead">
@@ -1222,9 +1252,7 @@ document.getElementById("btn-generar").addEventListener("click", () => {
       <li>Si la parte vendedora desiste, deberá abonar el doble del importe recibido, que la intermediaria entregará a la parte compradora, una vez recibido dicho importe duplicado, devolviéndose las arras de manera íntegra.</li>
     </ul>
 
-    <div class="contract-clause-title">Condición suspensiva por financiación hipotecaria</div>
-    <p class="contract-p">En el caso de que la parte compradora no obtenga la concesión de la financiación hipotecaria necesaria para la adquisición del inmueble objeto de este contrato, deberá justificarlo mediante la correspondiente denegación bancaria por escrito, la cual deberá presentarse en un plazo máximo de <b>${plazoHipoteca || "___"} días</b> (${plazoHipoteca ? numeroALetras(plazoHipoteca) : "___________"} días) desde la firma del presente contrato. En tal caso, las arras entregadas serán devueltas íntegramente a la parte compradora, sin que ello genere penalización ni obligación adicional para ninguna de las partes.</p>
-    <p class="contract-p">Si la parte compradora no inicia el proceso de solicitud en el plazo indicado, o no colabora activamente en su tramitación, esta cláusula quedará sin efecto y se aplicará lo dispuesto en la cláusula cuarta sobre arras penitenciales.</p>
+    ${clausulaHipoteca}
 
     <div class="contract-clause-title">Entrega de documentación legal obligatoria</div>
     <p class="contract-p">La parte vendedora se compromete a entregar, con anterioridad a la firma de la escritura pública de compraventa, toda la documentación legalmente exigida en Cataluña, incluyendo de manera expresa: el Certificado de Eficiencia Energética (CEE), la Cédula de Habitabilidad vigente, el Certificado acreditativo de estar al corriente en el pago de los gastos de comunidad, así como el justificante del pago del Impuesto sobre Bienes Inmuebles (IBI).</p>
@@ -1676,6 +1704,7 @@ document.getElementById("btn-generar-arras-fr").addEventListener("click", () => 
   const catastral = document.getElementById("far-catastral").value.trim();
   const precio = document.getElementById("far-precio").value;
   const arras = document.getElementById("far-arras").value;
+  const conHipoteca = document.getElementById("far-con-hipoteca").checked;
   const plazoHipoteca = document.getElementById("far-plazo-hipoteca").value;
   const fechaContrato = document.getElementById("far-fecha-contrato").value;
   const fechaEscritura = document.getElementById("far-fecha-escritura").value;
@@ -1697,6 +1726,16 @@ document.getElementById("btn-generar-arras-fr").addEventListener("click", () => 
   const vendedoraTextoFr = hayV2 && v2n && v2d
     ? `M./Mme <b>${escapeHtml(v1n)}</b>, majeur(e), titulaire du DNI/NIE/PASSEPORT n° <b>${escapeHtml(v1d)}</b>, et M./Mme <b>${escapeHtml(v2n)}</b>, majeur(e), titulaire du DNI/NIE/PASSEPORT n° <b>${escapeHtml(v2d)}</b>, ci-après dénommés &laquo;&nbsp;la partie venderesse&nbsp;&raquo;.`
     : `M./Mme <b>${escapeHtml(v1n)}</b>, majeur(e), titulaire du DNI/NIE/PASSEPORT n° <b>${escapeHtml(v1d)}</b>, ci-après dénommé(e) &laquo;&nbsp;la partie venderesse&nbsp;&raquo;.`;
+
+  const clausulaHipoteca = conHipoteca
+    ? `<div class="contract-clause-title">Condición suspensiva por financiación hipotecaria / <i>Condition suspensive liée au financement hypothécaire</i></div>
+    <p class="contract-p">En el caso de que la parte compradora no obtenga la concesión de la financiación hipotecaria necesaria para la adquisición del inmueble objeto de este contrato, deberá justificarlo mediante la correspondiente denegación bancaria por escrito, la cual deberá presentarse en un plazo máximo de <b>${plazoHipoteca || "___"} días</b> (${plazoHipoteca ? numeroALetras(plazoHipoteca) : "___________"} días) desde la firma del presente contrato. En tal caso, las arras entregadas serán devueltas íntegramente a la parte compradora, sin que ello genere penalización ni obligación adicional para ninguna de las partes.</p>
+    <p class="contract-p">Si la parte compradora no inicia el proceso de solicitud en el plazo indicado, o no colabora activamente en su tramitación, esta cláusula quedará sin efecto y se aplicará lo dispuesto en la cláusula cuarta sobre arras penitenciales.</p>
+    <p class="contract-p"><i>Dans le cas où la partie acquéreuse n'obtiendrait pas l'octroi du financement hypothécaire nécessaire à l'acquisition du bien objet du présent contrat, elle devra le justifier au moyen du refus bancaire correspondant par écrit, lequel devra être présenté dans un délai maximum de <b>${plazoHipoteca || "___"} jours</b> (${plazoHipoteca ? numeroALetrasFr(plazoHipoteca) : "___________"} jours) à compter de la signature du présent contrat. Dans ce cas, les arrhes versées seront restituées intégralement à la partie acquéreuse, sans que cela n'entraîne de pénalité ni d'obligation supplémentaire pour aucune des parties.</i></p>
+    <p class="contract-p"><i>Si la partie acquéreuse n'entame pas le processus de demande dans le délai indiqué, ou ne collabore pas activement à son instruction, la présente clause deviendra caduque et il sera fait application des dispositions de la clause quatrième relative aux arrhes pénitentielles.</i></p>`
+    : `<div class="contract-clause-title">Financiación / <i>Financement</i></div>
+    <p class="contract-p">La presente operación no está condicionada a la obtención de financiación hipotecaria. La parte compradora declara disponer de los medios económicos necesarios para hacer frente al pago del precio pactado, por lo que no será de aplicación ninguna condición suspensiva por denegación de préstamo hipotecario.</p>
+    <p class="contract-p"><i>La présente opération n'est pas conditionnée à l'obtention d'un financement hypothécaire. La partie acquéreuse déclare disposer des moyens économiques nécessaires pour faire face au paiement du prix convenu, de sorte qu'aucune condition suspensive liée à un refus de prêt hypothécaire ne sera applicable.</i></p>`;
 
   const html = `
     <div class="contract-letterhead">
@@ -1762,11 +1801,7 @@ document.getElementById("btn-generar-arras-fr").addEventListener("click", () => 
       <li><i>Si la partie venderesse se désiste, elle devra verser le double du montant reçu, que l'intermédiaire remettra à la partie acquéreuse, une fois ce montant doublé effectivement perçu, les arrhes étant restituées de manière intégrale.</i></li>
     </ul>
 
-    <div class="contract-clause-title">Condición suspensiva por financiación hipotecaria / <i>Condition suspensive liée au financement hypothécaire</i></div>
-    <p class="contract-p">En el caso de que la parte compradora no obtenga la concesión de la financiación hipotecaria necesaria para la adquisición del inmueble objeto de este contrato, deberá justificarlo mediante la correspondiente denegación bancaria por escrito, la cual deberá presentarse en un plazo máximo de <b>${plazoHipoteca || "___"} días</b> (${plazoHipoteca ? numeroALetras(plazoHipoteca) : "___________"} días) desde la firma del presente contrato. En tal caso, las arras entregadas serán devueltas íntegramente a la parte compradora, sin que ello genere penalización ni obligación adicional para ninguna de las partes.</p>
-    <p class="contract-p">Si la parte compradora no inicia el proceso de solicitud en el plazo indicado, o no colabora activamente en su tramitación, esta cláusula quedará sin efecto y se aplicará lo dispuesto en la cláusula cuarta sobre arras penitenciales.</p>
-    <p class="contract-p"><i>Dans le cas où la partie acquéreuse n'obtiendrait pas l'octroi du financement hypothécaire nécessaire à l'acquisition du bien objet du présent contrat, elle devra le justifier au moyen du refus bancaire correspondant par écrit, lequel devra être présenté dans un délai maximum de <b>${plazoHipoteca || "___"} jours</b> (${plazoHipoteca ? numeroALetrasFr(plazoHipoteca) : "___________"} jours) à compter de la signature du présent contrat. Dans ce cas, les arrhes versées seront restituées intégralement à la partie acquéreuse, sans que cela n'entraîne de pénalité ni d'obligation supplémentaire pour aucune des parties.</i></p>
-    <p class="contract-p"><i>Si la partie acquéreuse n'entame pas le processus de demande dans le délai indiqué, ou ne collabore pas activement à son instruction, la présente clause deviendra caduque et il sera fait application des dispositions de la clause quatrième relative aux arrhes pénitentielles.</i></p>
+    ${clausulaHipoteca}
 
     <div class="contract-clause-title">Entrega de documentación legal obligatoria / <i>Remise de la documentation légale obligatoire</i></div>
     <p class="contract-p">La parte vendedora se compromete a entregar, con anterioridad a la firma de la escritura pública de compraventa, toda la documentación legalmente exigida en Cataluña, incluyendo de manera expresa: el Certificado de Eficiencia Energética (CEE), la Cédula de Habitabilidad vigente, el Certificado acreditativo de estar al corriente en el pago de los gastos de comunidad, así como el justificante del pago del Impuesto sobre Bienes Inmuebles (IBI).</p>
