@@ -354,6 +354,7 @@
     <button class="tab-btn active" id="tab-precio" onclick="switchTab('precio')">Precio → Comisión</button>
     <button class="tab-btn" id="tab-comision" onclick="switchTab('comision')">Comisión → Precio</button>
     <button class="tab-btn" id="tab-propietario" onclick="switchTab('propietario')">Precio propietario → Publicación</button>
+    <button class="tab-btn" id="tab-gastos" onclick="switchTab('gastos')">Gastos de compra (comprador)</button>
   </div>
 
   <!-- MODO 1: precio de venta -> comisión -->
@@ -463,6 +464,95 @@
       </div>
     </div>
   </div>
+
+  <!-- MODO 4: gastos de compra para el comprador -->
+  <div class="card" id="panel-gastos" style="display:none;">
+    <h2>Gastos de compra estimados (comprador)</h2>
+    <div class="field">
+      <label for="gastos-precio">Precio de compra (€)</label>
+      <input type="number" id="gastos-precio" placeholder="Ej. 250000" min="0" step="0.01" oninput="calcDesdeGastos()">
+    </div>
+    <div class="field">
+      <label for="gastos-tipo">Tipo de vivienda</label>
+      <select id="gastos-tipo" onchange="toggleTipoGastos(); calcDesdeGastos();" style="width:100%; padding:11px 13px; border-radius:10px; border:1px solid var(--border); font-family:'Inter',sans-serif; font-size:14px; color:var(--text); background:#fff;">
+        <option value="usada">Vivienda de segunda mano (ITP)</option>
+        <option value="nueva">Vivienda nueva / obra nueva (IVA + AJD)</option>
+      </select>
+      <div class="field-hint">En Cataluña, la vivienda de segunda mano tributa por ITP; la obra nueva por IVA + Actos Jurídicos Documentados.</div>
+    </div>
+
+    <div class="params-row" id="gastos-usada-row">
+      <div class="field">
+        <label for="gastos-itp">ITP (%)</label>
+        <input type="number" id="gastos-itp" value="10" min="0" step="0.01" oninput="calcDesdeGastos()">
+      </div>
+    </div>
+    <div class="params-row" id="gastos-nueva-row" style="display:none;">
+      <div class="field">
+        <label for="gastos-iva">IVA (%)</label>
+        <input type="number" id="gastos-iva" value="10" min="0" step="0.01" oninput="calcDesdeGastos()">
+      </div>
+      <div class="field">
+        <label for="gastos-ajd">AJD (%)</label>
+        <input type="number" id="gastos-ajd" value="1.5" min="0" step="0.01" oninput="calcDesdeGastos()">
+      </div>
+    </div>
+
+    <div class="params-row">
+      <div class="field">
+        <label for="gastos-notaria">Notaría (%)</label>
+        <input type="number" id="gastos-notaria" value="0.5" min="0" step="0.01" oninput="calcDesdeGastos()">
+      </div>
+      <div class="field">
+        <label for="gastos-registro">Registro de la propiedad (%)</label>
+        <input type="number" id="gastos-registro" value="0.2" min="0" step="0.01" oninput="calcDesdeGastos()">
+      </div>
+    </div>
+    <div class="field">
+      <label for="gastos-gestoria">Gestoría (€, importe fijo estimado)</label>
+      <input type="number" id="gastos-gestoria" value="350" min="0" step="1" oninput="calcDesdeGastos()">
+    </div>
+    <div class="field-hint" style="margin-top:-8px; margin-bottom:16px;">Estos porcentajes son estimaciones orientativas; el importe real de notaría y registro depende del arancel oficial y puede variar.</div>
+
+    <div class="results">
+      <div class="result-row">
+        <span class="label">Precio de compra</span>
+        <span class="value" id="g-out-precio">—</span>
+      </div>
+      <div class="result-row" id="g-row-itp">
+        <span class="label">ITP</span>
+        <span class="value" id="g-out-itp">—</span>
+      </div>
+      <div class="result-row" id="g-row-iva" style="display:none;">
+        <span class="label">IVA</span>
+        <span class="value" id="g-out-iva">—</span>
+      </div>
+      <div class="result-row" id="g-row-ajd" style="display:none;">
+        <span class="label">AJD</span>
+        <span class="value" id="g-out-ajd">—</span>
+      </div>
+      <div class="result-row">
+        <span class="label">Notaría (estimado)</span>
+        <span class="value" id="g-out-notaria">—</span>
+      </div>
+      <div class="result-row">
+        <span class="label">Registro (estimado)</span>
+        <span class="value" id="g-out-registro">—</span>
+      </div>
+      <div class="result-row">
+        <span class="label">Gestoría (estimado)</span>
+        <span class="value" id="g-out-gestoria">—</span>
+      </div>
+      <div class="result-row total">
+        <span class="label">Total gastos estimados</span>
+        <span class="value" id="g-out-total-gastos">—</span>
+      </div>
+      <div class="result-row final">
+        <span class="label">Desembolso total aproximado</span>
+        <span class="value" id="g-out-total-final">—</span>
+      </div>
+    </div>
+  </div>
 </main>
 
 <script>
@@ -475,9 +565,66 @@
     document.getElementById("panel-precio").style.display = which === "precio" ? "block" : "none";
     document.getElementById("panel-comision").style.display = which === "comision" ? "block" : "none";
     document.getElementById("panel-propietario").style.display = which === "propietario" ? "block" : "none";
+    document.getElementById("panel-gastos").style.display = which === "gastos" ? "block" : "none";
     document.getElementById("tab-precio").classList.toggle("active", which === "precio");
     document.getElementById("tab-comision").classList.toggle("active", which === "comision");
     document.getElementById("tab-propietario").classList.toggle("active", which === "propietario");
+    document.getElementById("tab-gastos").classList.toggle("active", which === "gastos");
+  }
+
+  function toggleTipoGastos() {
+    const esNueva = document.getElementById("gastos-tipo").value === "nueva";
+    document.getElementById("gastos-usada-row").style.display = esNueva ? "none" : "flex";
+    document.getElementById("gastos-nueva-row").style.display = esNueva ? "flex" : "none";
+    document.getElementById("g-row-itp").style.display = esNueva ? "none" : "flex";
+    document.getElementById("g-row-iva").style.display = esNueva ? "flex" : "none";
+    document.getElementById("g-row-ajd").style.display = esNueva ? "flex" : "none";
+  }
+
+  function calcDesdeGastos() {
+    const precio = parseFloat(document.getElementById("gastos-precio").value);
+    const esNueva = document.getElementById("gastos-tipo").value === "nueva";
+    const itpPct = parseFloat(document.getElementById("gastos-itp").value);
+    const ivaPct = parseFloat(document.getElementById("gastos-iva").value);
+    const ajdPct = parseFloat(document.getElementById("gastos-ajd").value);
+    const notariaPct = parseFloat(document.getElementById("gastos-notaria").value);
+    const registroPct = parseFloat(document.getElementById("gastos-registro").value);
+    const gestoria = parseFloat(document.getElementById("gastos-gestoria").value);
+
+    const ids = ["g-out-precio", "g-out-itp", "g-out-iva", "g-out-ajd", "g-out-notaria", "g-out-registro", "g-out-gestoria", "g-out-total-gastos", "g-out-total-final"];
+    if (isNaN(precio) || precio <= 0) {
+      ids.forEach(id => document.getElementById(id).textContent = "—");
+      return;
+    }
+
+    const notaria = precio * ((isNaN(notariaPct) ? 0 : notariaPct) / 100);
+    const registro = precio * ((isNaN(registroPct) ? 0 : registroPct) / 100);
+    const gestoriaVal = isNaN(gestoria) ? 0 : gestoria;
+
+    let impuesto = 0;
+    let totalGastos = 0;
+
+    if (esNueva) {
+      const iva = precio * ((isNaN(ivaPct) ? 0 : ivaPct) / 100);
+      const ajd = precio * ((isNaN(ajdPct) ? 0 : ajdPct) / 100);
+      impuesto = iva + ajd;
+      document.getElementById("g-out-iva").textContent = fmtEUR(iva);
+      document.getElementById("g-out-ajd").textContent = fmtEUR(ajd);
+    } else {
+      const itp = precio * ((isNaN(itpPct) ? 0 : itpPct) / 100);
+      impuesto = itp;
+      document.getElementById("g-out-itp").textContent = fmtEUR(itp);
+    }
+
+    totalGastos = impuesto + notaria + registro + gestoriaVal;
+    const totalFinal = precio + totalGastos;
+
+    document.getElementById("g-out-precio").textContent = fmtEUR(precio);
+    document.getElementById("g-out-notaria").textContent = fmtEUR(notaria);
+    document.getElementById("g-out-registro").textContent = fmtEUR(registro);
+    document.getElementById("g-out-gestoria").textContent = fmtEUR(gestoriaVal);
+    document.getElementById("g-out-total-gastos").textContent = fmtEUR(totalGastos);
+    document.getElementById("g-out-total-final").textContent = fmtEUR(totalFinal);
   }
 
   function calcDesdePrecio() {
