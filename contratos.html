@@ -291,7 +291,8 @@
 
   .print-letterhead { display: none; }
   .contract-table { width: 100%; border-collapse: collapse; }
-  .contract-table td { padding: 0; border: none; }
+  .contract-table > thead > tr > td { padding: 0; border: none; }
+  .contract-table > tbody > tr > td { border: none; }
 
   @media print {
     .oi-nav, .form-card, .topbar-row, .output-toolbar, .intro, .no-print { display: none !important; }
