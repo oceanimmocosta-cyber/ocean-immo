@@ -781,6 +781,13 @@
   .foot-map-pin{fill:var(--turquoise)}
   .foot-map-pin-ring{fill:none;stroke:var(--turquoise);stroke-width:4;transform-origin:center;transform-box:fill-box;animation:footPinPulse 2.6s ease-out infinite}
   @keyframes footPinPulse{0%{transform:scale(1);opacity:.7}100%{transform:scale(3.4);opacity:0}}
+  .map-arrow{position:absolute;left:0;top:0;pointer-events:none;z-index:3;overflow:visible;display:none}
+  .map-arrow path.ma-line{fill:none;stroke:var(--turquoise);stroke-width:2.5;stroke-linecap:round;stroke-dasharray:3 9;opacity:.9}
+  .map-arrow path.ma-line.ma-draw{stroke-dasharray:var(--ma-len);stroke-dashoffset:var(--ma-len);transition:stroke-dashoffset 1.8s linear}
+  .map-arrow path.ma-line.ma-draw.ma-on{stroke-dashoffset:0}
+  .map-arrow .ma-head{fill:none;stroke:var(--turquoise);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;opacity:0;transition:opacity .4s ease 1.7s}
+  .map-arrow .ma-head.ma-on{opacity:1}
+  @media(max-width:900px){.map-arrow{display:none!important}}
   @media(max-width:900px){.foot-map{right:3%;top:auto;bottom:2%;height:42%}}
   .foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1.2fr;gap:40px;margin-bottom:44px}
   .foot-brand .logo{color:#fff;margin-bottom:18px}
@@ -3986,6 +3993,66 @@
   // (searchBtn handled inside the delegated click router above)
   initPriceSliders();
 
+</script>
+<script>
+(function(){
+  var svgNS='http://www.w3.org/2000/svg', svg, line, head, shown=false, io;
+  function build(){
+    svg=document.createElementNS(svgNS,'svg');
+    svg.setAttribute('class','map-arrow'); svg.setAttribute('aria-hidden','true');
+    line=document.createElementNS(svgNS,'path'); line.setAttribute('class','ma-line ma-draw');
+    head=document.createElementNS(svgNS,'path'); head.setAttribute('class','ma-head');
+    svg.appendChild(line); svg.appendChild(head); document.body.appendChild(svg);
+  }
+  function place(){
+    var map=document.querySelector('#contacto .map-embed');
+    var pin=document.querySelector('.foot-map-pin');
+    if(!svg) build();
+    if(window.innerWidth<=900 || !map || !pin || map.offsetParent===null || pin.getBoundingClientRect().width===0){ svg.style.display='none'; return; }
+    var sx=window.pageXOffset, sy=window.pageYOffset;
+    var m=map.getBoundingClientRect(), p=pin.getBoundingClientRect();
+    var px=p.left+p.width/2+sx, py=p.top+p.height/2+sy-p.height/2-4;
+    var mx=m.left+sx, my=m.top+sy, mw=m.width, mh=m.height;
+    // destino: borde inferior del mapa, zona derecha, llegando desde abajo
+    var ex=mx+mw-Math.min(70,mw*0.15), ey=my+mh+6;
+    var dy=py-ey;
+    var d='M'+px.toFixed(1)+','+py.toFixed(1)+
+      ' C'+px.toFixed(1)+','+(py-dy*0.55).toFixed(1)+' '+ex.toFixed(1)+','+(ey+dy*0.45).toFixed(1)+' '+ex.toFixed(1)+','+ey.toFixed(1);
+    var W=Math.max(document.documentElement.scrollWidth,px+20), H=Math.max(document.documentElement.scrollHeight,py+20);
+    svg.setAttribute('width',W); svg.setAttribute('height',H); svg.style.display='block';
+    line.setAttribute('d',d);
+    var len=line.getTotalLength(); line.style.setProperty('--ma-len',len.toFixed(0));
+    head.setAttribute('d','M'+(ex-9).toFixed(1)+','+(ey+11).toFixed(1)+' L'+ex.toFixed(1)+','+ey.toFixed(1)+' L'+(ex+9).toFixed(1)+','+(ey+11).toFixed(1));
+    if(shown){ line.classList.add('ma-on'); head.classList.add('ma-on'); }
+  }
+  function reveal(){
+    shown=true;
+    place();
+    line.getBoundingClientRect();
+    requestAnimationFrame(function(){ line.classList.add('ma-on'); head.classList.add('ma-on'); });
+  }
+  function reset(){
+    shown=false;
+    if(line){ line.classList.remove('ma-on'); head.classList.remove('ma-on'); }
+  }
+  function init(){
+    place();
+    var mp=document.querySelector('#contacto .map-embed');
+    if('IntersectionObserver' in window && mp){
+      io=new IntersectionObserver(function(es){ es.forEach(function(e){
+        if(e.isIntersecting && e.intersectionRatio>=0.5){ if(!shown) reveal(); }
+        else if(!e.isIntersecting){ reset(); }
+      }); },{threshold:[0,0.5]});
+      io.observe(mp);
+    } else { reveal(); }
+    var t; function again(){ clearTimeout(t); t=setTimeout(place,120); }
+    window.addEventListener('resize',again);
+    window.addEventListener('load',function(){ setTimeout(place,300); });
+    if('ResizeObserver' in window) new ResizeObserver(again).observe(document.body);
+    document.addEventListener('click',function(){ setTimeout(place,350); });
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
+})();
 </script>
 </body>
 </html>
