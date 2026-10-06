@@ -182,6 +182,17 @@ async function main() {
   } else {
     console.log('No hay propiedades nuevas desde la última sincronización.');
   }
+
+  // Modo prueba (se activa a mano desde Actions → Run workflow → "probar_aviso"):
+  // envía el aviso SOLO a oceanimmocosta@gmail.com con una propiedad cualquiera,
+  // para comprobar la clave de Brevo y el remitente sin molestar a los suscriptores.
+  if (process.env.PROBAR_AVISO === 'true') {
+    const ejemplo = propiedades.find((p) => !p.vendido) || propiedades[0];
+    if (ejemplo) {
+      console.log('MODO PRUEBA: enviando aviso de prueba a oceanimmocosta@gmail.com');
+      await avisarSuscriptores([ejemplo], true);
+    }
+  }
 }
 
 const SITE_URL = 'https://oceanimmocosta-cyber.github.io/ocean-immo/';
@@ -198,7 +209,7 @@ function fmtPrecio(n) {
   return Math.round(num).toLocaleString('es-ES') + ' €';
 }
 
-async function avisarSuscriptores(nuevas) {
+async function avisarSuscriptores(nuevas, modoPrueba = false) {
   const apiKey = process.env.BREVO_API_KEY;
   if (!apiKey) {
     console.warn('Falta BREVO_API_KEY: no se puede avisar a los suscriptores (revisa el secreto en GitHub).');
@@ -241,6 +252,38 @@ async function avisarSuscriptores(nuevas) {
     nuevas.length === 1
       ? `Nueva propiedad: ${tituloSeguro(nuevas[0].titulo)}`
       : `${nuevas.length} nuevas propiedades en Ocean Immo`;
+
+  if (modoPrueba) {
+    // Diagnóstico 1: ¿está validado el remitente en Brevo?
+    const sendersRes = await fetch('https://api.brevo.com/v3/senders', {
+      headers: { 'api-key': apiKey, Accept: 'application/json' },
+    });
+    if (sendersRes.ok) {
+      const { senders = [] } = await sendersRes.json();
+      const mio = senders.find((x) => String(x.email).toLowerCase() === 'oceanimmocosta@gmail.com');
+      console.log(
+        mio
+          ? `Remitente oceanimmocosta@gmail.com en Brevo: activo=${mio.active}`
+          : 'AVISO: oceanimmocosta@gmail.com NO está dado de alta como remitente en Brevo (Remitentes y IP → Remitentes). Los avisos fallarán.'
+      );
+    } else {
+      console.error('No se pudo consultar los remitentes de Brevo:', sendersRes.status, await sendersRes.text());
+    }
+    // Diagnóstico 2: ¿funciona la clave y se entrega el correo?
+    const testRes = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: { 'api-key': apiKey, 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({
+        sender: { name: 'Ocean Immo', email: 'oceanimmocosta@gmail.com' },
+        to: [{ email: 'oceanimmocosta@gmail.com' }],
+        subject: '[PRUEBA] ' + subject,
+        htmlContent,
+      }),
+    });
+    if (testRes.ok) console.log('Aviso de PRUEBA enviado a oceanimmocosta@gmail.com. Revisa la bandeja (y el spam).');
+    else console.error('Error al enviar el aviso de prueba:', testRes.status, await testRes.text());
+    return;
+  }
 
   const createRes = await fetch('https://api.brevo.com/v3/emailCampaigns', {
     method: 'POST',
