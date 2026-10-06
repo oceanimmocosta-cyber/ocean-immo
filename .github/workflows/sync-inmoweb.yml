@@ -5,7 +5,12 @@ on:
     # 21:00 UTC = 22:00-23:00 hora de España según la época del año.
     # Siempre dentro de la ventana 18:00-09:00 en que el feed de Inmoweb está disponible.
     - cron: '0 21 * * *'
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      probar_aviso:
+        description: 'Enviar un aviso de PRUEBA solo a oceanimmocosta@gmail.com (no avisa a los suscriptores)'
+        type: boolean
+        default: false
 
 jobs:
   sync:
@@ -27,6 +32,7 @@ jobs:
         env:
           INMOWEB_KEY: ${{ secrets.INMOWEB_KEY }}
           BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
+          PROBAR_AVISO: ${{ inputs.probar_aviso }}
 
       - name: Generar páginas individuales por propiedad (SEO)
         run: node scripts/generate-property-pages.mjs
