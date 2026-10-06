@@ -223,6 +223,9 @@ async function avisarSuscriptores(nuevas, modoPrueba = false) {
       const operacion = escHtml(p.operacion);
       const poblacion = escHtml(p.poblacion);
       const fotoSafe = escHtml(foto);
+      // Enlace directo a la ficha (propiedades/<referencia>.html, mismo criterio que generate-property-pages.mjs)
+      const refLimpia = String(p.referencia || '').replace(/[^a-zA-Z0-9_-]/g, '');
+      const urlFicha = escHtml(refLimpia ? `${SITE_URL}propiedades/${refLimpia}.html` : SITE_URL);
       return `
         <table style="width:100%;max-width:560px;margin:0 auto 24px;border:1px solid #e5e0d8;border-radius:8px;overflow:hidden;font-family:Helvetica,Arial,sans-serif">
           <tr>${foto ? `<td><img src="${fotoSafe}" alt="${titulo}" style="width:100%;display:block;max-height:260px;object-fit:cover"></td>` : ''}</tr>
@@ -230,7 +233,7 @@ async function avisarSuscriptores(nuevas, modoPrueba = false) {
             <p style="margin:0 0 4px;color:#039BA5;font-weight:700;font-size:13px;letter-spacing:.03em;text-transform:uppercase">${operacion}${poblacion ? ' · ' + poblacion : ''}</p>
             <h3 style="margin:0 0 8px;color:#1A2E43;font-size:19px">${titulo}</h3>
             <p style="margin:0 0 14px;color:#1A2E43;font-size:18px;font-weight:700">${escHtml(fmtPrecio(p.precio))}</p>
-            <a href="${SITE_URL}" style="display:inline-block;background:#039BA5;color:#fff;text-decoration:none;padding:10px 22px;border-radius:100px;font-size:14px;font-weight:600">Ver en la web</a>
+            <a href="${urlFicha}" style="display:inline-block;background:#039BA5;color:#fff;text-decoration:none;padding:10px 22px;border-radius:100px;font-size:14px;font-weight:600">Ver en la web</a>
           </td></tr>
         </table>`;
     })
