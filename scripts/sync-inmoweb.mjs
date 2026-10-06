@@ -186,6 +186,17 @@ async function main() {
   // Modo prueba (se activa a mano desde Actions → Run workflow → "probar_aviso"):
   // envía el aviso SOLO a oceanimmocosta@gmail.com con una propiedad cualquiera,
   // para comprobar la clave de Brevo y el remitente sin molestar a los suscriptores.
+  // Reenvío REAL (se activa a mano desde Actions → Run workflow → "avisar_suscriptores_ahora"):
+  // manda de verdad el aviso a TODOS los suscriptores de la lista con una propiedad
+  // de ejemplo, para comprobar que el envío completo funciona.
+  if (process.env.REAVISAR === 'true' && process.env.PROBAR_AVISO !== 'true') {
+    const ejemplo = propiedades.find((p) => !p.vendido) || propiedades[0];
+    if (ejemplo) {
+      console.log('REENVÍO REAL: avisando a todos los suscriptores con la propiedad ' + ejemplo.referencia);
+      await avisarSuscriptores([ejemplo]);
+    }
+  }
+
   if (process.env.PROBAR_AVISO === 'true') {
     const ejemplo = propiedades.find((p) => !p.vendido) || propiedades[0];
     if (ejemplo) {
