@@ -4018,8 +4018,12 @@
     var dy=py-ey;
     var d='M'+px.toFixed(1)+','+py.toFixed(1)+
       ' C'+px.toFixed(1)+','+(py-dy*0.55).toFixed(1)+' '+ex.toFixed(1)+','+(ey+dy*0.45).toFixed(1)+' '+ex.toFixed(1)+','+ey.toFixed(1);
-    var W=Math.max(document.documentElement.scrollWidth,px+20), H=Math.max(document.documentElement.scrollHeight,py+20);
-    svg.setAttribute('width',W); svg.setAttribute('height',H); svg.style.display='block';
+    // El SVG ocupa SOLO el rectángulo de la flecha (no toda la página), para no alargar el documento.
+    var bx=Math.min(ex,px)-24, by=ey-16, bw=Math.abs(px-ex)+48, bh=(py-ey)+32;
+    svg.style.left=bx.toFixed(1)+'px'; svg.style.top=by.toFixed(1)+'px';
+    svg.setAttribute('width',bw.toFixed(1)); svg.setAttribute('height',bh.toFixed(1));
+    svg.setAttribute('viewBox',bx.toFixed(1)+' '+by.toFixed(1)+' '+bw.toFixed(1)+' '+bh.toFixed(1));
+    svg.style.display='block';
     line.setAttribute('d',d);
     var len=line.getTotalLength(); line.style.setProperty('--ma-len',len.toFixed(0));
     head.setAttribute('d','M'+(ex-9).toFixed(1)+','+(ey+11).toFixed(1)+' L'+ex.toFixed(1)+','+ey.toFixed(1)+' L'+(ex+9).toFixed(1)+','+(ey+11).toFixed(1));
