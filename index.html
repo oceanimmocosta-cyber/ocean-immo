@@ -807,9 +807,9 @@
   .foot-legal-info{font-size:.82rem;line-height:1.7;color:rgba(255,255,255,.55)}
   .foot-legal-info strong{color:rgba(255,255,255,.85);font-weight:600}
   .api-badge{width:200px;height:auto;margin-top:16px;display:block}
-  .foot-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px}
+  .foot-bottom{padding-top:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px}
   .foot-bottom p{font-size:.84rem}
-  .foot-bottom .legal-links{display:flex;gap:22px}
+  .foot-bottom .legal-links{display:flex;gap:22px;margin-left:auto}
   .foot-bottom .legal-links a{font-size:.84rem;transition:color .2s}
   .foot-bottom .legal-links a:hover{color:var(--turquoise)}
 
@@ -876,6 +876,7 @@
     .news-form .btn{width:100%}
     .foot-grid{grid-template-columns:1fr}
     .foot-bottom{flex-direction:column;text-align:center}
+    .foot-bottom .legal-links{margin-left:0}
     .testi-head{flex-direction:column;align-items:flex-start}
     /* horizontal scroll for properties on mobile */
     .prop-grid.scrollable{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:16px;margin:0 -24px;padding:0 24px 10px;scrollbar-width:none}
@@ -2547,7 +2548,6 @@
       </div>
     </div>
     <div class="foot-bottom">
-      <p>© 2025 Ocean Immo. Todos los derechos reservados.</p>
       <div class="legal-links">
         <a href="#" data-page="legal">Aviso legal</a>
         <a href="#" data-page="privacidad">Privacidad</a>
@@ -2930,7 +2930,7 @@
   document.querySelectorAll('.lang button, .foot-lang button, .ml-dropdown button').forEach(function(b){
     b.addEventListener('click',function(){
       var code=this.textContent.trim().toLowerCase();
-      if(['es','ca','fr','en'].indexOf(code)>=0) applyLang(code);
+      if(['es','ca','fr','en'].indexOf(code)>=0){ applyLang(code); document.dispatchEvent(new CustomEvent('oi-lang-changed')); }
     });
   });
 
@@ -4033,7 +4033,12 @@
   }
   function reset(){
     shown=false;
-    if(line){ line.classList.remove('ma-on'); head.classList.remove('ma-on'); }
+    if(line){
+      line.style.transition='none'; head.style.transition='none';
+      line.classList.remove('ma-on'); head.classList.remove('ma-on');
+      line.getBoundingClientRect(); head.getBoundingClientRect();
+      line.style.transition=''; head.style.transition='';
+    }
   }
   function init(){
     place();
@@ -4050,6 +4055,17 @@
     window.addEventListener('load',function(){ setTimeout(place,300); });
     if('ResizeObserver' in window) new ResizeObserver(again).observe(document.body);
     document.addEventListener('click',function(){ setTimeout(place,350); });
+    document.addEventListener('oi-lang-changed',function(){
+      reset();
+      setTimeout(function(){
+        place();
+        var mp2=document.querySelector('#contacto .map-embed');
+        if(!mp2||mp2.offsetParent===null) return;
+        var r=mp2.getBoundingClientRect(), vh=window.innerHeight;
+        var vis=Math.min(r.bottom,vh)-Math.max(r.top,0);
+        if(vis>=r.height*0.5) reveal();
+      },150);
+    });
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
 })();
