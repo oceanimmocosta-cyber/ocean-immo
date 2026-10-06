@@ -11,6 +11,10 @@ on:
         description: 'Enviar un aviso de PRUEBA solo a oceanimmocosta@gmail.com (no avisa a los suscriptores)'
         type: boolean
         default: false
+      avisar_suscriptores_ahora:
+        description: 'ATENCION: envia un aviso REAL a TODOS los suscriptores (con una propiedad de ejemplo)'
+        type: boolean
+        default: false
 
 jobs:
   sync:
@@ -33,6 +37,7 @@ jobs:
           INMOWEB_KEY: ${{ secrets.INMOWEB_KEY }}
           BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
           PROBAR_AVISO: ${{ inputs.probar_aviso }}
+          REAVISAR: ${{ inputs.avisar_suscriptores_ahora }}
 
       - name: Generar páginas individuales por propiedad (SEO)
         run: node scripts/generate-property-pages.mjs
