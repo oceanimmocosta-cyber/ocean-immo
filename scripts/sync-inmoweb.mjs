@@ -114,6 +114,7 @@ async function main() {
     const etiquetasRaw = toArray(p.etiquetas?.etiqueta).map((e) => textOf(e));
     const etiquetasNorm = etiquetasRaw.map((e) => e.toLowerCase());
     const vendido = etiquetasNorm.some((e) => e.includes('vend'));
+    const reservado = !vendido && etiquetasNorm.some((e) => e.includes('reserv'));
 
     return {
       referencia: textOf(p.referencia) || String(p['@_id'] || ''),
@@ -144,6 +145,7 @@ async function main() {
       modalidad: opId === '6' ? 'Vacacional' : null,
       etiquetas: etiquetasRaw,
       vendido,
+      reservado,
     };
   });
 
