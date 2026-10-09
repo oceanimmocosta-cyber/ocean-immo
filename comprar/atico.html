@@ -295,7 +295,8 @@
   .prop-img{position:relative;height:220px;overflow:hidden}
   .prop-img img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
   .prop:hover .prop-img img{transform:scale(1.07)}
-  .prop-zone{position:absolute;top:14px;left:14px;background:rgba(255,255,255,.94);color:var(--navy);font-size:.74rem;font-weight:600;padding:6px 13px;border-radius:100px;letter-spacing:.02em}
+  .prop-zone{display:flex;align-items:center;gap:6px;color:var(--turquoise-dark);font-size:.82rem;font-weight:600;letter-spacing:.01em;margin:0 0 8px}
+  .prop-zone::before{content:'';flex:0 0 14px;height:14px;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z'/%3E%3Ccircle cx='12' cy='10' r='3'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z'/%3E%3Ccircle cx='12' cy='10' r='3'/%3E%3C/svg%3E") center/contain no-repeat}
   .prop-op{position:absolute;top:14px;right:14px;font-size:.72rem;font-weight:600;padding:6px 12px;border-radius:100px;color:#fff;letter-spacing:.03em}
   .prop-op.venta{background:var(--turquoise)}
   .prop-op.alquiler{background:var(--gold)}
@@ -491,6 +492,13 @@
   }
   .detail-badges .reserved-ribbon{position:static;transform:none;display:inline-block;margin-left:8px}
   .detail-badges .sold-ribbon{position:static;transform:none;display:inline-block;margin-left:8px}
+  /* Cinta diagonal en la esquina de las tarjetas (Vendido / Reservado) */
+  .corner-ribbon{position:absolute;top:0;left:0;width:132px;height:132px;overflow:hidden;z-index:4;pointer-events:none}
+  .corner-ribbon span{position:absolute;display:block;width:190px;left:-50px;top:30px;transform:rotate(-45deg);padding:5px 0;text-align:center;
+    color:#fff;font-size:.86rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;box-shadow:0 3px 8px rgba(0,0,0,.28)}
+  .corner-ribbon.sold span{background:#D93025}
+  .corner-ribbon.reserved span{background:#F2A900;text-shadow:0 1px 2px rgba(0,0,0,.25)}
+
   .sold-notice{
     background:#FBEAE9;border:1px solid #E8B4AF;color:#8a2d24;border-radius:var(--radius);
     padding:20px 22px;font-size:.95rem;line-height:1.5;margin-top:6px;
@@ -1208,11 +1216,12 @@
           <button type="button" class="mini-gal-arrow mini-gal-prev" aria-label="Foto anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="m15 18-6-6 6-6"/></svg></button>
           <button type="button" class="mini-gal-arrow mini-gal-next" aria-label="Foto siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="m9 18 6-6-6-6"/></svg></button>
           <div class="mini-gal-dots"></div>
-          <span class="prop-zone">Puig Rom</span><span class="prop-op venta">Venta</span>
+          <span class="prop-op venta">Venta</span>
         </div>
         <div class="prop-body">
           <div class="prop-price">485.000 € <small></small></div>
           <div class="prop-title">Casa con vistas al mar y piscina</div>
+          <div class="prop-zone">Puig Rom</div>
           <div class="prop-ref">Ref. OI-1001</div>
           <div class="prop-specs">
             <span class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21V8l9-5 9 5v13"/></svg>180 m²</span>
@@ -1229,11 +1238,12 @@
           <button type="button" class="mini-gal-arrow mini-gal-prev" aria-label="Foto anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="m15 18-6-6 6-6"/></svg></button>
           <button type="button" class="mini-gal-arrow mini-gal-next" aria-label="Foto siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="m9 18 6-6-6-6"/></svg></button>
           <div class="mini-gal-dots"></div>
-          <span class="prop-zone">Santa Margarida</span><span class="prop-op venta">Venta</span>
+          <span class="prop-op venta">Venta</span>
         </div>
         <div class="prop-body">
           <div class="prop-price">265.000 €</div>
           <div class="prop-title">Piso junto a los canales con terraza</div>
+          <div class="prop-zone">Santa Margarida</div>
           <div class="prop-ref">Ref. OI-1002</div>
           <div class="prop-specs">
             <span class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21V8l9-5 9 5v13"/></svg>95 m²</span>
@@ -1250,11 +1260,12 @@
           <button type="button" class="mini-gal-arrow mini-gal-prev" aria-label="Foto anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="m15 18-6-6 6-6"/></svg></button>
           <button type="button" class="mini-gal-arrow mini-gal-next" aria-label="Foto siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="m9 18 6-6-6-6"/></svg></button>
           <div class="mini-gal-dots"></div>
-          <span class="prop-zone">Roses Centro</span><span class="prop-op venta">Venta</span>
+          <span class="prop-op venta">Venta</span>
         </div>
         <div class="prop-body">
           <div class="prop-price">198.000 € <small></small></div>
           <div class="prop-title">Apartamento a 2 min de la playa</div>
+          <div class="prop-zone">Roses Centro</div>
           <div class="prop-ref">Ref. OI-1003</div>
           <div class="prop-specs">
             <span class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21V8l9-5 9 5v13"/></svg>68 m²</span>
@@ -1271,11 +1282,12 @@
           <button type="button" class="mini-gal-arrow mini-gal-prev" aria-label="Foto anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="m15 18-6-6 6-6"/></svg></button>
           <button type="button" class="mini-gal-arrow mini-gal-next" aria-label="Foto siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="m9 18 6-6-6-6"/></svg></button>
           <div class="mini-gal-dots"></div>
-          <span class="prop-zone">Mas Oliva</span><span class="prop-op venta">Venta</span>
+          <span class="prop-op venta">Venta</span>
         </div>
         <div class="prop-body">
           <div class="prop-price">625.000 €</div>
           <div class="prop-title">Villa moderna con jardín y garaje</div>
+          <div class="prop-zone">Mas Oliva</div>
           <div class="prop-ref">Ref. OI-1004</div>
           <div class="prop-specs">
             <span class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21V8l9-5 9 5v13"/></svg>220 m²</span>
@@ -1292,11 +1304,12 @@
           <button type="button" class="mini-gal-arrow mini-gal-prev" aria-label="Foto anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="m15 18-6-6 6-6"/></svg></button>
           <button type="button" class="mini-gal-arrow mini-gal-next" aria-label="Foto siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="m9 18 6-6-6-6"/></svg></button>
           <div class="mini-gal-dots"></div>
-          <span class="prop-zone">Empuriabrava</span><span class="prop-op venta">Venta</span>
+          <span class="prop-op venta">Venta</span>
         </div>
         <div class="prop-body">
           <div class="prop-price">165.000 € <small></small></div>
           <div class="prop-title">Estudio en primera línea de canal</div>
+          <div class="prop-zone">Empuriabrava</div>
           <div class="prop-ref">Ref. OI-1005</div>
           <div class="prop-specs">
             <span class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21V8l9-5 9 5v13"/></svg>42 m²</span>
@@ -1313,11 +1326,12 @@
           <button type="button" class="mini-gal-arrow mini-gal-prev" aria-label="Foto anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="m15 18-6-6 6-6"/></svg></button>
           <button type="button" class="mini-gal-arrow mini-gal-next" aria-label="Foto siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="m9 18 6-6-6-6"/></svg></button>
           <div class="mini-gal-dots"></div>
-          <span class="prop-zone">Castelló d'Empúries</span><span class="prop-op venta">Venta</span>
+          <span class="prop-op venta">Venta</span>
         </div>
         <div class="prop-body">
           <div class="prop-price">340.000 €</div>
           <div class="prop-title">Casa de pueblo rehabilitada con encanto</div>
+          <div class="prop-zone">Castelló d'Empúries</div>
           <div class="prop-ref">Ref. OI-1006</div>
           <div class="prop-specs">
             <span class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21V8l9-5 9 5v13"/></svg>140 m²</span>
@@ -1594,11 +1608,12 @@
           <button type="button" class="mini-gal-arrow mini-gal-prev" aria-label="Foto anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="m15 18-6-6 6-6"/></svg></button>
           <button type="button" class="mini-gal-arrow mini-gal-next" aria-label="Foto siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="m9 18 6-6-6-6"/></svg></button>
           <div class="mini-gal-dots"></div>
-          <span class="prop-zone">Puig Rom</span><span class="prop-op venta">Venta</span>
+          <span class="prop-op venta">Venta</span>
         </div>
         <div class="prop-body">
           <div class="prop-price">485.000 € <small></small></div>
           <div class="prop-title">Casa con vistas al mar y piscina</div>
+          <div class="prop-zone">Puig Rom</div>
           <div class="prop-ref">Ref. OI-1001</div>
           <div class="prop-specs"><span class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21V8l9-5 9 5v13"/></svg>180 m²</span><span class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v3M2 11h20v7a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2z"/></svg>4 hab</span><span class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h16v4a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4zM6 12V6a2 2 0 0 1 4 0"/></svg>3 baños</span></div>
           <a href="#" data-detalle class="btn btn-ghost">Ver detalles</a>
@@ -1610,11 +1625,12 @@
           <button type="button" class="mini-gal-arrow mini-gal-prev" aria-label="Foto anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="m15 18-6-6 6-6"/></svg></button>
           <button type="button" class="mini-gal-arrow mini-gal-next" aria-label="Foto siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="m9 18 6-6-6-6"/></svg></button>
           <div class="mini-gal-dots"></div>
-          <span class="prop-zone">Santa Margarida</span><span class="prop-op venta">Venta</span>
+          <span class="prop-op venta">Venta</span>
         </div>
         <div class="prop-body">
           <div class="prop-price">265.000 € <small></small></div>
           <div class="prop-title">Piso junto a los canales con terraza</div>
+          <div class="prop-zone">Santa Margarida</div>
           <div class="prop-ref">Ref. OI-1002</div>
           <div class="prop-specs"><span class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21V8l9-5 9 5v13"/></svg>95 m²</span><span class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v3M2 11h20v7a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2z"/></svg>3 hab</span><span class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h16v4a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4zM6 12V6a2 2 0 0 1 4 0"/></svg>2 baños</span></div>
           <a href="#" data-detalle class="btn btn-ghost">Ver detalles</a>
@@ -1626,11 +1642,12 @@
           <button type="button" class="mini-gal-arrow mini-gal-prev" aria-label="Foto anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="m15 18-6-6 6-6"/></svg></button>
           <button type="button" class="mini-gal-arrow mini-gal-next" aria-label="Foto siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="m9 18 6-6-6-6"/></svg></button>
           <div class="mini-gal-dots"></div>
-          <span class="prop-zone">Mas Oliva</span><span class="prop-op venta">Venta</span>
+          <span class="prop-op venta">Venta</span>
         </div>
         <div class="prop-body">
           <div class="prop-price">625.000 € <small></small></div>
           <div class="prop-title">Villa moderna con jardín y garaje</div>
+          <div class="prop-zone">Mas Oliva</div>
           <div class="prop-ref">Ref. OI-1004</div>
           <div class="prop-specs"><span class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21V8l9-5 9 5v13"/></svg>220 m²</span><span class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v3M2 11h20v7a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2z"/></svg>5 hab</span><span class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h16v4a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4zM6 12V6a2 2 0 0 1 4 0"/></svg>3 baños</span></div>
           <a href="#" data-detalle class="btn btn-ghost">Ver detalles</a>
@@ -1642,11 +1659,12 @@
           <button type="button" class="mini-gal-arrow mini-gal-prev" aria-label="Foto anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="m15 18-6-6 6-6"/></svg></button>
           <button type="button" class="mini-gal-arrow mini-gal-next" aria-label="Foto siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="m9 18 6-6-6-6"/></svg></button>
           <div class="mini-gal-dots"></div>
-          <span class="prop-zone">Castelló d'Empúries</span><span class="prop-op venta">Venta</span>
+          <span class="prop-op venta">Venta</span>
         </div>
         <div class="prop-body">
           <div class="prop-price">340.000 € <small></small></div>
           <div class="prop-title">Casa de pueblo rehabilitada con encanto</div>
+          <div class="prop-zone">Castelló d'Empúries</div>
           <div class="prop-ref">Ref. OI-1006</div>
           <div class="prop-specs"><span class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21V8l9-5 9 5v13"/></svg>140 m²</span><span class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v3M2 11h20v7a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2z"/></svg>3 hab</span><span class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h16v4a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4zM6 12V6a2 2 0 0 1 4 0"/></svg>2 baños</span></div>
           <a href="#" data-detalle class="btn btn-ghost">Ver detalles</a>
@@ -1658,11 +1676,12 @@
           <button type="button" class="mini-gal-arrow mini-gal-prev" aria-label="Foto anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="m15 18-6-6 6-6"/></svg></button>
           <button type="button" class="mini-gal-arrow mini-gal-next" aria-label="Foto siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="m9 18 6-6-6-6"/></svg></button>
           <div class="mini-gal-dots"></div>
-          <span class="prop-zone">Roses Centro</span><span class="prop-op venta">Venta</span>
+          <span class="prop-op venta">Venta</span>
         </div>
         <div class="prop-body">
           <div class="prop-price">395.000 € <small></small></div>
           <div class="prop-title">Ático con terraza y vistas despejadas</div>
+          <div class="prop-zone">Roses Centro</div>
           <div class="prop-ref">Ref. OI-1007</div>
           <div class="prop-specs"><span class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21V8l9-5 9 5v13"/></svg>110 m²</span><span class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v3M2 11h20v7a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2z"/></svg>3 hab</span><span class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h16v4a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4zM6 12V6a2 2 0 0 1 4 0"/></svg>2 baños</span></div>
           <a href="#" data-detalle class="btn btn-ghost">Ver detalles</a>
@@ -1674,11 +1693,12 @@
           <button type="button" class="mini-gal-arrow mini-gal-prev" aria-label="Foto anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="m15 18-6-6 6-6"/></svg></button>
           <button type="button" class="mini-gal-arrow mini-gal-next" aria-label="Foto siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="m9 18 6-6-6-6"/></svg></button>
           <div class="mini-gal-dots"></div>
-          <span class="prop-zone">Puig Rom</span><span class="prop-op venta">Venta</span>
+          <span class="prop-op venta">Venta</span>
         </div>
         <div class="prop-body">
           <div class="prop-price">210.000 € <small></small></div>
           <div class="prop-title">Parcela con proyecto y licencia</div>
+          <div class="prop-zone">Puig Rom</div>
           <div class="prop-ref">Ref. OI-1008</div>
           <div class="prop-specs"><span class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21V8l9-5 9 5v13"/></svg>600 m²</span><span class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v3M2 11h20v7a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2z"/></svg>—</span><span class="spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h16v4a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4zM6 12V6a2 2 0 0 1 4 0"/></svg>—</span></div>
           <a href="#" data-detalle class="btn btn-ghost">Ver detalles</a>
@@ -3546,23 +3566,24 @@
       var eEmiL = p.certEmisionesLetra || '';
       var eEmiV = p.certEmisionesValor || '';
       var vendido = !!p.vendido;
-      var soldBadge = vendido ? '<span class="sold-ribbon">Vendido</span>' : '';
+      var soldBadge = vendido ? '<span class="corner-ribbon sold"><span>Vendido</span></span>' : '';
       var reservado = !!p.reservado && !vendido;
-      if(reservado) soldBadge = '<span class="reserved-ribbon">Reservado</span>';
+      if(reservado) soldBadge = '<span class="corner-ribbon reserved"><span>Reservado</span></span>';
       var poblacion = p.poblacion || '';
       if(zone.trim().toLowerCase()==='centro') zone = poblacion || 'Roses';
       var tipoVal = p.tipo || '';
 
       return '' +
-      '<article class="prop'+(vendido?' is-sold':'')+'" data-vendido="'+(vendido?'true':'false')+'" data-reservado="'+(reservado?'true':'false')+'" data-poblacion="'+esc(poblacion)+'" data-tipo="'+esc(tipoVal)+'" data-year="'+esc(year)+'" data-feats="'+esc(featsAttr)+'" data-title-es="'+esc(title)+'" data-title-ca="'+esc(titleCa)+'" data-title-fr="'+esc(titleFr)+'" data-title-en="'+esc(titleEn)+'" data-desc="'+esc(descVal)+'" data-desc-ca="'+esc(descCaVal)+'" data-desc-fr="'+esc(descFrVal)+'" data-desc-en="'+esc(descEnVal)+'" data-m2="'+esc(m2||'')+'" data-hab="'+esc(hab||'')+'" data-banos="'+esc(banos||'')+'" data-e-consl="'+esc(eConsL)+'" data-e-consv="'+esc(eConsV)+'" data-e-emil="'+esc(eEmiL)+'" data-e-emiv="'+esc(eEmiV)+'">' +
+      '<article class="prop'+(vendido?' is-sold':'')+((vendido||reservado)?' has-ribbon':'')+'" data-vendido="'+(vendido?'true':'false')+'" data-reservado="'+(reservado?'true':'false')+'" data-poblacion="'+esc(poblacion)+'" data-tipo="'+esc(tipoVal)+'" data-year="'+esc(year)+'" data-feats="'+esc(featsAttr)+'" data-title-es="'+esc(title)+'" data-title-ca="'+esc(titleCa)+'" data-title-fr="'+esc(titleFr)+'" data-title-en="'+esc(titleEn)+'" data-desc="'+esc(descVal)+'" data-desc-ca="'+esc(descCaVal)+'" data-desc-fr="'+esc(descFrVal)+'" data-desc-en="'+esc(descEnVal)+'" data-m2="'+esc(m2||'')+'" data-hab="'+esc(hab||'')+'" data-banos="'+esc(banos||'')+'" data-e-consl="'+esc(eConsL)+'" data-e-consv="'+esc(eConsV)+'" data-e-emil="'+esc(eEmiL)+'" data-e-emiv="'+esc(eEmiV)+'">' +
         '<div class="prop-img" data-gallery="'+esc(gallery)+'" data-gallery-full="'+esc(galleryFullAttr)+'">' +
           '<img src="'+esc(galleryThumbs[0])+'" alt="'+esc(titleShown)+'" loading="lazy" decoding="async">' +
           MINI_ARROWS +
-          '<span class="prop-zone">'+esc(zone)+'</span><span class="prop-op '+opClass+'">'+opText+'</span>'+modBadge+soldBadge +
+          '<span class="prop-op '+opClass+'">'+opText+'</span>'+modBadge+soldBadge +
         '</div>' +
         '<div class="prop-body">' +
           '<div class="prop-price">'+esc(price)+priceSuffix+'</div>' +
           '<div class="prop-title">'+esc(titleShown)+'</div>' +
+          '<div class="prop-zone">'+esc(zone)+'</div>' +
           '<div class="prop-ref">Ref. '+esc(ref)+'</div>' +
           '<div class="prop-specs">' + specsHtmlFor(m2,hab,banos,currentLang) + '</div>' +
           '<a href="#" data-detalle class="btn btn-ghost">Ver detalles</a>' +
