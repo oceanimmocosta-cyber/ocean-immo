@@ -248,6 +248,14 @@
   /* ===== TRUST BAR ===== */
   .trust{background:var(--navy);padding:36px 0}
   .trust-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;text-align:center}
+  /* Franja de datos translúcida: la foto de portada continúa por detrás (solo escritorio) */
+  @media(min-width:1101px){
+    .hero{padding-bottom:230px}
+    .trust{height:190px;margin-top:-190px;padding:0;position:relative;z-index:5;display:flex;align-items:center;
+      background:rgba(16,32,50,.62);-webkit-backdrop-filter:blur(12px) saturate(1.2);backdrop-filter:blur(12px) saturate(1.2);
+      border-top:1px solid rgba(255,255,255,.14)}
+    .trust .trust-grid{width:100%}
+  }
   .trust-item{position:relative}
   .trust-item:not(:last-child)::after{content:"";position:absolute;right:-10px;top:12%;height:76%;width:1px;background:rgba(255,255,255,.14)}
   .trust-item .ico{width:34px;height:34px;margin:0 auto 12px;color:var(--turquoise)}
