@@ -362,7 +362,10 @@
   .about-copy h2{font-size:clamp(1.9rem,3.6vw,2.7rem);margin-bottom:20px}
   .about-copy p{color:var(--muted);font-size:1.04rem;margin-bottom:18px}
   .about-copy p strong{color:var(--navy);font-weight:600}
-  .founders{display:flex;flex-wrap:wrap;gap:16px;margin-top:28px}
+  .founders{display:flex;flex-wrap:wrap;gap:16px;margin-top:28px;margin-right:-30px}
+  .founders .founder{flex-shrink:0;max-width:100%}
+  .founders .founder:nth-child(3){margin-right:100%}
+  @media(min-width:1700px){.founders{margin-right:-240px}.founders .founder:nth-child(3){margin-right:0}}
   .founder{display:flex;align-items:center;gap:13px;background:#fff;border:1px solid var(--line);border-radius:100px;padding:8px 20px 8px 8px}
   .founder .av{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--turquoise),var(--navy));color:#fff;display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:1.05rem}
   .founder .av-photo{background:none;overflow:hidden}.founder .av-photo img{width:100%;height:100%;object-fit:cover;display:block}
@@ -915,7 +918,7 @@
   }
   @media(max-width:440px){
     .trust-grid,.why-grid{grid-template-columns:1fr}
-    .founders{flex-direction:column;align-items:flex-start}
+    .founders{flex-direction:column;align-items:flex-start;margin-right:0} .founders .founder:nth-child(3){margin-right:0}
     .fab-stack{bottom:18px;right:18px;gap:10px}
     .fab{width:52px;height:52px}
     .fab svg{width:24px;height:24px}
