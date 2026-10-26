@@ -1240,8 +1240,7 @@ document.getElementById("btn-generar").addEventListener("click", () => {
     ? `<div class="contract-clause-title">Condición suspensiva por financiación hipotecaria</div>
     <p class="contract-p">En el caso de que la parte compradora no obtenga la concesión de la financiación hipotecaria necesaria para la adquisición del inmueble objeto de este contrato, deberá justificarlo mediante la correspondiente denegación bancaria por escrito, la cual deberá presentarse en un plazo máximo de <b>${plazoHipoteca || "___"} días</b> (${plazoHipoteca ? numeroALetras(plazoHipoteca) : "___________"} días) desde la firma del presente contrato. En tal caso, las arras entregadas serán devueltas íntegramente a la parte compradora, sin que ello genere penalización ni obligación adicional para ninguna de las partes.</p>
     <p class="contract-p">Si la parte compradora no inicia el proceso de solicitud en el plazo indicado, o no colabora activamente en su tramitación, esta cláusula quedará sin efecto y se aplicará lo dispuesto en la cláusula cuarta sobre arras penitenciales.</p>`
-    : `<div class="contract-clause-title">Financiación</div>
-    <p class="contract-p">La presente operación no está condicionada a la obtención de financiación hipotecaria. La parte compradora declara disponer de los medios económicos necesarios para hacer frente al pago del precio pactado, por lo que no será de aplicación ninguna condición suspensiva por denegación de préstamo hipotecario.</p>`;
+    : "";
 
   const html = `
     <div class="contract-letterhead">
@@ -1275,14 +1274,14 @@ document.getElementById("btn-generar").addEventListener("click", () => {
     <p class="contract-p">La cantidad entregada en concepto de arras queda en poder de la intermediaria, que actuará como depositaria neutral hasta que se cumpla una de las siguientes condiciones:</p>
     <ul class="contract-list">
       <li>Que se otorgue la escritura pública de compraventa, momento en el cual la intermediaria entregará la cantidad a la parte vendedora.</li>
-      <li>Que se produzca un desistimiento por alguna de las partes. En tal caso, la intermediaria entregará las arras a la parte correspondiente conforme a lo dispuesto en la cláusula cuarta.</li>
+      <li>Que se produzca un desistimiento por alguna de las partes. En tal caso, la intermediaria entregará las arras a la parte correspondiente conforme a lo dispuesto en la cláusula siguiente.</li>
     </ul>
 
     <div class="contract-clause-title">Naturaleza de las arras</div>
     <p class="contract-p">Las arras tienen carácter penitencial, de modo que:</p>
     <ul class="contract-list">
-      <li>Si la parte compradora desiste, perderá las arras entregadas, las cuales serán entregadas por la intermediaria a la parte vendedora de manera íntegra.</li>
-      <li>Si la parte vendedora desiste, deberá abonar el doble del importe recibido, que la intermediaria entregará a la parte compradora, una vez recibido dicho importe duplicado, devolviéndose las arras de manera íntegra.</li>
+      <li>Si la parte compradora desiste, perderá las arras entregadas, que ascienden a <b>${fmtMoneda(arras)} €</b>. De dicho importe, la mitad corresponderá a la agencia intermediaria en concepto de honorarios por sus servicios, y la otra mitad será entregada a la parte vendedora.</li>
+      <li>Si la parte vendedora desiste, deberá abonar el doble del importe recibido, que la intermediaria entregará a la parte compradora, una vez recibido dicho importe duplicado, y deberá abonar a la agencia intermediaria la comisión pactada por sus servicios.</li>
     </ul>
 
     ${clausulaHipoteca}
@@ -1778,9 +1777,7 @@ document.getElementById("btn-generar-arras-fr").addEventListener("click", () => 
     <p class="contract-p">Si la parte compradora no inicia el proceso de solicitud en el plazo indicado, o no colabora activamente en su tramitación, esta cláusula quedará sin efecto y se aplicará lo dispuesto en la cláusula cuarta sobre arras penitenciales.</p>
     <p class="contract-p"><i>Dans le cas où la partie acquéreuse n'obtiendrait pas l'octroi du financement hypothécaire nécessaire à l'acquisition du bien objet du présent contrat, elle devra le justifier au moyen du refus bancaire correspondant par écrit, lequel devra être présenté dans un délai maximum de <b>${plazoHipoteca || "___"} jours</b> (${plazoHipoteca ? numeroALetrasFr(plazoHipoteca) : "___________"} jours) à compter de la signature du présent contrat. Dans ce cas, les arrhes versées seront restituées intégralement à la partie acquéreuse, sans que cela n'entraîne de pénalité ni d'obligation supplémentaire pour aucune des parties.</i></p>
     <p class="contract-p"><i>Si la partie acquéreuse n'entame pas le processus de demande dans le délai indiqué, ou ne collabore pas activement à son instruction, la présente clause deviendra caduque et il sera fait application des dispositions de la clause quatrième relative aux arrhes pénitentielles.</i></p>`
-    : `<div class="contract-clause-title">Financiación / <i>Financement</i></div>
-    <p class="contract-p">La presente operación no está condicionada a la obtención de financiación hipotecaria. La parte compradora declara disponer de los medios económicos necesarios para hacer frente al pago del precio pactado, por lo que no será de aplicación ninguna condición suspensiva por denegación de préstamo hipotecario.</p>
-    <p class="contract-p"><i>La présente opération n'est pas conditionnée à l'obtention d'un financement hypothécaire. La partie acquéreuse déclare disposer des moyens économiques nécessaires pour faire face au paiement du prix convenu, de sorte qu'aucune condition suspensive liée à un refus de prêt hypothécaire ne sera applicable.</i></p>`;
+    : "";
 
   const html = `
     <div class="contract-letterhead">
@@ -1826,24 +1823,24 @@ document.getElementById("btn-generar-arras-fr").addEventListener("click", () => 
     <p class="contract-p">La cantidad entregada en concepto de arras queda en poder de la intermediaria, que actuará como depositaria neutral hasta que se cumpla una de las siguientes condiciones:</p>
     <ul class="contract-list">
       <li>Que se otorgue la escritura pública de compraventa, momento en el cual la intermediaria entregará la cantidad a la parte vendedora.</li>
-      <li>Que se produzca un desistimiento por alguna de las partes. En tal caso, la intermediaria entregará las arras a la parte correspondiente conforme a lo dispuesto en la cláusula cuarta.</li>
+      <li>Que se produzca un desistimiento por alguna de las partes. En tal caso, la intermediaria entregará las arras a la parte correspondiente conforme a lo dispuesto en la cláusula siguiente.</li>
     </ul>
     <p class="contract-p"><i>La somme versée au titre des arrhes reste entre les mains de l'intermédiaire, qui agira comme dépositaire neutre jusqu'à la réalisation de l'une des conditions suivantes :</i></p>
     <ul class="contract-list">
       <li><i>Que l'acte authentique de vente soit signé, auquel cas l'intermédiaire remettra la somme à la partie venderesse.</i></li>
-      <li><i>Qu'un désistement intervienne de la part de l'une des parties. Dans ce cas, l'intermédiaire restituera les arrhes à la partie correspondante, conformément aux dispositions de la clause quatrième.</i></li>
+      <li><i>Qu'un désistement intervienne de la part de l'une des parties. Dans ce cas, l'intermédiaire restituera les arrhes à la partie correspondante, conformément aux dispositions de la clause suivante.</i></li>
     </ul>
 
     <div class="contract-clause-title">Naturaleza de las arras / <i>Nature des arrhes</i></div>
     <p class="contract-p">Las arras tienen carácter penitencial, de modo que:</p>
     <ul class="contract-list">
-      <li>Si la parte compradora desiste, perderá las arras entregadas, las cuales serán entregadas por la intermediaria a la parte vendedora de manera íntegra.</li>
-      <li>Si la parte vendedora desiste, deberá abonar el doble del importe recibido, que la intermediaria entregará a la parte compradora, una vez recibido dicho importe duplicado, devolviéndose las arras de manera íntegra.</li>
+      <li>Si la parte compradora desiste, perderá las arras entregadas, que ascienden a <b>${fmtMoneda(arras)} €</b>. De dicho importe, la mitad corresponderá a la agencia intermediaria en concepto de honorarios por sus servicios, y la otra mitad será entregada a la parte vendedora.</li>
+      <li>Si la parte vendedora desiste, deberá abonar el doble del importe recibido, que la intermediaria entregará a la parte compradora, una vez recibido dicho importe duplicado, y deberá abonar a la agencia intermediaria la comisión pactada por sus servicios.</li>
     </ul>
     <p class="contract-p"><i>Les arrhes ont un caractère pénitentiel, de sorte que :</i></p>
     <ul class="contract-list">
-      <li><i>Si la partie acquéreuse se désiste, elle perdra les arrhes versées, lesquelles seront remises par l'intermédiaire à la partie venderesse de manière intégrale.</i></li>
-      <li><i>Si la partie venderesse se désiste, elle devra verser le double du montant reçu, que l'intermédiaire remettra à la partie acquéreuse, une fois ce montant doublé effectivement perçu, les arrhes étant restituées de manière intégrale.</i></li>
+      <li><i>Si la partie acquéreuse se désiste, elle perdra les arrhes versées, qui s'élèvent à <b>${fmtMoneda(arras)} €</b>. De ce montant, la moitié reviendra à l'agence intermédiaire à titre d'honoraires pour ses services, et l'autre moitié sera remise à la partie venderesse.</i></li>
+      <li><i>Si la partie venderesse se désiste, elle devra verser le double du montant reçu, que l'intermédiaire remettra à la partie acquéreuse, une fois ce montant doublé effectivement perçu, et elle devra verser à l'agence intermédiaire la commission convenue pour ses services.</i></li>
     </ul>
 
     ${clausulaHipoteca}
