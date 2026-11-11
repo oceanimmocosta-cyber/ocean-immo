@@ -62,7 +62,9 @@ function jsonLd(obj) {
 function main() {
   const raw = JSON.parse(fs.readFileSync('properties.json', 'utf8'));
   const propiedades = raw.propiedades || [];
-  const indexHtml = fs.readFileSync(INDEX_FILE, 'utf8');
+  let indexHtml = fs.readFileSync(INDEX_FILE, 'utf8');
+  // Quitamos las etiquetas de vista previa de la portada (<!--og-home-->): cada página genera las suyas.
+  indexHtml = indexHtml.replace(/<!--og-home-->[\s\S]*?<!--\/og-home-->\n?/, '');
 
   // Localizamos, dentro del index.html real, el <title> y el <meta description>
   // originales para poder sustituirlos por los de cada propiedad.
@@ -116,7 +118,7 @@ function main() {
       `<meta property="og:type" content="website">`,
       `<meta property="og:title" content="${titulo} · ${precio}">`,
       `<meta property="og:description" content="${descripcionCorta}">`,
-      foto ? `<meta property="og:image" content="${esc(foto)}">` : '',
+      `<meta property="og:image" content="${esc(foto || SITE_URL + '/og-image.jpg')}">`,
       `<meta property="og:url" content="${url}">`,
       `<meta name="twitter:card" content="summary_large_image">`,
       `<meta name="robots" content="${vendido ? 'noindex,follow' : 'index,follow'}">`,
