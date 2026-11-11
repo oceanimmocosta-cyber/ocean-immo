@@ -12,7 +12,7 @@
 import fs from 'fs';
 import path from 'path';
 
-const SITE_URL = 'https://oceanimmocosta-cyber.github.io/ocean-immo';
+const SITE_URL = 'https://www.oceanimmocosta.com';
 const OUT_DIR = 'propiedades';
 const INDEX_FILE = 'index.html';
 
