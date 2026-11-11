@@ -3345,7 +3345,14 @@
   }
   function closeSharePopover(){ toggleSharePopover(false); }
   function setShareLinks(title, refTxt){
+    // La dirección de la ficha se calcula a partir de la propiedad abierta: al abrir una
+    // ficha desde la web, la URL del navegador todavía no se ha actualizado en este punto
+    // (se cambia justo después), y se compartía la portada en lugar de la propiedad.
     var url=window.location.href;
+    try{
+      var pu = lastCard ? propertyUrlFor(lastCard) : null;
+      if(pu) url = window.location.origin + pu;
+    }catch(_e){}
     var shareTitle=title || 'Propiedad';
     var shareText=title + (refTxt ? ' – '+refTxt : '') + ' | Ocean Immo';
     var links={
