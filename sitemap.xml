@@ -1,21 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://www.oceanimmocosta.com/captacion.html</loc>
-    <lastmod>2026-11-11</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.oceanimmocosta.com/clientes.html</loc>
-    <lastmod>2026-11-11</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.oceanimmocosta.com/comision.html</loc>
-    <lastmod>2026-11-11</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://www.oceanimmocosta.com/comprar.html</loc>
     <lastmod>2026-11-11</lastmod>
     <priority>0.8</priority>
@@ -61,39 +46,9 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.oceanimmocosta.com/contratos.html</loc>
-    <lastmod>2026-11-11</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.oceanimmocosta.com/documentos.html</loc>
-    <lastmod>2026-11-11</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.oceanimmocosta.com/ficha.html</loc>
-    <lastmod>2026-11-11</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.oceanimmocosta.com/firmar.html</loc>
-    <lastmod>2026-11-11</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://www.oceanimmocosta.com/</loc>
     <lastmod>2026-11-11</lastmod>
     <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://www.oceanimmocosta.com/panel.html</loc>
-    <lastmod>2026-11-11</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.oceanimmocosta.com/particulares.html</loc>
-    <lastmod>2026-11-11</lastmod>
-    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.oceanimmocosta.com/propiedades/ADO0001.html</loc>
