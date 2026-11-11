@@ -12,7 +12,7 @@ import fs from 'fs';
 import path from 'path';
 
 const INDEX_FILE = 'index.html';
-const SITE_URL = 'https://oceanimmocosta-cyber.github.io/ocean-immo';
+const SITE_URL = 'https://www.oceanimmocosta.com';
 
 function jsonLd(obj) {
   return `<script type="application/ld+json">${JSON.stringify(obj)}</script>`;
