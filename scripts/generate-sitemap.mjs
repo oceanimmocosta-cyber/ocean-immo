@@ -5,23 +5,26 @@ import fs from 'fs';
 import path from 'path';
 
 const SITE_URL = 'https://www.oceanimmocosta.com';
-const IGNORAR_DIRS = new Set(['.git', '.github', 'node_modules', 'scripts']);
-const IGNORAR_ARCHIVOS = new Set(['404.html']);
+// Solo se incluyen las páginas públicas de la web. Cualquier otro .html del
+// repositorio (herramientas internas, pruebas...) queda fuera del sitemap.
+const PAGINAS_RAIZ = new Set(['index.html', 'comprar.html', 'servicios.html']);
+const CARPETAS_PUBLICAS = ['comprar', 'servicios', 'propiedades'];
 
-function buscarHtml(dir, base = '') {
-  const out = [];
-  for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (e.isDirectory()) {
-      if (!IGNORAR_DIRS.has(e.name) && !e.name.startsWith('.')) out.push(...buscarHtml(path.join(dir, e.name), `${base}${e.name}/`));
-    } else if (e.name.endsWith('.html') && !IGNORAR_ARCHIVOS.has(e.name)) {
-      out.push({ ruta: `${base}${e.name}`, mtime: fs.statSync(path.join(dir, e.name)).mtime });
-    }
-  }
-  return out;
+function listarHtml(carpeta) {
+  if (!fs.existsSync(carpeta)) return [];
+  return fs.readdirSync(carpeta)
+    .filter((f) => f.endsWith('.html'))
+    .map((f) => `${carpeta}/${f}`);
+}
+
+function buscarHtml() {
+  const rutas = [...PAGINAS_RAIZ].filter((f) => fs.existsSync(f));
+  for (const c of CARPETAS_PUBLICAS) rutas.push(...listarHtml(c));
+  return rutas.map((ruta) => ({ ruta, mtime: fs.statSync(ruta).mtime }));
 }
 
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-const paginas = buscarHtml('.').sort((a, b) => a.ruta.localeCompare(b.ruta));
+const paginas = buscarHtml().sort((a, b) => a.ruta.localeCompare(b.ruta));
 
 const urls = paginas.map((p) => {
   const esInicio = p.ruta === 'index.html';
