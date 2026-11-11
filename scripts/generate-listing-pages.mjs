@@ -86,8 +86,25 @@ function esc(s) {
   return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
+// Etiquetas de vista previa (WhatsApp, redes) y canonical propias de cada página.
+function ogTags(titulo, descripcion, rutaUrl) {
+  const url = `${SITE_URL}${rutaUrl}`;
+  return [
+    `<link rel="canonical" href="${url}">`,
+    `<meta property="og:type" content="website">`,
+    `<meta property="og:site_name" content="Ocean Immo">`,
+    `<meta property="og:title" content="${esc(titulo)} · Ocean Immo">`,
+    `<meta property="og:description" content="${esc(descripcion)}">`,
+    `<meta property="og:image" content="${SITE_URL}/og-image.jpg">`,
+    `<meta property="og:url" content="${url}">`,
+    `<meta name="twitter:card" content="summary_large_image">`,
+  ].join('\n');
+}
+
 function main() {
-  const indexHtml = fs.readFileSync(INDEX_FILE, 'utf8');
+  let indexHtml = fs.readFileSync(INDEX_FILE, 'utf8');
+  // Quitamos las etiquetas de vista previa de la portada (<!--og-home-->): cada página genera las suyas.
+  indexHtml = indexHtml.replace(/<!--og-home-->[\s\S]*?<!--\/og-home-->\n?/, '');
 
   const tituloOriginalMatch = indexHtml.match(/<title>[^<]*<\/title>/);
   const descOriginalMatch = indexHtml.match(/<meta name="description" content="[^"]*">/);
@@ -105,6 +122,7 @@ function main() {
     let pagina = indexHtml;
     pagina = pagina.replace(tituloOriginalMatch[0], `<title>${esc(titulo)} · Ocean Immo</title>`);
     pagina = pagina.replace(descOriginalMatch[0], `<meta name="description" content="${esc(descripcion)}">`);
+    pagina = pagina.replace(`<meta name="description" content="${esc(descripcion)}">`, `<meta name="description" content="${esc(descripcion)}">\n${ogTags(titulo, descripcion, '/servicios.html')}`);
     pagina = pagina.replace(
       '</head>',
       `<script>window.__OPEN_PAGE=${JSON.stringify('servicios')};</script>\n` +
@@ -125,6 +143,7 @@ function main() {
     let pagina = indexHtml;
     pagina = pagina.replace(tituloOriginalMatch[0], `<title>${esc(titulo)} · Ocean Immo</title>`);
     pagina = pagina.replace(descOriginalMatch[0], `<meta name="description" content="${esc(descripcion)}">`);
+    pagina = pagina.replace(`<meta name="description" content="${esc(descripcion)}">`, `<meta name="description" content="${esc(descripcion)}">\n${ogTags(titulo, descripcion, '/comprar.html')}`);
     pagina = pagina.replace(
       '</head>',
       `<script>window.__OPEN_PAGE=${JSON.stringify('comprar')};</script>\n` +
@@ -148,6 +167,7 @@ function main() {
     let pagina = indexHtml;
     pagina = pagina.replace(tituloOriginalMatch[0], `<title>${esc(titulo)} · Ocean Immo</title>`);
     pagina = pagina.replace(descOriginalMatch[0], `<meta name="description" content="${esc(descripcion)}">`);
+    pagina = pagina.replace(`<meta name="description" content="${esc(descripcion)}">`, `<meta name="description" content="${esc(descripcion)}">\n${ogTags(titulo, descripcion, `/comprar/${t.slug}.html`)}`);
     pagina = pagina.replace(
       '</head>',
       `<script>window.__OPEN_PAGE=${JSON.stringify('comprar')};window.__OPEN_TIPO_FILTER=${JSON.stringify(t.tipoFilter)};</script>\n` +
@@ -171,6 +191,7 @@ function main() {
     let pagina = indexHtml;
     pagina = pagina.replace(tituloOriginalMatch[0], `<title>${esc(s.titulo)} · Ocean Immo</title>`);
     pagina = pagina.replace(descOriginalMatch[0], `<meta name="description" content="${esc(s.descripcion)}">`);
+    pagina = pagina.replace(`<meta name="description" content="${esc(s.descripcion)}">`, `<meta name="description" content="${esc(s.descripcion)}">\n${ogTags(s.titulo, s.descripcion, `/servicios/${s.slug}.html`)}`);
     pagina = pagina.replace(
       '</head>',
       `<script>window.__OPEN_PAGE=${JSON.stringify('servicio-' + s.slug)};</script>\n` +
