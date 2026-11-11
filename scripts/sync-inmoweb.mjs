@@ -208,7 +208,7 @@ async function main() {
   }
 }
 
-const SITE_URL = 'https://oceanimmocosta-cyber.github.io/ocean-immo/';
+const SITE_URL = 'https://www.oceanimmocosta.com/';
 // Lista real donde el formulario de suscripción de la web mete a la gente,
 // comprobado suscribiéndose de verdad desde la web y viendo dónde aparece el
 // contacto en Brevo: en "Contactos que participan en las conversaciones" (ID 4).
