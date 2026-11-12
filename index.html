@@ -3085,9 +3085,29 @@
   // Fill the detail page from a card (used on open and on language change)
   // ===== Property photo gallery (carousel) =====
   var galImages=[], galIndex=0;
+  // Precarga de las fotos vecinas: mientras miras una, el navegador ya descarga las dos
+  // siguientes y la anterior, para que al pasar de foto aparezcan al instante.
+  var galPrecargadas = {};
+  function precargarFoto(u){
+    if(!u || galPrecargadas[u]) return;
+    var im = new Image();
+    im.decoding = 'async';
+    im.src = u;
+    galPrecargadas[u] = im;
+  }
+  function precargarVecinas(){
+    var n = galImages.length;
+    if(n < 2) return;
+    var conn = navigator.connection;
+    if(conn && conn.saveData) return; // respeta el ahorro de datos del móvil
+    [1, 2, -1].forEach(function(d){
+      precargarFoto(galImages[(galIndex + d + n) % n]);
+    });
+  }
   function renderGallery(){
     var img=document.getElementById('d-img');
     if(img && galImages.length) img.src=galImages[galIndex];
+    precargarVecinas();
     var dotsWrap=document.getElementById('d-gal-dots');
     if(dotsWrap){
       dotsWrap.innerHTML = galImages.length>1 ? galImages.map(function(_,i){
