@@ -388,13 +388,13 @@
   .why-pin-on .why-note-wrap.is-on{opacity:1;transform:none}
   .why-done .sec-head.center{margin-bottom:30px}
   /* Aparición suave al hacer scroll (propiedades destacadas, Nosotros y Vender). Las clases las pone el JS. */
-  .rv{opacity:0;transition:opacity 1.1s ease,transform 1.1s cubic-bezier(.22,.7,.25,1)}
+  .rv{opacity:0;transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1)}
   .rv-up{transform:translateY(30px)}
   .rv-left{transform:translateX(-44px)}
   .rv-pop{transform:translateY(12px) scale(.92)}
   .rv.rv-in{opacity:1;transform:none}
   .val-points li.rv svg{transform:scale(.3);opacity:0}
-  .val-points li.rv-in svg{transform:none;opacity:1;transition:transform .8s cubic-bezier(.3,1.4,.5,1) .3s,opacity .6s ease .3s}
+  .val-points li.rv-in svg{transform:none;opacity:1;transition:transform .5s cubic-bezier(.3,1.5,.5,1) .2s,opacity .4s ease .2s}
   @media(max-width:1100px){.rv-left{transform:translateY(30px)}}
 
   /* ===== ABOUT ===== */
@@ -2868,7 +2868,7 @@ html,body{overflow-anchor:none}
         CLS.forEach(function(c){ el.classList.remove(c); });
         el.style.transitionDelay='';
         el.removeAttribute('data-rv-d');
-      }, d+1500);
+      }, d+900);
     }
     var io=new IntersectionObserver(function(entries){
       entries.forEach(function(e){
@@ -2891,12 +2891,12 @@ html,body{overflow-anchor:none}
     }
     // Nosotros
     add(document.querySelector('#nosotros .about-photo'),'left',0);
-    addAll('#nosotros .about-copy > .eyebrow, #nosotros .about-copy > h2, #nosotros .about-copy > p','up',190);
-    addAll('#nosotros .founders .founder','pop',240);
+    addAll('#nosotros .about-copy > .eyebrow, #nosotros .about-copy > h2, #nosotros .about-copy > p','up',110);
+    addAll('#nosotros .founders .founder','pop',130);
     // Vender
-    addAll('#vender .val-copy > .eyebrow, #vender .val-copy > h2, #vender .val-copy > p','up',180);
-    addAll('#vender .val-points li','up',260);
-    add(document.querySelector('#vender .val-form'),'up',420);
+    addAll('#vender .val-copy > .eyebrow, #vender .val-copy > h2, #vender .val-copy > p','up',100);
+    addAll('#vender .val-points li','up',140);
+    add(document.querySelector('#vender .val-form'),'up',220);
     // Propiedades destacadas: las tarjetas reales se crean con JS al cargar properties.json,
     // que llama a window.ocRevealCards. Solo se animan la primera vez que se pintan.
     var cardsDone=false;
@@ -2909,7 +2909,7 @@ html,body{overflow-anchor:none}
         // para no dejar huecos vacíos mientras se desliza.
         cards.forEach(function(c,i){
           c.classList.add('rv','rv-up');
-          c.setAttribute('data-rv-d',String(Math.min(i,3)*170));
+          c.setAttribute('data-rv-d',String(Math.min(i,3)*90));
         });
         var gio=new IntersectionObserver(function(es){
           if(!es[0].isIntersecting) return;
@@ -2918,7 +2918,7 @@ html,body{overflow-anchor:none}
         },{threshold:0.3,rootMargin:'0px 0px -22% 0px'});
         gio.observe(grid);
       } else {
-        cards.forEach(function(c,i){ add(c,'up',(i%3)*170); });
+        cards.forEach(function(c,i){ add(c,'up',(i%3)*90); });
       }
       cardsDone=true;
     };
