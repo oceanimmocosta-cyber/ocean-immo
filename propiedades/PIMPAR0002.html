@@ -13,8 +13,8 @@
 <meta property="og:url" content="https://www.oceanimmocosta.com/propiedades/PIMPAR0002.html">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="robots" content="index,follow">
-<link rel="icon" type="image/png" sizes="256x256" href="https://www.oceanimmocosta.com/favicon.png">
-<link rel="shortcut icon" href="https://www.oceanimmocosta.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="https://www.oceanimmocosta.com/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="https://www.oceanimmocosta.com/favicon-google.png">
 <link rel="apple-touch-icon" href="https://www.oceanimmocosta.com/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -368,17 +368,27 @@
   .why-pin-on .why-stage .wrap{width:100%}
   .why-pin-on .sec-head.center{margin-bottom:30px}
   .why-pin-on .why-note-wrap{margin-top:26px}
-  .why-pin-on .why-progress{display:block;position:relative;margin:0 0 22px}
-  .why-pin-on .why-line{position:absolute;left:12.5%;right:12.5%;top:50%;height:3px;margin-top:-1.5px;border-radius:3px;background:rgba(10,37,64,.12);overflow:hidden}
-  .why-pin-on .why-line-fill{height:100%;width:100%;background:var(--turquoise);transform-origin:left center;transform:scaleX(0)}
-  .why-pin-on .why-dots{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:24px;justify-items:center}
-  .why-pin-on .why-dots span{width:16px;height:16px;border-radius:50%;background:#fff;border:3px solid rgba(10,37,64,.18);transition:background .35s,border-color .35s,transform .35s,box-shadow .35s}
-  .why-pin-on .why-dots span.is-on{background:var(--turquoise);border-color:var(--turquoise);transform:scale(1.25);box-shadow:0 0 0 6px rgba(0,150,166,.16)}
+  .why-pin-on .why-progress,.why-done .why-progress{display:block;position:relative;margin:0 0 22px}
+  .why-pin-on .why-line,.why-done .why-line{position:absolute;left:12.5%;right:12.5%;top:50%;height:3px;margin-top:-1.5px;border-radius:3px;background:rgba(10,37,64,.12);overflow:hidden}
+  .why-pin-on .why-line-fill,.why-done .why-line-fill{height:100%;width:100%;background:var(--turquoise);transform-origin:left center;transform:scaleX(0)}
+  .why-pin-on .why-dots,.why-done .why-dots{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:24px;justify-items:center}
+  .why-pin-on .why-dots span,.why-done .why-dots span{width:16px;height:16px;border-radius:50%;background:#fff;border:3px solid rgba(10,37,64,.18);transition:background .35s,border-color .35s,transform .35s,box-shadow .35s}
+  .why-pin-on .why-dots span.is-on,.why-done .why-dots span.is-on{background:var(--turquoise);border-color:var(--turquoise);transform:scale(1.25);box-shadow:0 0 0 6px rgba(0,150,166,.16)}
   .why-pin-on .why-card{opacity:0;transform:translateY(38px) scale(.96);transition:opacity .55s ease,transform .55s cubic-bezier(.2,.7,.2,1),box-shadow .25s,border-color .25s}
   .why-pin-on .why-card.is-on{opacity:1;transform:none}
   .why-pin-on .why-card.is-on:hover{transform:translateY(-5px)}
   .why-pin-on .why-note-wrap{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease}
   .why-pin-on .why-note-wrap.is-on{opacity:1;transform:none}
+  .why-done .sec-head.center{margin-bottom:30px}
+  /* Aparición suave al hacer scroll (propiedades destacadas, Nosotros y Vender). Las clases las pone el JS. */
+  .rv{opacity:0;transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1)}
+  .rv-up{transform:translateY(30px)}
+  .rv-left{transform:translateX(-44px)}
+  .rv-pop{transform:translateY(12px) scale(.92)}
+  .rv.rv-in{opacity:1;transform:none}
+  .val-points li.rv svg{transform:scale(.3);opacity:0}
+  .val-points li.rv-in svg{transform:none;opacity:1;transition:transform .5s cubic-bezier(.3,1.5,.5,1) .2s,opacity .4s ease .2s}
+  @media(max-width:1100px){.rv-left{transform:translateY(30px)}}
 
   /* ===== ABOUT ===== */
   .about{background:var(--sand)}
@@ -962,6 +972,7 @@
   }
   :focus-visible{outline:3px solid var(--turquoise);outline-offset:2px;border-radius:4px}
   @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+html,body{overflow-anchor:none}
 </style>
 <script type="application/ld+json">
 {
@@ -995,7 +1006,7 @@
   ]
 }
 </script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"RealEstateListing","name":"TERRENO RÚSTICO DE 12.900 m² CON 300 OLIVOS PICUAL Y VISTAS AL CANIGÓ – PEDRET Y MARZÀ","description":"En la tranquila y apreciada zona de Pedret y Marzà, se encuentra este magnífico terreno rústico de 12.900 m² que destaca por su excelente estado de conservación, su olivar productivo y sus impresionantes vistas al Canigó.\n\n\n\nLo que lo hace realmente especial:\n\n\n\n· Superficie de 12.900 m²\n\n· Aproximadamente 300 olivos variedad Picual, conocidos por producir un aceite de excelente calidad\n\n· Sistema de riego subterráneo instalado, diseñado para llegar a cada olivo de forma eficiente\n\n· Impresionantes vistas al Canigó\n\n· Acceso a agua\n\n· Buen acceso para vehículos, ideal para cualquier actividad o explotación agrícola\n\n· Finca muy cuidada y lista para explotar\n\n\n\nUna oportunidad única para quienes buscan una finca productiva, bien mantenida y con un entorno natural incomparable. La combinación del olivar en plena producción, el riego subterráneo y las vistas al Canigó hacen de esta propiedad un enclave verdaderamente especial en el corazón del Alt Empordà.\n\n\n\nLos honorarios de agencia están incluidos en el precio de venta publicado. No obstante, los gastos derivados de la compraventa, como impuestos, gastos de notaría y registro de la propiedad, corren a cargo del comprador y no están incluidos en el precio anunciado.","url":"https://www.oceanimmocosta.com/propiedades/PIMPAR0002.html","image":["https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1674084/image/img_5298.jpg","https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1674084/image/img_5310.jpg","https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1674084/image/img_5312.jpg","https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1674084/image/img_5313.jpg","https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1674084/image/img_5295.jpg","https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1674084/image/img_5314.jpg","https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1674084/image/img_5308.jpg","https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1674084/image/img_5303.jpg"],"datePosted":"2026-11-13T01:35:16.419Z","address":{"@type":"PostalAddress","addressLocality":"Pedret i Marzà","addressRegion":"Girona","addressCountry":"ES"},"floorSize":{"@type":"QuantitativeValue","value":12900,"unitCode":"MTK"},"offers":{"@type":"Offer","price":55000,"priceCurrency":"EUR","availability":"https://schema.org/InStock","url":"https://www.oceanimmocosta.com/propiedades/PIMPAR0002.html"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"RealEstateListing","name":"TERRENO RÚSTICO DE 12.900 m² CON 300 OLIVOS PICUAL Y VISTAS AL CANIGÓ – PEDRET Y MARZÀ","description":"En la tranquila y apreciada zona de Pedret y Marzà, se encuentra este magnífico terreno rústico de 12.900 m² que destaca por su excelente estado de conservación, su olivar productivo y sus impresionantes vistas al Canigó.\n\n\n\nLo que lo hace realmente especial:\n\n\n\n· Superficie de 12.900 m²\n\n· Aproximadamente 300 olivos variedad Picual, conocidos por producir un aceite de excelente calidad\n\n· Sistema de riego subterráneo instalado, diseñado para llegar a cada olivo de forma eficiente\n\n· Impresionantes vistas al Canigó\n\n· Acceso a agua\n\n· Buen acceso para vehículos, ideal para cualquier actividad o explotación agrícola\n\n· Finca muy cuidada y lista para explotar\n\n\n\nUna oportunidad única para quienes buscan una finca productiva, bien mantenida y con un entorno natural incomparable. La combinación del olivar en plena producción, el riego subterráneo y las vistas al Canigó hacen de esta propiedad un enclave verdaderamente especial en el corazón del Alt Empordà.\n\n\n\nLos honorarios de agencia están incluidos en el precio de venta publicado. No obstante, los gastos derivados de la compraventa, como impuestos, gastos de notaría y registro de la propiedad, corren a cargo del comprador y no están incluidos en el precio anunciado.","url":"https://www.oceanimmocosta.com/propiedades/PIMPAR0002.html","image":["https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1674084/image/img_5298.jpg","https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1674084/image/img_5310.jpg","https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1674084/image/img_5312.jpg","https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1674084/image/img_5313.jpg","https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1674084/image/img_5295.jpg","https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1674084/image/img_5314.jpg","https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1674084/image/img_5308.jpg","https://storage.googleapis.com/static.inmoweb.es/clients/4152/property/1674084/image/img_5303.jpg"],"datePosted":"2026-11-13T15:19:37.339Z","address":{"@type":"PostalAddress","addressLocality":"Pedret i Marzà","addressRegion":"Girona","addressCountry":"ES"},"floorSize":{"@type":"QuantitativeValue","value":12900,"unitCode":"MTK"},"offers":{"@type":"Offer","price":55000,"priceCurrency":"EUR","availability":"https://schema.org/InStock","url":"https://www.oceanimmocosta.com/propiedades/PIMPAR0002.html"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Inicio","item":"https://www.oceanimmocosta.com/"},{"@type":"ListItem","position":2,"name":"Comprar","item":"https://www.oceanimmocosta.com/comprar.html"},{"@type":"ListItem","position":3,"name":"Terrenos","item":"https://www.oceanimmocosta.com/comprar/terreno.html"},{"@type":"ListItem","position":4,"name":"TERRENO RÚSTICO DE 12.900 m² CON 300 OLIVOS PICUAL Y VISTAS AL CANIGÓ – PEDRET Y MARZÀ"}]}</script>
 <script>window.__OPEN_PROPERTY_REF="PIMPAR0002";</script>
 <style id="oc-preload">#home{display:none}#page-detalle{display:block}</style>
@@ -2792,24 +2803,37 @@
     var fill=sec.querySelector('.why-line-fill');
     var note=sec.querySelector('.why-note-wrap');
     var ticking=false;
+    var tMax=0, startedEver=false, finished=false;
     function update(){
       ticking=false;
-      if(!sec.classList.contains('why-pin-on')) return;
+      if(finished || !sec.classList.contains('why-pin-on')) return;
       var r=sec.getBoundingClientRect(), vh=window.innerHeight;
       var span=r.height-vh;
       var p=span>0 ? Math.min(1,Math.max(0,-r.top/span)) : 1;
       var t=Math.min(1,Math.max(0,(p-0.04)/0.80));
-      var started = r.top<=vh*0.2; // la primera tarjeta entra cuando la sección ya está a la vista
-      if(fill) fill.style.transform='scaleX('+t.toFixed(3)+')';
+      // La animación solo avanza: al volver hacia arriba no se deshace ni empieza de nuevo.
+      if(r.top<=vh*0.04) startedEver=true;
+      if(startedEver && t>tMax) tMax=t;
+      if(fill) fill.style.transform='scaleX('+tMax.toFixed(3)+')';
       cards.forEach(function(c,i){
-        var on = started && t>=i/3-0.0001;
+        var on = startedEver && tMax>=i/3-0.0001;
         c.classList.toggle('is-on',on);
         if(dots[i]) dots[i].classList.toggle('is-on',on);
       });
-      if(note) note.classList.toggle('is-on', started && t>=1);
+      if(note) note.classList.toggle('is-on', startedEver && tMax>=1);
+      // Terminada y ya superada la sección: se quita el bloqueo para que, al subir, se vea normal.
+      if(tMax>=1 && r.bottom<0){
+        var nx=sec.nextElementSibling; var before=nx?nx.getBoundingClientRect().top:0;
+        finished=true;
+        sec.classList.add('why-done');
+        sec.classList.remove('why-pin-on');
+        var diff=nx?nx.getBoundingClientRect().top-before:0;
+        if(Math.abs(diff)>0.5) window.scrollBy({top:diff,left:0,behavior:'instant'});
+      }
     }
     function onScroll(){ if(!ticking){ ticking=true; requestAnimationFrame(update); } }
     function apply(){
+      if(finished) return;
       var enable=mq.matches;
       sec.classList.toggle('why-pin-on',enable);
       if(!enable){
@@ -2824,6 +2848,77 @@
     window.addEventListener('scroll',onScroll,{passive:true});
     window.addEventListener('resize',onScroll);
     apply();
+  })();
+
+  // Aparición suave al hacer scroll: propiedades destacadas, "Nosotros" y "Vender".
+  // Solo movimiento y opacidad; se desactiva con "reducir movimiento" o sin IntersectionObserver.
+  (function(){
+    if(!('IntersectionObserver' in window)) return;
+    if(window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+    var CLS=['rv','rv-up','rv-left','rv-pop','rv-in'];
+    function reveal(el){
+      var d=parseInt(el.getAttribute('data-rv-d')||'0',10);
+      el.style.transitionDelay=d+'ms';
+      el.classList.add('rv-in');
+      // Al terminar, se quitan las clases para que vuelvan los efectos originales (hover, etc.).
+      setTimeout(function(){
+        CLS.forEach(function(c){ el.classList.remove(c); });
+        el.style.transitionDelay='';
+        el.removeAttribute('data-rv-d');
+      }, d+900);
+    }
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(!e.isIntersecting) return;
+        io.unobserve(e.target);
+        reveal(e.target);
+      });
+    // La animación empieza cuando el elemento ya está bien dentro de la pantalla (no al asomar por abajo).
+    },{threshold:0.15,rootMargin:'0px 0px -30% 0px'});
+    function add(el,type,delay){
+      if(!el || el.classList.contains('rv')) return;
+      el.classList.add('rv','rv-'+type);
+      el.setAttribute('data-rv-d',String(delay||0));
+      io.observe(el);
+    }
+    function addAll(sel,type,step,mod){
+      [].slice.call(document.querySelectorAll(sel)).forEach(function(el,i){
+        add(el,type,((mod?i%mod:i))*step);
+      });
+    }
+    // Nosotros
+    add(document.querySelector('#nosotros .about-photo'),'left',0);
+    addAll('#nosotros .about-copy > .eyebrow, #nosotros .about-copy > h2, #nosotros .about-copy > p','up',110);
+    addAll('#nosotros .founders .founder','pop',130);
+    // Vender
+    addAll('#vender .val-copy > .eyebrow, #vender .val-copy > h2, #vender .val-copy > p','up',100);
+    addAll('#vender .val-points li','up',140);
+    add(document.querySelector('#vender .val-form'),'up',220);
+    // Propiedades destacadas: las tarjetas reales se crean con JS al cargar properties.json,
+    // que llama a window.ocRevealCards. Solo se animan la primera vez que se pintan.
+    var cardsDone=false;
+    window.ocRevealCards=function(grid){
+      if(cardsDone || !grid) return;
+      var cards=[].slice.call(grid.children).filter(function(c){ return c.classList && c.classList.contains('prop'); });
+      if(!cards.length) return;
+      if(grid.scrollWidth>grid.clientWidth+8){
+        // Carrusel horizontal (móvil): aparecen todas juntas cuando el carrusel entra en pantalla,
+        // para no dejar huecos vacíos mientras se desliza.
+        cards.forEach(function(c,i){
+          c.classList.add('rv','rv-up');
+          c.setAttribute('data-rv-d',String(Math.min(i,3)*90));
+        });
+        var gio=new IntersectionObserver(function(es){
+          if(!es[0].isIntersecting) return;
+          gio.disconnect();
+          cards.forEach(reveal);
+        },{threshold:0.3,rootMargin:'0px 0px -22% 0px'});
+        gio.observe(grid);
+      } else {
+        cards.forEach(function(c,i){ add(c,'up',(i%3)*90); });
+      }
+      cardsDone=true;
+    };
   })();
 
   // Header: shadow on scroll + hide on scroll down / show on scroll up
@@ -3867,6 +3962,7 @@
           homeGrid.innerHTML = featured.map(buildCard).join('');
           initMiniGalleries(homeGrid);
           if(currentLang!=='es' && typeof applyLang==='function') applyLang(currentLang);
+          if(window.ocRevealCards) window.ocRevealCards(homeGrid);
         }
 
         wireFilterSearch('comprar-f-buscar', 'comprar-f-poblacion', 'comprar-f-precio', ventas, comprarGrid, comprarPag, 'comprar-f-tipo', 'comprar-f-hab', 'comprar');
