@@ -1,7 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://www.oceanimmocosta.com/ca/comprar.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.oceanimmocosta.com/comprar.html"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://www.oceanimmocosta.com/ca/comprar.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.oceanimmocosta.com/en/comprar.html"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.oceanimmocosta.com/fr/comprar.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.oceanimmocosta.com/comprar.html"/>
+    <lastmod>2026-11-16</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.oceanimmocosta.com/ca/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.oceanimmocosta.com/"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://www.oceanimmocosta.com/ca/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.oceanimmocosta.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.oceanimmocosta.com/fr/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.oceanimmocosta.com/"/>
+    <lastmod>2026-11-16</lastmod>
+    <priority>1.0</priority>
+  </url>
   <url>
     <loc>https://www.oceanimmocosta.com/comprar.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.oceanimmocosta.com/comprar.html"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://www.oceanimmocosta.com/ca/comprar.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.oceanimmocosta.com/en/comprar.html"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.oceanimmocosta.com/fr/comprar.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.oceanimmocosta.com/comprar.html"/>
     <lastmod>2026-11-16</lastmod>
     <priority>0.8</priority>
   </url>
@@ -46,7 +71,52 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://www.oceanimmocosta.com/en/comprar.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.oceanimmocosta.com/comprar.html"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://www.oceanimmocosta.com/ca/comprar.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.oceanimmocosta.com/en/comprar.html"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.oceanimmocosta.com/fr/comprar.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.oceanimmocosta.com/comprar.html"/>
+    <lastmod>2026-11-16</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.oceanimmocosta.com/en/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.oceanimmocosta.com/"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://www.oceanimmocosta.com/ca/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.oceanimmocosta.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.oceanimmocosta.com/fr/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.oceanimmocosta.com/"/>
+    <lastmod>2026-11-16</lastmod>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://www.oceanimmocosta.com/fr/comprar.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.oceanimmocosta.com/comprar.html"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://www.oceanimmocosta.com/ca/comprar.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.oceanimmocosta.com/en/comprar.html"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.oceanimmocosta.com/fr/comprar.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.oceanimmocosta.com/comprar.html"/>
+    <lastmod>2026-11-16</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.oceanimmocosta.com/fr/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.oceanimmocosta.com/"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://www.oceanimmocosta.com/ca/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.oceanimmocosta.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.oceanimmocosta.com/fr/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.oceanimmocosta.com/"/>
+    <lastmod>2026-11-16</lastmod>
+    <priority>1.0</priority>
+  </url>
+  <url>
     <loc>https://www.oceanimmocosta.com/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.oceanimmocosta.com/"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://www.oceanimmocosta.com/ca/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.oceanimmocosta.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.oceanimmocosta.com/fr/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.oceanimmocosta.com/"/>
     <lastmod>2026-11-16</lastmod>
     <priority>1.0</priority>
   </url>
