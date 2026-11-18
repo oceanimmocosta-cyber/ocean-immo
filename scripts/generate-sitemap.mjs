@@ -8,7 +8,7 @@ const SITE_URL = 'https://www.oceanimmocosta.com';
 // Solo se incluyen las páginas públicas de la web. Cualquier otro .html del
 // repositorio (herramientas internas, pruebas...) queda fuera del sitemap.
 const PAGINAS_RAIZ = new Set(['index.html', 'comprar.html', 'servicios.html']);
-const CARPETAS_PUBLICAS = ['comprar', 'servicios', 'propiedades'];
+const CARPETAS_PUBLICAS = ['comprar', 'servicios', 'propiedades', 'zonas'];
 // Versiones por idioma de la portada y de Comprar (las genera generate-language-pages.mjs).
 const IDIOMAS = ['ca', 'en', 'fr'];
 const PAGINAS_IDIOMA = ['index.html', 'comprar.html'];
