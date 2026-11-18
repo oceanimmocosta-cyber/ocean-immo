@@ -10,7 +10,7 @@
   },
   "todas": {
     "nombre": "Todas las propiedades",
-    "foto": "zonas/img/todas.jpg",
+    "foto": "todas.jpg",
     "vista": {
       "centro": [
         3.02,
@@ -39,8 +39,8 @@
         ],
         "zoom": 12.9
       },
-      "foto": "zonas/img/roses.jpg",
-      "hero": "zonas/img/roses-hero.jpg",
+      "foto": "roses.jpg",
+      "hero": "roses-hero.jpg",
       "dato": "Parque Natural Cap de Creus",
       "iconoDato": "mount",
       "titulo": "Casas y pisos en venta en Roses, Costa Brava · Ocean Immo",
@@ -97,8 +97,8 @@
         ],
         "zoom": 12.6
       },
-      "foto": "zonas/img/empuriabrava.jpg",
-      "hero": "zonas/img/empuriabrava-hero.jpg",
+      "foto": "empuriabrava.jpg",
+      "hero": "empuriabrava-hero.jpg",
       "dato": "Canales navegables",
       "iconoDato": "wave",
       "titulo": "Casas con amarre y pisos en venta en Empuriabrava · Ocean Immo",
@@ -155,8 +155,8 @@
         ],
         "zoom": 13.1
       },
-      "foto": "zonas/img/santa-margarida.jpg",
-      "hero": "zonas/img/santa-margarida-hero.jpg",
+      "foto": "santa-margarida.jpg",
+      "hero": "santa-margarida-hero.jpg",
       "dato": "Playa de 600 m",
       "iconoDato": "sun",
       "titulo": "Apartamentos y pisos en venta en Santa Margarida, Roses · Ocean Immo",
