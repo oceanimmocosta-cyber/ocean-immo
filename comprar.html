@@ -4506,7 +4506,7 @@ html,body{overflow-anchor:none}
   function esc(s){var d=document.createElement('div');d.textContent=s==null?'':String(s);return d.innerHTML;}
   // Misma normalización que generate-zone-pages.mjs
   function norm(s){return String(s==null?'':s).normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim().replace(/margarita/g,'margarida');}
-  function match(p,z){var c=z.coincide||{};return (c.poblacion||[]).indexOf(norm(p.poblacion))>-1||(c.zona||[]).indexOf(norm(p.zona))>-1;}
+  function match(p,z){var c=z.coincide||{},x=z.excluye||{};if((x.poblacion||[]).indexOf(norm(p.poblacion))>-1||(x.zona||[]).indexOf(norm(p.zona))>-1)return false;return (c.poblacion||[]).indexOf(norm(p.poblacion))>-1||(c.zona||[]).indexOf(norm(p.zona))>-1;}
   function url(path){return siteRootPath()+path;}
   function isEs(){return (typeof currentLang==='undefined')||currentLang==='es';}
 
