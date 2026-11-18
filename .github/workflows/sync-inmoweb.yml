@@ -45,6 +45,9 @@ jobs:
       - name: Generar páginas de listado por tipo (SEO)
         run: node scripts/generate-listing-pages.mjs
 
+      - name: Generar páginas de zonas (Roses, Empuriabrava...)
+        run: node scripts/generate-zone-pages.mjs
+
       - name: Generar páginas por idioma (en, fr, ca)
         run: node scripts/generate-language-pages.mjs
 
@@ -55,6 +58,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add properties.json propiedades/ comprar.html comprar/ servicios.html servicios/ en/ fr/ ca/ sitemap.xml
+          git add properties.json propiedades/ comprar.html comprar/ servicios.html servicios/ zonas/ en/ fr/ ca/ sitemap.xml
           git diff --staged --quiet || git commit -m "Actualización automática de propiedades desde Inmoweb"
           git push
