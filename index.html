@@ -4642,6 +4642,8 @@ html,body{overflow-anchor:none}
     if(pd&&pd.renderPaginated) pd.renderPaginated(item.list,g('zona-grid'),g('zona-pagination'),1);
     window.__ZONA_CUR=slug;
     if(typeof showPage==='function') showPage('zona');
+    // En el móvil el navegador a veces no sube del todo al cambiar de página: se fuerza arriba tras pintar.
+    window.scrollTo(0,0); requestAnimationFrame(function(){window.scrollTo(0,0);}); setTimeout(function(){window.scrollTo(0,0);},120);
     document.title=z.titulo;
     if(push) history.pushState({ocListing:true},'',url('zonas/'+slug+'.html'));
   }
