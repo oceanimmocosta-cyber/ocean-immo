@@ -1013,6 +1013,67 @@ html,body{overflow-anchor:none}
   ]
 }
 </script>
+<style id="oc-zonas-css">
+/* ===== Zonas: sección de portada con mapa + página de zona ===== */
+.nav-dropdown [hidden]{display:none!important}
+.nav-dd-label{display:block;padding:10px 12px 4px;margin-top:4px;border-top:1px solid #eee7d8;font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--turquoise)}
+#zonas{background:var(--sand)}
+#zonas[hidden]{display:none}
+.zmap{display:grid;grid-template-columns:1.25fr 1fr;gap:28px}
+#zmap{height:440px;border-radius:24px;box-shadow:0 10px 30px rgba(26,46,67,.12);background:#e7edf0 url() center/cover;z-index:0;overflow:hidden}
+.zmap.nomap{grid-template-columns:1fr;max-width:560px;margin:0 auto}
+.zmap.nomap #zmap{display:none}
+.zlist{display:flex;flex-direction:column;gap:14px;justify-content:center}
+.zrow{display:flex;align-items:center;gap:16px;background:#fff;border-radius:18px;padding:12px 18px 12px 12px;box-shadow:0 6px 20px rgba(26,46,67,.07);text-decoration:none;color:var(--navy);transition:.2s;outline:2px solid transparent}
+.zrow:hover,.zrow.on{transform:translateX(4px);box-shadow:0 12px 28px rgba(26,46,67,.13);outline-color:var(--turquoise)}
+.zrow-img{width:84px;height:68px;border-radius:12px;background-size:cover;background-position:center;flex:none}
+.zrow-t{flex:1}
+.zrow-t h3{font-family:var(--display,inherit);font-size:1.1rem;margin:0 0 3px;color:var(--navy)}
+.zrow-t span{font-size:.88rem;color:var(--turquoise);font-weight:600}
+.zrow>svg{color:var(--turquoise);flex:none}
+.zpin{width:18px;height:18px;border-radius:50%;background:var(--navy);border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.35);transition:.2s}
+.zpin.on{background:var(--turquoise);transform:scale(1.35);box-shadow:0 0 0 8px rgba(3,155,165,.3)}
+.zmk{position:relative;width:18px;height:18px;cursor:pointer}
+.zmk .zpin{position:absolute;inset:0}
+.ztip{position:absolute;left:50%;bottom:27px;transform:translateX(-50%);white-space:nowrap;display:flex;flex-direction:column;align-items:flex-start;padding:6px 8px 7px;font:700 13px var(--body,system-ui),sans-serif;color:var(--navy);background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.2);border-radius:12px}
+.ztip .zsub{display:none;flex-direction:column;gap:2px;margin-top:3px;font-weight:600;font-size:11.5px;color:#41546a}
+.ztip .zsub .zn{color:var(--turquoise);font-weight:700}
+.ztip .zsub .zd{display:flex;align-items:center;gap:5px}
+.ztip .zsub .zd svg{color:var(--turquoise);flex:none}
+.ztip .zsub .zph{display:block;width:190px;height:88px;border-radius:8px;background-size:cover;background-position:center;background-repeat:no-repeat;margin:2px 0 6px}
+.zmk.on{z-index:5}
+.zmk.on .ztip .zsub{display:flex}
+.zmk.on .ztip{box-shadow:0 6px 18px rgba(0,0,0,.28)}
+#zmap .maplibregl-ctrl-attrib{background:rgba(255,255,255,.6)!important;font-size:10px!important;border-radius:10px;margin:0 8px 8px 0!important}
+#zmap .maplibregl-ctrl-attrib a{color:#5d6e80!important}
+#zmap .maplibregl-ctrl-attrib-button{opacity:.75}
+@media(max-width:900px){.zmap{grid-template-columns:1fr}#zmap{height:320px}}
+/* Página de zona */
+.zona-banner{position:relative;background-size:cover;background-position:center}
+.zona-banner.has-img::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(26,46,67,.9),rgba(26,46,67,.55))}
+.zona-banner .wrap{position:relative}
+.zona-grid{display:grid;grid-template-columns:1.35fr 1fr;gap:56px;align-items:start}
+.zona-text h2{font-size:clamp(1.5rem,2.4vw,2.1rem);margin-bottom:16px}
+.zona-text p{color:var(--ink);opacity:.86;font-weight:300;font-size:1.05rem;line-height:1.75;margin-bottom:16px}
+.zona-facts{background:var(--sand);border-radius:22px;padding:30px 30px 8px}
+.zona-facts h3{font-size:1.15rem;margin-bottom:18px}
+.zona-fact{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-top:1px solid rgba(26,46,67,.1)}
+.zona-fact:first-of-type{border-top:0}
+.zona-fact .ic{flex:0 0 40px;height:40px;border-radius:12px;background:#fff;display:grid;place-items:center;color:var(--turquoise)}
+.zona-fact strong{display:block;color:var(--navy);font-size:.98rem;margin-bottom:2px}
+.zona-fact span{font-size:.9rem;color:var(--ink);opacity:.75;font-weight:300}
+.zona-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin-bottom:34px;flex-wrap:wrap}
+.zona-head h2{font-size:clamp(1.5rem,2.4vw,2.1rem)}
+.zona-head p{color:var(--ink);opacity:.7;margin-top:6px}
+.zona-chips{display:flex;flex-wrap:wrap;gap:12px}
+.zona-chips a{padding:12px 22px;border-radius:999px;background:#fff;border:1.5px solid var(--line);color:var(--navy);font-weight:500;text-decoration:none;transition:.2s}
+.zona-chips a:hover{background:var(--navy);color:#fff;border-color:var(--navy)}
+.zona-cta{background:var(--navy);border-radius:26px;padding:46px 48px;display:flex;justify-content:space-between;align-items:center;gap:28px;flex-wrap:wrap}
+.zona-cta h3{color:#fff;font-size:1.6rem;margin-bottom:6px}
+.zona-cta p{color:rgba(255,255,255,.8);font-weight:300}
+.zona-fuentes{margin-top:18px;font-size:.8rem;color:var(--ink);opacity:.55;line-height:1.6}
+@media(max-width:900px){.zona-grid{grid-template-columns:1fr;gap:34px}.zona-cta{padding:32px 26px}}
+</style>
 <script>window.__LANG="ca";window.__HOME_TITLE="Ocean Immo · La teva llar vora el mar a la Costa Brava | Immobiliària a Roses";window.__PAGE_TITLES={"comprar":"Propietats en venda a Roses i la Costa Brava · Ocean Immo"};</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Inici"}]}</script>
 </head>
@@ -1404,6 +1465,18 @@ html,body{overflow-anchor:none}
   </div>
 </section>
 
+<!-- ===== ZONAS (se rellena sola desde zonas.json + properties.json) ===== -->
+<section class="sec" id="zonas" hidden>
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="eyebrow">Explora por zonas</span>
+      <h2>Encuentra tu rincón de la Costa Brava</h2>
+      <p>Estas son algunas de nuestras zonas, pero trabajamos en muchas más. Te contamos cómo es cada una y qué propiedades hay ahora mismo.</p>
+    </div>
+    <div class="zmap" id="zmapWrap"><div id="zmap" role="region" aria-label="Mapa de zonas"></div><div class="zlist" id="zlist"></div></div>
+  </div>
+</section>
+
 <!-- ===== VALUATION ===== -->
 <section class="sec valuation" id="vender">
   <div class="wrap val-grid">
@@ -1637,6 +1710,52 @@ html,body{overflow-anchor:none}
 </main>
 
 <!-- ===== SUBPAGE: COMPRAR ===== -->
+<div class="subpage" id="page-zona">
+  <section class="subpage-banner zona-banner" id="zona-banner">
+    <div class="wrap">
+      <button class="back-home" data-home="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Tornar</button>
+      <span class="eyebrow" id="zona-eyebrow">Zonas</span>
+      <h1 id="zona-h1"></h1>
+      <p id="zona-lead"></p>
+    </div>
+  </section>
+  <section class="sec" style="padding-bottom:40px">
+    <div class="wrap zona-grid">
+      <div class="zona-text">
+        <h2 id="zona-h2texto"></h2>
+        <div id="zona-texto"></div>
+      </div>
+      <aside class="zona-facts">
+        <h3 id="zona-h2datos"></h3>
+        <div id="zona-hechos"></div>
+      </aside>
+    </div>
+  </section>
+  <section class="sec" style="padding-top:30px">
+    <div class="wrap">
+      <div class="zona-head">
+        <div><h2 id="zona-h2props"></h2><p id="zona-count"></p></div>
+        <a href="comprar.html" data-page="comprar" class="btn btn-ghost">Ver todas las propiedades</a>
+      </div>
+      <div class="prop-grid" id="zona-grid"></div>
+      <div class="pagination" id="zona-pagination"></div>
+    </div>
+  </section>
+  <section class="sec" id="zona-otras" style="padding-top:0;padding-bottom:60px">
+    <div class="wrap">
+      <div class="zona-head"><div><h2>Otras zonas</h2></div></div>
+      <div class="zona-chips" id="zona-chips"></div>
+    </div>
+  </section>
+  <section class="sec" style="padding-top:0">
+    <div class="wrap">
+      <div class="zona-cta">
+        <div><h3 id="zona-cta-t"></h3><p>Cuéntanos qué necesitas y te avisamos de las propiedades antes de que salgan a los portales.</p></div>
+        <a href="https://wa.me/34632251470" id="zona-wa" class="btn btn-wa" target="_blank" rel="noopener">Escriu-nos per WhatsApp</a>
+      </div>
+    </div>
+  </section>
+</div>
 <div class="subpage" id="page-comprar">
   <section class="subpage-banner">
     <div class="wrap">
@@ -3202,14 +3321,14 @@ html,body{overflow-anchor:none}
   var SLUG_TIPOS = {};
   Object.keys(TIPO_SLUGS).forEach(function(k){ SLUG_TIPOS[TIPO_SLUGS[k]] = k; });
   function siteRootPath(){
-    var m = location.pathname.match(/^(.*\/)(propiedades\/|comprar\/|comprar\.html|servicios\/|servicios\.html)/);
+    var m = location.pathname.match(/^(.*\/)(propiedades\/|comprar\/|comprar\.html|servicios\/|servicios\.html|zonas\/)/);
     var r = m ? m[1] : location.pathname.replace(/index\.html$/, '');
     // Las propiedades, tipos y servicios no tienen versión por idioma: se enlazan siempre desde la raíz.
     return r.replace(/(^|\/)(?:en|fr|ca)\/$/, '$1');
   }
   function resetPropertyUrlIfNeeded(){
     if(syncingFromPopstate) return;
-    var m = location.pathname.match(/^(.*\/)(propiedades\/|comprar\/|comprar\.html|servicios\/|servicios\.html)/);
+    var m = location.pathname.match(/^(.*\/)(propiedades\/|comprar\/|comprar\.html|servicios\/|servicios\.html|zonas\/)/);
     if(m){
       history.pushState(null, '', m[1] || '/');
     }
@@ -3241,7 +3360,7 @@ html,body{overflow-anchor:none}
     window.scrollTo({top:0,left:0,behavior:'instant'});
     closeMenu();
     if(PAGE_TITLES[name]) document.title=PAGE_TITLES[name];
-    if(name!=='detalle' && name!=='comprar' && name!=='servicios' && name.indexOf('servicio-')!==0) resetPropertyUrlIfNeeded();
+    if(name!=='detalle' && name!=='comprar' && name!=='servicios' && name!=='zona' && name.indexOf('servicio-')!==0) resetPropertyUrlIfNeeded();
   }
   function showHome(scrollId){
     subpages.forEach(s=>s.style.display='none');
@@ -4006,6 +4125,7 @@ html,body{overflow-anchor:none}
           applyFilters: applyFilters, renderPaginated: renderPaginated,
           buildCard: buildCard
         };
+        document.dispatchEvent(new Event('oc:props'));
 
         // Si esta página se ha generado/enlazado para abrir directamente una propiedad
         // concreta (páginas individuales /propiedades/REF.html, o ?ref=REF), la abrimos
@@ -4083,6 +4203,8 @@ html,body{overflow-anchor:none}
         return;
       }
     }
+    var mz = location.pathname.match(/\/zonas\/([^/]+)\.html$/);
+    if(mz && window.__openZona){ window.__openZona(decodeURIComponent(mz[1]), false); syncingFromPopstate = false; return; }
     var mc = location.pathname.match(/\/comprar\/([^/]+)\.html$/);
     if(mc && window.__propertyData){
       var slug = decodeURIComponent(mc[1]);
@@ -4139,6 +4261,7 @@ html,body{overflow-anchor:none}
     }
     const t=e.target.closest('[data-page],[data-home],[data-back],a');
     if(!t) return;
+    if(t.hasAttribute('data-zona') && window.__openZona){ e.preventDefault(); previousView=activeView; window.__openZona(t.getAttribute('data-zona'), true); return; }
     if(t.id==='searchBtn'){
       e.preventDefault();
       var refInput=document.getElementById('hero-f-referencia');
@@ -4204,7 +4327,9 @@ html,body{overflow-anchor:none}
     }
     if(t.hasAttribute('data-back')){
       e.preventDefault();
-      if(previousView==='comprar'||previousView==='alquilar'){
+      if(previousView==='zona' && window.__ZONA_CUR && window.__openZona){
+        window.__openZona(window.__ZONA_CUR, true);
+      } else if(previousView==='comprar'||previousView==='alquilar'){
         showPage(previousView);
         if(previousView==='comprar') history.pushState({ocListing:true}, '', siteRootPath()+'comprar.html');
       } else {
@@ -4357,6 +4482,178 @@ html,body{overflow-anchor:none}
     });
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
+})();
+</script>
+<script id="oc-zonas-js">
+/* ===== Zonas: mapa de portada, menú y páginas de zona =====
+   Todo sale de zonas.json (textos, fotos, coordenadas) y de properties.json (recuentos).
+   Los números NO se escriben a mano: se cuentan aquí con las propiedades en venta no vendidas.
+   Una zona con menos propiedades que "minimo" desaparece sola (tarjeta, punto, menú y página). */
+(function(){
+  var Z=null, VENTAS=null, ACTIVE=[], map=null, mapLoading=false, started=false, zlistWired=false;
+  var SVG=function(p){return '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+p+'</svg>';};
+  var ICON={
+    wave:'<path d="M3 12c3-4 6-4 9 0s6 4 9 0M3 18c3-4 6-4 9 0s6 4 9 0"/>',
+    pin:'<path d="M12 21s-7-6.2-7-11a7 7 0 0114 0c0 4.8-7 11-7 11z"/>',
+    boat:'<path d="M12 3v12M12 5l6 9h-6M3 18c2 2 4 2 6 0s4-2 6 0 4 2 6 0"/>',
+    home:'<path d="M3 11l9-8 9 8v9a1 1 0 01-1 1H4a1 1 0 01-1-1z"/>',
+    people:'<path d="M17 20v-1a4 4 0 00-4-4H7a4 4 0 00-4 4v1M10 11a4 4 0 100-8 4 4 0 000 8zM21 20v-1a4 4 0 00-3-3.9M16 3.1a4 4 0 010 7.8"/>',
+    leaf:'<path d="M5 19C5 10 11 5 20 4c0 9-5 15-14 15zM5 19c3-5 6-8 10-10"/>',
+    plane:'<path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 00-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/>',
+    sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/>',
+    mount:'<path d="M3 20l6-11 4 7 3-4 5 8z"/>'
+  };
+  var ARROW='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+  function esc(s){var d=document.createElement('div');d.textContent=s==null?'':String(s);return d.innerHTML;}
+  // Misma normalización que generate-zone-pages.mjs
+  function norm(s){return String(s==null?'':s).normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim().replace(/margarita/g,'margarida');}
+  function match(p,z){var c=z.coincide||{};return (c.poblacion||[]).indexOf(norm(p.poblacion))>-1||(c.zona||[]).indexOf(norm(p.zona))>-1;}
+  function url(path){return siteRootPath()+path;}
+  function isEs(){return (typeof currentLang==='undefined')||currentLang==='es';}
+
+  function compute(){
+    ACTIVE=Z.zonas.map(function(z){return {z:z,list:VENTAS.filter(function(p){return !p.vendido && match(p,z);})};})
+      .filter(function(x){return x.list.length>=(Z.minimo||3);});
+  }
+
+  /* ---------- Menú Comprar ---------- */
+  function buildMenu(){
+    var dd=document.querySelector('.nav-item-dropdown .nav-dropdown');
+    if(!dd) return;
+    [].slice.call(dd.querySelectorAll('[data-zona-menu]')).forEach(function(n){n.remove();});
+    if(!ACTIVE.length||!isEs()) return;
+    var h='<span class="nav-dd-label" data-zona-menu>Por zona</span>';
+    ACTIVE.forEach(function(x){h+='<a href="'+url('zonas/'+x.z.slug+'.html')+'" data-zona="'+x.z.slug+'" data-zona-menu>'+esc(x.z.nombre)+'</a>';});
+    h+='<a href="'+url('comprar.html')+'" data-page="comprar" data-zona-menu>Todas las propiedades</a>';
+    dd.insertAdjacentHTML('beforeend',h);
+  }
+
+  /* ---------- Portada: tarjetas + mapa ---------- */
+  var sec,wrapEl,zlist,zmapEl;
+  function buildHome(){
+    sec=document.getElementById('zonas'); if(!sec) return;
+    zlist=document.getElementById('zlist'); zmapEl=document.getElementById('zmap'); wrapEl=document.getElementById('zmapWrap');
+    if(!ACTIVE.length||!isEs()){ sec.hidden=true; return; }
+    var h='';
+    ACTIVE.forEach(function(x){
+      h+='<a href="'+url('zonas/'+x.z.slug+'.html')+'" class="zrow" data-zona="'+x.z.slug+'" data-z="'+x.z.slug+'"><div class="zrow-img" style="background-image:url('+url(x.z.foto)+')"></div><div class="zrow-t"><h3>'+esc(x.z.nombre)+'</h3><span>Ver propiedades</span></div>'+ARROW+'</a>';
+    });
+    h+='<a href="'+url('comprar.html')+'" data-page="comprar" class="zrow" data-z="todas"><div class="zrow-img" style="background-image:url('+url(Z.todas.foto)+')"></div><div class="zrow-t"><h3>'+esc(Z.todas.nombre)+'</h3><span>Ver propiedades</span></div>'+ARROW+'</a>';
+    zlist.innerHTML=h;
+    sec.hidden=false;
+    wrapEl.classList.remove('nomap');
+    if(map){ refreshMarkers(); } else { lazyMap(); }
+    wireRows();
+  }
+
+  var markers=[], timer=null;
+  function go(v){ if(!map||!v) return; clearTimeout(timer); map.flyTo({center:v.centro,zoom:v.zoom,speed:.9,curve:1.3,essential:true}); }
+  function setOn(k,on){
+    var r=zlist.querySelector('.zrow[data-z="'+k+'"]'); if(r) r.classList.toggle('on',on);
+    markers.forEach(function(m){ if(m.k===k){ m.el.classList.toggle('on',on); m.pin.classList.toggle('on',on);} });
+  }
+  function viewOf(k){ if(k==='todas') return Z.todas.vista; var x=ACTIVE.filter(function(a){return a.z.slug===k;})[0]; return x?x.z.vista:null; }
+  function wireRows(){
+    [].slice.call(zlist.querySelectorAll('.zrow')).forEach(function(r){
+      var k=r.getAttribute('data-z');
+      r.addEventListener('mouseenter',function(){setOn(k,true);go(viewOf(k));});
+      r.addEventListener('mouseleave',function(){setOn(k,false);});
+    });
+    if(!zlistWired){ zlistWired=true; zlist.addEventListener('mouseleave',function(){clearTimeout(timer);timer=setTimeout(function(){go({centro:Z.inicio.centro,zoom:Z.inicio.zoom});},700);}); }
+  }
+
+  function lazyMap(){
+    if(mapLoading) return; mapLoading=true;
+    var start=function(){
+      if(!document.getElementById('oc-maplibre-css')){
+        var l=document.createElement('link'); l.rel='stylesheet'; l.id='oc-maplibre-css'; l.href='https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css'; document.head.appendChild(l);
+      }
+      var s=document.createElement('script'); s.src='https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js';
+      s.onload=initMap;
+      s.onerror=function(){ wrapEl.classList.add('nomap'); };
+      document.head.appendChild(s);
+    };
+    if('IntersectionObserver' in window){
+      var io=new IntersectionObserver(function(es){ if(es.some(function(e){return e.isIntersecting;})){ io.disconnect(); start(); } },{rootMargin:'400px 0px'});
+      io.observe(zmapEl);
+    } else start();
+  }
+
+  function refreshMarkers(){
+    markers.forEach(function(m){m.marker.remove();}); markers=[];
+    ACTIVE.forEach(function(x){
+      var z=x.z, el=document.createElement('div'); el.className='zmk';
+      el.innerHTML='<span class="ztip"><b>'+esc(z.nombre)+'</b><span class="zsub"><span class="zph" style="background-image:url('+url(z.foto)+')"></span><span class="zn">'+x.list.length+' propiedades</span><span class="zd">'+SVG(ICON[z.iconoDato]||ICON.pin).replace('width="20" height="20"','width="13" height="13"').replace('stroke-width="1.8"','stroke-width="2"')+esc(z.dato||'')+'</span></span></span><div class="zpin"></div>';
+      var pin=el.querySelector('.zpin');
+      el.addEventListener('mouseenter',function(){setOn(z.slug,true);});
+      el.addEventListener('mouseleave',function(){setOn(z.slug,false);});
+      el.addEventListener('click',function(){go(z.vista);});
+      var mk=new maplibregl.Marker({element:el,anchor:'center'}).setLngLat(z.punto).addTo(map);
+      markers.push({k:z.slug,el:el,pin:pin,marker:mk});
+    });
+  }
+  function initMap(){
+    try{
+      map=new maplibregl.Map({container:'zmap',style:'https://tiles.openfreemap.org/styles/bright',center:Z.inicio.centro,zoom:Z.inicio.zoom,cooperativeGestures:true,attributionControl:false});
+      map.addControl(new maplibregl.NavigationControl({showCompass:false}),'top-left');
+      map.addControl(new maplibregl.AttributionControl({compact:true}),'bottom-right');
+      var cierra=function(){var a=document.querySelector('#zmap .maplibregl-ctrl-attrib');if(a)a.classList.remove('maplibregl-compact-show');};
+      map.on('load',cierra); map.once('idle',cierra); setTimeout(cierra,1500);
+      map.on('error',function(){});
+      refreshMarkers();
+    }catch(e){ wrapEl.classList.add('nomap'); }
+  }
+
+  /* ---------- Página de zona ---------- */
+  function openZona(slug,push,keepScroll){
+    var item=ACTIVE.filter(function(a){return a.z.slug===slug;})[0];
+    if(!item){
+      var zz=Z.zonas.filter(function(z){return z.slug===slug;})[0];
+      if(!zz){ if(typeof showHome==='function') showHome(); return; }
+      item={z:zz,list:VENTAS.filter(function(p){return !p.vendido&&match(p,zz);})};
+    }
+    var z=item.z, n=item.list.length, g=function(id){return document.getElementById(id);};
+    g('zona-eyebrow').textContent='Zonas · '+z.nombre;
+    g('zona-h1').textContent=z.h1; g('zona-lead').textContent=z.lead;
+    g('zona-h2texto').textContent=z.h2texto;
+    g('zona-texto').innerHTML=z.texto.map(function(t){return '<p>'+esc(t)+'</p>';}).join('');
+    g('zona-h2datos').textContent=z.h2datos;
+    g('zona-hechos').innerHTML=z.hechos.map(function(f){return '<div class="zona-fact"><div class="ic">'+SVG(ICON[f.icono]||ICON.pin)+'</div><div><strong>'+esc(f.t)+'</strong><span>'+esc(f.d)+'</span></div></div>';}).join('');
+    g('zona-h2props').textContent=z.h2props;
+    g('zona-count').textContent=n+(n===1?' propiedad disponible':' propiedades disponibles')+' ahora mismo';
+    g('zona-cta-t').textContent=z.cta;
+    g('zona-wa').href='https://wa.me/34632251470?text='+encodeURIComponent('Hola, busco una propiedad en '+z.nombre+'.');
+    var b=g('zona-banner');
+    if(z.hero){ b.style.backgroundImage='url('+url(z.hero)+')'; b.classList.add('has-img'); } else { b.style.backgroundImage=''; b.classList.remove('has-img'); }
+    var otras=ACTIVE.filter(function(a){return a.z.slug!==slug;});
+    g('zona-otras').style.display=otras.length?'':'none';
+    g('zona-chips').innerHTML=otras.map(function(a){return '<a href="'+url('zonas/'+a.z.slug+'.html')+'" data-zona="'+a.z.slug+'">'+esc(a.z.nombre)+'</a>';}).join('');
+    var pd=window.__propertyData;
+    if(pd&&pd.renderPaginated) pd.renderPaginated(item.list,g('zona-grid'),g('zona-pagination'),1);
+    window.__ZONA_CUR=slug;
+    if(typeof showPage==='function') showPage('zona');
+    document.title=z.titulo;
+    if(push) history.pushState({ocListing:true},'',url('zonas/'+slug+'.html'));
+  }
+  window.__openZona=function(slug,push){
+    if(!Z||!VENTAS){ return; }
+    openZona(slug,push!==false);
+  };
+
+  function init(){
+    if(!Z||!window.__propertyData) return;
+    VENTAS=window.__propertyData.ventas||[];
+    compute(); buildMenu(); buildHome();
+    if(window.__ZONA_SLUG && !started){ started=true; openZona(window.__ZONA_SLUG,false); }
+  }
+  var zp=fetch('../zonas.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;});
+  zp.then(function(d){ Z=d; init(); });
+  document.addEventListener('oc:props',init);
+  // Si cambia el idioma, esta sección (solo en castellano por ahora) se oculta o vuelve a aparecer.
+  if(typeof applyLang==='function'){
+    var _al=applyLang;
+    window.applyLang=function(){ var r=_al.apply(this,arguments); try{ if(Z&&VENTAS){ buildMenu(); buildHome(); } }catch(e){} return r; };
+  }
 })();
 </script>
 </body>
