@@ -24,6 +24,8 @@ const jsonLd = (obj) => `<script type="application/ld+json">${JSON.stringify(obj
 const norm = (s) => String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim().replace(/margarita/g, 'margarida');
 const coincide = (p, z) => {
   const c = z.coincide || {};
+  const x = z.excluye || {};
+  if ((x.poblacion || []).includes(norm(p.poblacion)) || (x.zona || []).includes(norm(p.zona))) return false;
   return (c.poblacion || []).includes(norm(p.poblacion)) || (c.zona || []).includes(norm(p.zona));
 };
 
