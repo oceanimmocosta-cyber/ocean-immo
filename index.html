@@ -1018,6 +1018,7 @@ html,body{overflow-anchor:none}
   ]
 }
 </script>
+<script>/* Al recargar, la página empieza siempre arriba (el navegador no recuerda la posición de scroll). */try{history.scrollRestoration="manual";}catch(e){}</script>
 <style id="oc-zonas-css">
 /* ===== Zonas: sección de portada con mapa + página de zona ===== */
 .nav-dropdown [hidden]{display:none!important}
@@ -1057,6 +1058,8 @@ html,body{overflow-anchor:none}
 .zona-banner{position:relative;background-size:cover;background-position:center}
 .zona-banner.has-img::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(26,46,67,.9),rgba(26,46,67,.55))}
 .zona-banner .wrap{position:relative}
+.zona-banner .back-home{display:inline-flex;align-items:center;margin-bottom:22px}
+.zona-banner .eyebrow{display:block;margin-bottom:10px}
 .zona-grid{display:grid;grid-template-columns:1.35fr 1fr;gap:56px;align-items:start}
 .zona-text h2{font-size:clamp(1.5rem,2.4vw,2.1rem);margin-bottom:16px}
 .zona-text p{color:var(--ink);opacity:.86;font-weight:300;font-size:1.05rem;line-height:1.75;margin-bottom:16px}
@@ -1716,7 +1719,7 @@ html,body{overflow-anchor:none}
 <div class="subpage" id="page-zona">
   <section class="subpage-banner zona-banner" id="zona-banner">
     <div class="wrap">
-      <button class="back-home" data-home="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Volver</button>
+      <button class="back-home" data-zona-back="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Volver</button>
       <span class="eyebrow" id="zona-eyebrow">Zonas</span>
       <h1 id="zona-h1"></h1>
       <p id="zona-lead"></p>
@@ -4552,7 +4555,9 @@ html,body{overflow-anchor:none}
   }
 
   var markers=[], timer=null;
-  function go(v){ if(!map||!v) return; clearTimeout(timer); map.flyTo({center:v.centro,zoom:v.zoom,speed:.9,curve:1.3,essential:true}); }
+  // El efecto de acercar el mapa solo en ordenador (con ratón); en móvil el mapa se queda quieto.
+  var CAN_FLY=window.matchMedia&&window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+  function go(v){ if(!CAN_FLY||!map||!v) return; clearTimeout(timer); map.flyTo({center:v.centro,zoom:v.zoom,speed:.9,curve:1.3,essential:true}); }
   function setOn(k,on){
     var r=zlist.querySelector('.zrow[data-z="'+k+'"]'); if(r) r.classList.toggle('on',on);
     markers.forEach(function(m){ if(m.k===k){ m.el.classList.toggle('on',on); m.pin.classList.toggle('on',on);} });
@@ -4640,6 +4645,18 @@ html,body{overflow-anchor:none}
     document.title=z.titulo;
     if(push) history.pushState({ocListing:true},'',url('zonas/'+slug+'.html'));
   }
+  // "Volver" desde una zona: si se entró desde "Explora por zonas", se vuelve a esa misma sección y no al inicio de la portada.
+  document.addEventListener('click',function(e){
+    var a=e.target.closest&&e.target.closest('[data-zona]');
+    if(a) window.__ZONA_FROM_HOME=!!a.closest('#zonas');
+    var back=e.target.closest&&e.target.closest('[data-zona-back]');
+    if(back){
+      e.preventDefault(); e.stopPropagation();
+      var vuelve=window.__ZONA_FROM_HOME&&document.getElementById('zonas')&&!document.getElementById('zonas').hidden;
+      window.__ZONA_FROM_HOME=false;
+      showHome(vuelve?'zonas':undefined);
+    }
+  },true);
   window.__openZona=function(slug,push){
     if(!Z||!VENTAS){ return; }
     openZona(slug,push!==false);
