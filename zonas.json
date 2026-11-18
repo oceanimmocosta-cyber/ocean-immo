@@ -1,0 +1,198 @@
+{
+  "_nota": "Fuente única de las zonas. Los números de propiedades NO se escriben aquí: se calculan solos con properties.json (nunca contando las vendidas). Una zona con menos propiedades que 'minimo' pierde sola su tarjeta, su punto en el mapa y su página. Para añadir una zona nueva basta con copiar un bloque y cambiar sus datos.",
+  "minimo": 3,
+  "inicio": {
+    "centro": [
+      3.15,
+      42.272
+    ],
+    "zoom": 11.15
+  },
+  "todas": {
+    "nombre": "Todas las propiedades",
+    "foto": "zonas/img/todas.jpg",
+    "vista": {
+      "centro": [
+        3.02,
+        42.25
+      ],
+      "zoom": 9.9
+    }
+  },
+  "zonas": [
+    {
+      "slug": "roses",
+      "nombre": "Roses",
+      "coincide": {
+        "poblacion": [
+          "roses"
+        ]
+      },
+      "punto": [
+        3.18306,
+        42.26306
+      ],
+      "vista": {
+        "centro": [
+          3.18306,
+          42.26306
+        ],
+        "zoom": 12.9
+      },
+      "foto": "zonas/img/roses.jpg",
+      "hero": "zonas/img/roses-hero.jpg",
+      "dato": "Parque Natural Cap de Creus",
+      "iconoDato": "mount",
+      "titulo": "Casas y pisos en venta en Roses, Costa Brava · Ocean Immo",
+      "descripcion": "Propiedades en venta en Roses: pisos, casas y apartamentos cerca del mar, en el centro y en barrios como Santa Margarida, Canyelles o Puig Rom. Inmobiliaria local en Roses.",
+      "h1": "Casas y pisos en venta en Roses",
+      "lead": "Un pueblo con vida todo el año, entre la bahía y el Parque Natural del Cap de Creus.",
+      "h2texto": "Cómo es vivir en Roses",
+      "texto": [
+        "Roses es el municipio más grande de la zona del Golfo de Roses, con unos 20.000 habitantes todo el año, y en verano su población se multiplica. Combina casco antiguo, puerto, playa y comercio con las calas del Parque Natural del Cap de Creus, que ocupa aproximadamente la mitad del término municipal.",
+        "Al ser un pueblo con vida todo el año, sirve tanto para vivir como para segunda residencia o inversión. Dentro conviven barrios muy distintos, desde el centro hasta zonas residenciales tranquilas con villas y vistas a la bahía, como Canyelles y Puig Rom."
+      ],
+      "h2datos": "Roses de un vistazo",
+      "hechos": [
+        {
+          "icono": "people",
+          "t": "Unos 20.000 habitantes",
+          "d": "Vida todo el año; en verano la población se multiplica"
+        },
+        {
+          "icono": "leaf",
+          "t": "Parque Natural del Cap de Creus",
+          "d": "Ocupa aproximadamente la mitad del término municipal"
+        },
+        {
+          "icono": "wave",
+          "t": "Casco antiguo, puerto y playa",
+          "d": "Con comercio y servicios en el propio pueblo"
+        },
+        {
+          "icono": "home",
+          "t": "Barrios muy distintos",
+          "d": "Del centro a zonas tranquilas como Canyelles y Puig Rom"
+        }
+      ],
+      "h2props": "Propiedades en venta en Roses",
+      "cta": "¿Buscas en Roses?"
+    },
+    {
+      "slug": "empuriabrava",
+      "nombre": "Empuriabrava",
+      "coincide": {
+        "poblacion": [
+          "empuriabrava"
+        ]
+      },
+      "punto": [
+        3.1205,
+        42.251
+      ],
+      "vista": {
+        "centro": [
+          3.1205,
+          42.251
+        ],
+        "zoom": 12.6
+      },
+      "foto": "zonas/img/empuriabrava.jpg",
+      "hero": "zonas/img/empuriabrava-hero.jpg",
+      "dato": "Canales navegables",
+      "iconoDato": "wave",
+      "titulo": "Casas con amarre y pisos en venta en Empuriabrava · Ocean Immo",
+      "descripcion": "Propiedades en venta en Empuriabrava, la mayor marina residencial de Europa: casas con amarre propio en canales navegables, apartamentos y villas. Inmobiliaria local.",
+      "h1": "Casas y pisos en venta en Empuriabrava",
+      "lead": "La mayor marina residencial de Europa: canales navegables y, en muchas casas, el amarre en la puerta.",
+      "h2texto": "Cómo es vivir en Empuriabrava",
+      "texto": [
+        "Empuriabrava, en el término de Castelló d'Empúries, es considerada la mayor marina residencial de Europa. Se proyectó en 1964 y se terminó en 1975, y está atravesada por decenas de kilómetros de canales navegables, con muchas casas que tienen amarre propio.",
+        "Está rodeada por el Parque Natural dels Aiguamolls de l'Empordà y tiene un aeródromo con paracaidismo y otros deportes aéreos. Encaja con quien quiere tener el barco en la puerta de casa, ya sea para segunda residencia o para jubilarse."
+      ],
+      "h2datos": "Empuriabrava de un vistazo",
+      "hechos": [
+        {
+          "icono": "boat",
+          "t": "La mayor marina residencial de Europa",
+          "d": "Proyectada en 1964 y terminada en 1975"
+        },
+        {
+          "icono": "wave",
+          "t": "Decenas de km de canales navegables",
+          "d": "Muchas casas tienen amarre propio"
+        },
+        {
+          "icono": "leaf",
+          "t": "Parque Natural dels Aiguamolls",
+          "d": "Rodeada por el Parque Natural de l'Empordà"
+        },
+        {
+          "icono": "plane",
+          "t": "Aeródromo",
+          "d": "Con paracaidismo y otros deportes aéreos"
+        }
+      ],
+      "h2props": "Propiedades en venta en Empuriabrava",
+      "cta": "¿Buscas en Empuriabrava?"
+    },
+    {
+      "slug": "santa-margarida",
+      "nombre": "Santa Margarida",
+      "coincide": {
+        "zona": [
+          "santa margarida"
+        ]
+      },
+      "punto": [
+        3.1506,
+        42.2652
+      ],
+      "vista": {
+        "centro": [
+          3.1506,
+          42.2652
+        ],
+        "zoom": 13.1
+      },
+      "foto": "zonas/img/santa-margarida.jpg",
+      "hero": "zonas/img/santa-margarida-hero.jpg",
+      "dato": "Playa de 600 m",
+      "iconoDato": "sun",
+      "titulo": "Apartamentos y pisos en venta en Santa Margarida, Roses · Ocean Immo",
+      "descripcion": "Apartamentos y pisos en venta en Santa Margarida, barrio con frente marítimo de Roses: playa de arena de unos 600 metros y paseo marítimo. Inmobiliaria local.",
+      "h1": "Apartamentos y pisos en venta en Santa Margarida, Roses",
+      "lead": "Un barrio con frente marítimo, playa urbana de arena dorada y paseo marítimo.",
+      "h2texto": "Cómo es vivir en Santa Margarida",
+      "texto": [
+        "Santa Margarida es uno de los barrios con frente marítimo de Roses, con una playa urbana de arena dorada de unos 600 metros de largo y paseo marítimo. Hay sobre todo apartamentos y hoteles, con servicios de playa y transporte urbano.",
+        "Tiene un ambiente muy animado en verano y mucho más tranquilo en invierno. Funciona bien para familias y parejas que buscan un apartamento cerca del mar."
+      ],
+      "h2datos": "Santa Margarida de un vistazo",
+      "hechos": [
+        {
+          "icono": "wave",
+          "t": "Playa urbana de arena dorada",
+          "d": "Unos 600 metros de largo, con paseo marítimo"
+        },
+        {
+          "icono": "home",
+          "t": "Apartamentos y hoteles",
+          "d": "Con servicios de playa y transporte urbano"
+        },
+        {
+          "icono": "sun",
+          "t": "Animado en verano, tranquilo en invierno",
+          "d": "Dos ambientes distintos según la época"
+        },
+        {
+          "icono": "people",
+          "t": "Familias y parejas",
+          "d": "Para quien busca un apartamento cerca del mar"
+        }
+      ],
+      "h2props": "Propiedades en venta en Santa Margarida",
+      "cta": "¿Buscas en Santa Margarida?"
+    }
+  ]
+}
