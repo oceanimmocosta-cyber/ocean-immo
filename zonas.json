@@ -28,6 +28,11 @@
           "roses"
         ]
       },
+      "excluye": {
+        "zona": [
+          "santa margarida"
+        ]
+      },
       "punto": [
         3.18306,
         42.26306
