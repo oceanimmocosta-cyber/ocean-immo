@@ -24,7 +24,10 @@ function buscarHtml() {
   const rutas = [...PAGINAS_RAIZ].filter((f) => fs.existsSync(f));
   for (const c of CARPETAS_PUBLICAS) rutas.push(...listarHtml(c));
   for (const l of IDIOMAS) for (const f of PAGINAS_IDIOMA) if (fs.existsSync(`${l}/${f}`)) rutas.push(`${l}/${f}`);
-  return rutas.map((ruta) => ({ ruta, mtime: fs.statSync(ruta).mtime }));
+  // Las páginas marcadas "noindex" (p. ej. propiedades vendidas) no deben estar en el sitemap:
+  // Google avisa de "Excluida por una etiqueta noindex" si una URL del sitemap no se puede indexar.
+  const indexable = (ruta) => !/<meta\s+name="robots"\s+content="[^"]*noindex/i.test(fs.readFileSync(ruta, 'utf8'));
+  return rutas.filter(indexable).map((ruta) => ({ ruta, mtime: fs.statSync(ruta).mtime }));
 }
 
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
