@@ -1,5 +1,5 @@
 {
-  "_nota": "Fuente única de las zonas. Los números de propiedades NO se escriben aquí: se calculan solos con properties.json (nunca contando las vendidas). Una zona con menos propiedades que 'minimo' pierde sola su tarjeta, su punto en el mapa y su página. Para añadir una zona nueva basta con copiar un bloque y cambiar sus datos.",
+  "_nota": "Fuente única de las zonas. Los números de propiedades NO se escriben aquí: se calculan solos con properties.json (nunca contando las vendidas). Una zona con menos propiedades que 'minimo' pierde sola su tarjeta, su punto en el mapa y su página. Para añadir una zona nueva basta con copiar un bloque y cambiar sus datos. Traducciones: cada zona tiene 'i18n' con ca/en/fr y el bloque 'ui' tiene los textos fijos de la web; si falta algo en un idioma se usa el castellano.",
   "minimo": 3,
   "inicio": {
     "centro": [
@@ -17,6 +17,17 @@
         42.25
       ],
       "zoom": 9.9
+    },
+    "i18n": {
+      "ca": {
+        "nombre": "Totes les propietats"
+      },
+      "en": {
+        "nombre": "All properties"
+      },
+      "fr": {
+        "nombre": "Tous les biens"
+      }
     }
   },
   "zonas": [
@@ -81,7 +92,120 @@
         }
       ],
       "h2props": "Propiedades en venta en Roses",
-      "cta": "¿Buscas en Roses?"
+      "cta": "¿Buscas en Roses?",
+      "i18n": {
+        "ca": {
+          "dato": "Parc Natural del Cap de Creus",
+          "titulo": "Cases i pisos en venda a Roses, Costa Brava · Ocean Immo",
+          "descripcion": "Propietats en venda a Roses: pisos, cases i apartaments a prop del mar, al centre i en barris com Santa Margarida, Canyelles o Puig Rom. Immobiliària local a Roses.",
+          "h1": "Cases i pisos en venda a Roses",
+          "lead": "Un poble amb vida tot l'any, entre el mar i la muntanya del Cap de Creus.",
+          "h2texto": "Com és viure a Roses",
+          "texto": [
+            "Amb uns 20.000 habitants tot l'any, és el municipi més gran del Golf de Roses, i a l'estiu la seva població es multiplica. Reuneix nucli antic, port, platja i comerç, i a l'esquena té muntanya: el Parc Natural del Cap de Creus ocupa aproximadament la meitat del terme municipal, amb serres, cales i senders.",
+            "Com que té vida tot l'any, serveix tant per viure-hi com per a segona residència o inversió. Dins hi conviuen barris molt diferents, des del centre fins a zones residencials tranquil·les amb vil·les i vistes a la badia, com Canyelles i Puig Rom."
+          ],
+          "h2datos": "Roses d'un cop d'ull",
+          "hechos": [
+            {
+              "icono": "people",
+              "t": "Uns 20.000 habitants",
+              "d": "Vida tot l'any; a l'estiu la població es multiplica"
+            },
+            {
+              "icono": "leaf",
+              "t": "Mar i muntanya",
+              "d": "El Parc Natural del Cap de Creus ocupa aproximadament la meitat del terme municipal"
+            },
+            {
+              "icono": "wave",
+              "t": "Nucli antic, port i platja",
+              "d": "Amb comerç i serveis al mateix poble"
+            },
+            {
+              "icono": "home",
+              "t": "Barris molt diferents",
+              "d": "Del centre a zones tranquil·les com Canyelles i Puig Rom"
+            }
+          ],
+          "h2props": "Propietats en venda a Roses",
+          "cta": "Busques a Roses?"
+        },
+        "en": {
+          "dato": "Cap de Creus Natural Park",
+          "titulo": "Houses and apartments for sale in Roses, Costa Brava · Ocean Immo",
+          "descripcion": "Properties for sale in Roses: apartments and houses near the sea, in the centre and in neighbourhoods such as Santa Margarida, Canyelles or Puig Rom. Local real estate agency in Roses.",
+          "h1": "Houses and apartments for sale in Roses",
+          "lead": "A town with year-round life, between the sea and the mountains of Cap de Creus.",
+          "h2texto": "What it's like to live in Roses",
+          "texto": [
+            "With around 20,000 residents all year round, it is the largest municipality on the Gulf of Roses, and in summer its population multiplies. It combines an old town, harbour, beach and shops, and behind it lies mountain terrain: the Cap de Creus Natural Park covers roughly half of the municipality, with ridges, coves and trails.",
+            "Because it is lively all year, it works for living, as a second home or as an investment. Very different neighbourhoods sit side by side, from the town centre to quiet residential areas with villas and bay views, such as Canyelles and Puig Rom."
+          ],
+          "h2datos": "Roses at a glance",
+          "hechos": [
+            {
+              "icono": "people",
+              "t": "Around 20,000 residents",
+              "d": "Lively all year; the population multiplies in summer"
+            },
+            {
+              "icono": "leaf",
+              "t": "Sea and mountains",
+              "d": "The Cap de Creus Natural Park covers roughly half of the municipality"
+            },
+            {
+              "icono": "wave",
+              "t": "Old town, harbour and beach",
+              "d": "With shops and services in the town itself"
+            },
+            {
+              "icono": "home",
+              "t": "Very different neighbourhoods",
+              "d": "From the centre to quiet areas such as Canyelles and Puig Rom"
+            }
+          ],
+          "h2props": "Properties for sale in Roses",
+          "cta": "Looking in Roses?"
+        },
+        "fr": {
+          "dato": "Parc naturel du Cap de Creus",
+          "titulo": "Maisons et appartements à vendre à Roses, Costa Brava · Ocean Immo",
+          "descripcion": "Biens à vendre à Roses : appartements et maisons près de la mer, au centre et dans des quartiers comme Santa Margarida, Canyelles ou Puig Rom. Agence immobilière locale à Roses.",
+          "h1": "Maisons et appartements à vendre à Roses",
+          "lead": "Une ville vivante toute l'année, entre la mer et la montagne du Cap de Creus.",
+          "h2texto": "Comment est la vie à Roses",
+          "texto": [
+            "Avec environ 20 000 habitants toute l'année, c'est la plus grande commune du golfe de Roses, et en été sa population se multiplie. Elle réunit vieille ville, port, plage et commerces, et derrière elle s'élève la montagne : le parc naturel du Cap de Creus occupe environ la moitié du territoire communal, avec ses reliefs, ses criques et ses sentiers.",
+            "Vivante toute l'année, elle convient aussi bien pour y vivre que pour une résidence secondaire ou un investissement. Des quartiers très différents s'y côtoient, du centre aux zones résidentielles tranquilles avec villas et vues sur la baie, comme Canyelles et Puig Rom."
+          ],
+          "h2datos": "Roses en un coup d'œil",
+          "hechos": [
+            {
+              "icono": "people",
+              "t": "Environ 20 000 habitants",
+              "d": "Vivante toute l'année ; la population se multiplie en été"
+            },
+            {
+              "icono": "leaf",
+              "t": "Mer et montagne",
+              "d": "Le parc naturel du Cap de Creus occupe environ la moitié de la commune"
+            },
+            {
+              "icono": "wave",
+              "t": "Vieille ville, port et plage",
+              "d": "Avec commerces et services dans la ville même"
+            },
+            {
+              "icono": "home",
+              "t": "Des quartiers très différents",
+              "d": "Du centre aux zones calmes comme Canyelles et Puig Rom"
+            }
+          ],
+          "h2props": "Biens à vendre à Roses",
+          "cta": "Vous cherchez à Roses ?"
+        }
+      }
     },
     {
       "slug": "empuriabrava",
@@ -139,7 +263,120 @@
         }
       ],
       "h2props": "Propiedades en venta en Empuriabrava",
-      "cta": "¿Buscas en Empuriabrava?"
+      "cta": "¿Buscas en Empuriabrava?",
+      "i18n": {
+        "ca": {
+          "dato": "Canals navegables",
+          "titulo": "Cases amb amarratge i pisos en venda a Empuriabrava · Ocean Immo",
+          "descripcion": "Propietats en venda a Empuriabrava, la major marina residencial d'Europa: cases amb amarratge propi en canals navegables, apartaments i vil·les. Immobiliària local.",
+          "h1": "Cases i pisos en venda a Empuriabrava",
+          "lead": "La major marina residencial d'Europa: canals navegables i, en moltes cases, l'amarratge a la porta.",
+          "h2texto": "Com és viure a Empuriabrava",
+          "texto": [
+            "Empuriabrava, al terme de Castelló d'Empúries, és considerada la major marina residencial d'Europa. Es va projectar el 1964 i es va acabar el 1975, i la travessen desenes de quilòmetres de canals navegables, amb moltes cases que tenen amarratge propi.",
+            "Està envoltada pel Parc Natural dels Aiguamolls de l'Empordà i té un aeròdrom amb paracaigudisme i altres esports aeris. Encaixa amb qui vol tenir el vaixell a la porta de casa, ja sigui per a segona residència o per jubilar-se."
+          ],
+          "h2datos": "Empuriabrava d'un cop d'ull",
+          "hechos": [
+            {
+              "icono": "boat",
+              "t": "La major marina residencial d'Europa",
+              "d": "Projectada el 1964 i acabada el 1975"
+            },
+            {
+              "icono": "wave",
+              "t": "Desenes de km de canals navegables",
+              "d": "Moltes cases tenen amarratge propi"
+            },
+            {
+              "icono": "leaf",
+              "t": "Parc Natural dels Aiguamolls",
+              "d": "Envoltada pel Parc Natural de l'Empordà"
+            },
+            {
+              "icono": "plane",
+              "t": "Aeròdrom",
+              "d": "Amb paracaigudisme i altres esports aeris"
+            }
+          ],
+          "h2props": "Propietats en venda a Empuriabrava",
+          "cta": "Busques a Empuriabrava?"
+        },
+        "en": {
+          "dato": "Navigable canals",
+          "titulo": "Houses with mooring and apartments for sale in Empuriabrava · Ocean Immo",
+          "descripcion": "Properties for sale in Empuriabrava, Europe's largest residential marina: houses with their own mooring on navigable canals, apartments and villas. Local real estate agency.",
+          "h1": "Houses and apartments for sale in Empuriabrava",
+          "lead": "Europe's largest residential marina: navigable canals and, in many houses, a mooring at the door.",
+          "h2texto": "What it's like to live in Empuriabrava",
+          "texto": [
+            "Empuriabrava, in the municipality of Castelló d'Empúries, is considered the largest residential marina in Europe. It was designed in 1964 and completed in 1975, and it is crossed by dozens of kilometres of navigable canals, with many houses having their own mooring.",
+            "It is surrounded by the Aiguamolls de l'Empordà Natural Park and has an aerodrome with skydiving and other air sports. It suits anyone who wants their boat at the door, whether as a second home or for retirement."
+          ],
+          "h2datos": "Empuriabrava at a glance",
+          "hechos": [
+            {
+              "icono": "boat",
+              "t": "Europe's largest residential marina",
+              "d": "Designed in 1964 and completed in 1975"
+            },
+            {
+              "icono": "wave",
+              "t": "Dozens of km of navigable canals",
+              "d": "Many houses have their own mooring"
+            },
+            {
+              "icono": "leaf",
+              "t": "Aiguamolls Natural Park",
+              "d": "Surrounded by the Empordà Natural Park"
+            },
+            {
+              "icono": "plane",
+              "t": "Aerodrome",
+              "d": "With skydiving and other air sports"
+            }
+          ],
+          "h2props": "Properties for sale in Empuriabrava",
+          "cta": "Looking in Empuriabrava?"
+        },
+        "fr": {
+          "dato": "Canaux navigables",
+          "titulo": "Maisons avec amarrage et appartements à vendre à Empuriabrava · Ocean Immo",
+          "descripcion": "Biens à vendre à Empuriabrava, la plus grande marina résidentielle d'Europe : maisons avec amarrage privé sur canaux navigables, appartements et villas. Agence immobilière locale.",
+          "h1": "Maisons et appartements à vendre à Empuriabrava",
+          "lead": "La plus grande marina résidentielle d'Europe : des canaux navigables et, dans de nombreuses maisons, l'amarrage devant la porte.",
+          "h2texto": "Comment est la vie à Empuriabrava",
+          "texto": [
+            "Empuriabrava, sur la commune de Castelló d'Empúries, est considérée comme la plus grande marina résidentielle d'Europe. Elle a été conçue en 1964 et achevée en 1975, et elle est traversée par des dizaines de kilomètres de canaux navigables, de nombreuses maisons disposant de leur propre amarrage.",
+            "Elle est entourée par le parc naturel des Aiguamolls de l'Empordà et possède un aérodrome avec parachutisme et d'autres sports aériens. Elle convient à ceux qui veulent leur bateau devant la porte, que ce soit pour une résidence secondaire ou pour la retraite."
+          ],
+          "h2datos": "Empuriabrava en un coup d'œil",
+          "hechos": [
+            {
+              "icono": "boat",
+              "t": "La plus grande marina résidentielle d'Europe",
+              "d": "Conçue en 1964 et achevée en 1975"
+            },
+            {
+              "icono": "wave",
+              "t": "Des dizaines de km de canaux navigables",
+              "d": "De nombreuses maisons ont leur propre amarrage"
+            },
+            {
+              "icono": "leaf",
+              "t": "Parc naturel des Aiguamolls",
+              "d": "Entourée par le parc naturel de l'Empordà"
+            },
+            {
+              "icono": "plane",
+              "t": "Aérodrome",
+              "d": "Avec parachutisme et autres sports aériens"
+            }
+          ],
+          "h2props": "Biens à vendre à Empuriabrava",
+          "cta": "Vous cherchez à Empuriabrava ?"
+        }
+      }
     },
     {
       "slug": "santa-margarida",
@@ -197,7 +434,206 @@
         }
       ],
       "h2props": "Propiedades en venta en Santa Margarida",
-      "cta": "¿Buscas en Santa Margarida?"
+      "cta": "¿Buscas en Santa Margarida?",
+      "i18n": {
+        "ca": {
+          "dato": "Platja de 600 m",
+          "titulo": "Apartaments i pisos en venda a Santa Margarida, Roses · Ocean Immo",
+          "descripcion": "Apartaments i pisos en venda a Santa Margarida, barri amb front marítim de Roses: platja de sorra d'uns 600 metres i passeig marítim. Immobiliària local.",
+          "h1": "Apartaments i pisos en venda a Santa Margarida, Roses",
+          "lead": "Un barri amb front marítim, platja urbana de sorra daurada i passeig marítim.",
+          "h2texto": "Com és viure a Santa Margarida",
+          "texto": [
+            "Santa Margarida és un dels barris amb front marítim de Roses, amb una platja urbana de sorra daurada d'uns 600 metres de llarg i passeig marítim. Hi ha sobretot apartaments i hotels, amb serveis de platja i transport urbà.",
+            "Té un ambient molt animat a l'estiu i molt més tranquil a l'hivern. Funciona bé per a famílies i parelles que busquen un apartament a prop del mar."
+          ],
+          "h2datos": "Santa Margarida d'un cop d'ull",
+          "hechos": [
+            {
+              "icono": "wave",
+              "t": "Platja urbana de sorra daurada",
+              "d": "Uns 600 metres de llarg, amb passeig marítim"
+            },
+            {
+              "icono": "home",
+              "t": "Apartaments i hotels",
+              "d": "Amb serveis de platja i transport urbà"
+            },
+            {
+              "icono": "sun",
+              "t": "Animat a l'estiu, tranquil a l'hivern",
+              "d": "Dos ambients diferents segons l'època"
+            },
+            {
+              "icono": "people",
+              "t": "Famílies i parelles",
+              "d": "Per a qui busca un apartament a prop del mar"
+            }
+          ],
+          "h2props": "Propietats en venda a Santa Margarida",
+          "cta": "Busques a Santa Margarida?"
+        },
+        "en": {
+          "dato": "600 m beach",
+          "titulo": "Apartments for sale in Santa Margarida, Roses · Ocean Immo",
+          "descripcion": "Apartments for sale in Santa Margarida, a seafront neighbourhood of Roses: a sandy beach of about 600 metres and a seafront promenade. Local real estate agency.",
+          "h1": "Apartments for sale in Santa Margarida, Roses",
+          "lead": "A seafront neighbourhood with a golden-sand urban beach and a promenade.",
+          "h2texto": "What it's like to live in Santa Margarida",
+          "texto": [
+            "Santa Margarida is one of the seafront neighbourhoods of Roses, with a golden-sand urban beach about 600 metres long and a promenade. It is mostly apartments and hotels, with beach services and urban transport.",
+            "It is very lively in summer and much quieter in winter. It works well for families and couples looking for an apartment near the sea."
+          ],
+          "h2datos": "Santa Margarida at a glance",
+          "hechos": [
+            {
+              "icono": "wave",
+              "t": "Golden-sand urban beach",
+              "d": "About 600 metres long, with a promenade"
+            },
+            {
+              "icono": "home",
+              "t": "Apartments and hotels",
+              "d": "With beach services and urban transport"
+            },
+            {
+              "icono": "sun",
+              "t": "Lively in summer, quiet in winter",
+              "d": "Two different atmospheres depending on the season"
+            },
+            {
+              "icono": "people",
+              "t": "Families and couples",
+              "d": "For anyone looking for an apartment near the sea"
+            }
+          ],
+          "h2props": "Properties for sale in Santa Margarida",
+          "cta": "Looking in Santa Margarida?"
+        },
+        "fr": {
+          "dato": "Plage de 600 m",
+          "titulo": "Appartements à vendre à Santa Margarida, Roses · Ocean Immo",
+          "descripcion": "Appartements à vendre à Santa Margarida, quartier en bord de mer de Roses : plage de sable d'environ 600 mètres et promenade du front de mer. Agence immobilière locale.",
+          "h1": "Appartements à vendre à Santa Margarida, Roses",
+          "lead": "Un quartier en bord de mer, avec une plage urbaine de sable doré et une promenade.",
+          "h2texto": "Comment est la vie à Santa Margarida",
+          "texto": [
+            "Santa Margarida est l'un des quartiers en bord de mer de Roses, avec une plage urbaine de sable doré d'environ 600 mètres de long et une promenade. On y trouve surtout des appartements et des hôtels, avec des services de plage et des transports urbains.",
+            "L'ambiance y est très animée en été et beaucoup plus calme en hiver. C'est un bon choix pour les familles et les couples qui cherchent un appartement près de la mer."
+          ],
+          "h2datos": "Santa Margarida en un coup d'œil",
+          "hechos": [
+            {
+              "icono": "wave",
+              "t": "Plage urbaine de sable doré",
+              "d": "Environ 600 mètres de long, avec promenade"
+            },
+            {
+              "icono": "home",
+              "t": "Appartements et hôtels",
+              "d": "Avec services de plage et transports urbains"
+            },
+            {
+              "icono": "sun",
+              "t": "Animée en été, calme en hiver",
+              "d": "Deux ambiances différentes selon la saison"
+            },
+            {
+              "icono": "people",
+              "t": "Familles et couples",
+              "d": "Pour ceux qui cherchent un appartement près de la mer"
+            }
+          ],
+          "h2props": "Biens à vendre à Santa Margarida",
+          "cta": "Vous cherchez à Santa Margarida ?"
+        }
+      }
     }
-  ]
+  ],
+  "ui": {
+    "es": {
+      "eyebrow": "Explora por zonas",
+      "h2": "Encuentra tu rincón de la Costa Brava",
+      "p": "Estas son algunas de nuestras zonas, pero trabajamos en muchas más. Te contamos cómo es cada una y qué propiedades hay ahora mismo.",
+      "menu": "Por zona",
+      "todas": "Todas las propiedades",
+      "ver": "Ver propiedades",
+      "n": "{n} propiedades",
+      "zonas": "Zonas",
+      "disp1": " propiedad disponible",
+      "dispN": " propiedades disponibles",
+      "ahora": " ahora mismo",
+      "otras": "Otras zonas",
+      "ctap": "Cuéntanos qué necesitas y te avisamos de las propiedades antes de que salgan a los portales.",
+      "wa": "Escríbenos por WhatsApp",
+      "wamsg": "Hola, busco una propiedad en {z}.",
+      "verTodas": "Ver todas las propiedades",
+      "inicio": "Inicio",
+      "comprar": "Comprar",
+      "mapa": "Mapa de zonas"
+    },
+    "ca": {
+      "eyebrow": "Explora per zones",
+      "h2": "Troba el teu racó de la Costa Brava",
+      "p": "Aquestes són algunes de les nostres zones, però treballem en moltes més. T'expliquem com és cadascuna i quines propietats hi ha ara mateix.",
+      "menu": "Per zona",
+      "todas": "Totes les propietats",
+      "ver": "Veure propietats",
+      "n": "{n} propietats",
+      "zonas": "Zones",
+      "disp1": " propietat disponible",
+      "dispN": " propietats disponibles",
+      "ahora": " ara mateix",
+      "otras": "Altres zones",
+      "ctap": "Explica'ns què necessites i t'avisem de les propietats abans que surtin als portals.",
+      "wa": "Escriu-nos per WhatsApp",
+      "wamsg": "Hola, busco una propietat a {z}.",
+      "verTodas": "Veure totes les propietats",
+      "inicio": "Inici",
+      "comprar": "Comprar",
+      "mapa": "Mapa de zones"
+    },
+    "en": {
+      "eyebrow": "Explore by area",
+      "h2": "Find your corner of the Costa Brava",
+      "p": "These are some of the areas we cover, but we work in many more. Here's what each one is like and which properties are available right now.",
+      "menu": "By area",
+      "todas": "All properties",
+      "ver": "View properties",
+      "n": "{n} properties",
+      "zonas": "Areas",
+      "disp1": " property available",
+      "dispN": " properties available",
+      "ahora": " right now",
+      "otras": "Other areas",
+      "ctap": "Tell us what you need and we'll let you know about properties before they reach the portals.",
+      "wa": "Message us on WhatsApp",
+      "wamsg": "Hi, I'm looking for a property in {z}.",
+      "verTodas": "View all properties",
+      "inicio": "Home",
+      "comprar": "Buy",
+      "mapa": "Map of areas"
+    },
+    "fr": {
+      "eyebrow": "Explorez par secteur",
+      "h2": "Trouvez votre coin de la Costa Brava",
+      "p": "Voici quelques-uns de nos secteurs, mais nous travaillons dans bien d'autres. Découvrez comment est chacun et quels biens sont disponibles en ce moment.",
+      "menu": "Par secteur",
+      "todas": "Tous les biens",
+      "ver": "Voir les biens",
+      "n": "{n} biens",
+      "zonas": "Secteurs",
+      "disp1": " bien disponible",
+      "dispN": " biens disponibles",
+      "ahora": " en ce moment",
+      "otras": "Autres secteurs",
+      "ctap": "Dites-nous ce dont vous avez besoin et nous vous prévenons des biens avant leur diffusion sur les portails.",
+      "wa": "Écrivez-nous sur WhatsApp",
+      "wamsg": "Bonjour, je recherche un bien à {z}.",
+      "verTodas": "Voir tous les biens",
+      "inicio": "Accueil",
+      "comprar": "Acheter",
+      "mapa": "Carte des secteurs"
+    }
+  }
 }
