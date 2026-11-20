@@ -643,7 +643,9 @@ function solidity(sel,w,h){
   const hull=convexHull(P); let ar=0; for(let i=0;i<hull.length;i++){ const p=hull[i], n=hull[(i+1)%hull.length]; ar+=p[0]*n[1]-n[0]*p[1]; }
   ar=Math.abs(ar)/2; return ar>0 ? Math.min(1, area/ar) : 1;
 }
-function detectQuad(src, sw, sh, res){
+// si el método de hojas pegadas no da nada razonable (p. ej. se queda con una servilleta blanca), se usa la región clara más grande
+function detectQuad(src, sw, sh, res){ return detectQuadCore(src,sw,sh,res,false) || detectQuadCore(src,sw,sh,res,true); }
+function detectQuadCore(src, sw, sh, res, forceB){
   try {
     const w = res||256, h = Math.max(1, Math.round(w*sh/sw));
     const t = document.createElement('canvas'); t.width=w; t.height=h;
@@ -674,7 +676,7 @@ function detectQuad(src, sw, sh, res){
     // B) región clara simple (sin barreras). Si es una forma limpia (una sola hoja), se usa tal cual.
     const selB=pickComponent(M1,w,h,0.025,false);
     let sel=null;
-    if (selB && solidity(selB,w,h)>=0.985) sel=selB;
+    if (selB && (forceB || solidity(selB,w,h)>=0.985)) sel=selB;
     else {
       // A) hojas pegadas: núcleo erosionado separado por los bordes (corta puentes finos entre hojas)
       const R=Math.max(3,Math.round(w*0.02)), core=erodeM(M2,w,h,R);
