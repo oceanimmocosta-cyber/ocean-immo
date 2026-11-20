@@ -60,4 +60,5 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add properties.json propiedades/ comprar.html comprar/ servicios.html servicios/ zonas/ en/ fr/ ca/ sitemap.xml
           git diff --staged --quiet || git commit -m "Actualización automática de propiedades desde Inmoweb"
+          git pull --rebase origin main
           git push
