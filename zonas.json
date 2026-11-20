@@ -51,11 +51,11 @@
       "titulo": "Casas y pisos en venta en Roses, Costa Brava · Ocean Immo",
       "descripcion": "Propiedades en venta en Roses: pisos, casas y apartamentos cerca del mar, en el centro y en barrios como Santa Margarida, Canyelles o Puig Rom. Inmobiliaria local en Roses.",
       "h1": "Casas y pisos en venta en Roses",
-      "lead": "Un pueblo con vida todo el año, entre la bahía y el Parque Natural del Cap de Creus.",
+      "lead": "Un pueblo con vida todo el año, entre el mar y la montaña del Cap de Creus.",
       "h2texto": "Cómo es vivir en Roses",
       "texto": [
-        "Roses es el municipio más grande de la zona del Golfo de Roses, con unos 20.000 habitantes todo el año, y en verano su población se multiplica. Combina casco antiguo, puerto, playa y comercio con las calas del Parque Natural del Cap de Creus, que ocupa aproximadamente la mitad del término municipal.",
-        "Al ser un pueblo con vida todo el año, sirve tanto para vivir como para segunda residencia o inversión. Dentro conviven barrios muy distintos, desde el centro hasta zonas residenciales tranquilas con villas y vistas a la bahía, como Canyelles y Puig Rom."
+        "Con unos 20.000 habitantes todo el año, es el municipio más grande del Golfo de Roses, y en verano su población se multiplica. Reúne casco antiguo, puerto, playa y comercio, y a su espalda tiene montaña: el Parque Natural del Cap de Creus ocupa aproximadamente la mitad del término municipal, con sierras, calas y senderos.",
+        "Al tener vida todo el año, sirve tanto para vivir como para segunda residencia o inversión. Dentro conviven barrios muy distintos, desde el centro hasta zonas residenciales tranquilas con villas y vistas a la bahía, como Canyelles y Puig Rom."
       ],
       "h2datos": "Roses de un vistazo",
       "hechos": [
@@ -66,8 +66,8 @@
         },
         {
           "icono": "leaf",
-          "t": "Parque Natural del Cap de Creus",
-          "d": "Ocupa aproximadamente la mitad del término municipal"
+          "t": "Mar y montaña",
+          "d": "El Parque Natural del Cap de Creus ocupa aproximadamente la mitad del término municipal"
         },
         {
           "icono": "wave",
