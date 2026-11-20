@@ -379,6 +379,7 @@
   .cam-view { position: relative; flex: 1 1 auto; min-height: 0; background: #000; }
   .cam-modal video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #000; }
   #cam-overlay { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .cam-fx { all: unset; box-sizing: border-box; cursor: pointer; position: absolute; top: 10px; right: 10px; z-index: 4; width: 42px; height: 42px; border-radius: 50%; background: rgba(0,0,0,.55); border: 1px solid rgba(255,255,255,.35); color: #fff; font-size: 19px; text-align: center; line-height: 40px; }
   .cam-thumbs { position: absolute; top: 10px; left: 10px; display: flex; flex-direction: column; gap: 6px; pointer-events: none; z-index: 3; max-height: calc(100% - 20px); overflow: hidden; }
   .cam-thumbs canvas { width: 40px; height: auto; max-height: 60px; border-radius: 5px; border: 2px solid #fff; box-shadow: 0 1px 6px rgba(0,0,0,.5); background: #333; opacity: .92; display: block; }
   .cam-thumbs .more { color: #fff; font-size: 12px; font-weight: 700; text-shadow: 0 1px 4px #000; text-align: center; width: 44px; }
@@ -505,7 +506,7 @@
 </main>
 
 <div class="cam-modal" id="cam-modal">
-  <div class="cam-view" id="cam-view"><video id="cam-video" playsinline muted autoplay></video><canvas id="cam-overlay"></canvas><div class="cam-thumbs" id="cam-thumbs"></div><div class="cam-hint" id="cam-hint">Buscando documento…</div><div class="cam-flash" id="cam-flash"></div></div>
+  <div class="cam-view" id="cam-view"><video id="cam-video" playsinline muted autoplay></video><canvas id="cam-overlay"></canvas><div class="cam-thumbs" id="cam-thumbs"></div><button type="button" class="cam-fx" id="cam-fx" aria-label="Sonido y vibración">🔊</button><div class="cam-hint" id="cam-hint">Buscando documento…</div><div class="cam-flash" id="cam-flash"></div></div>
   <div class="cam-bar">
     <button type="button" class="cam-btn" id="cam-cancel">Cerrar</button>
     <button type="button" class="shutter" id="cam-shot" aria-label="Hacer foto"></button>
@@ -595,56 +596,137 @@ function bestQuad(hull){
   let st=0, mn=1e9; pts.forEach((p,k)=>{ if(p[0]+p[1]<mn){mn=p[0]+p[1];st=k;} });
   return [0,1,2,3].map(k=>pts[(st+k)%4]);
 }
+// nº de unos en la ventana (2r+1)² centrada en cada píxel (sumas deslizantes, O(n))
+function boxCount(M,w,h,r){
+  const tmp=new Int32Array(w*h), out=new Int32Array(w*h);
+  for (let y=0;y<h;y++){ let s=0; const o=y*w;
+    for (let x=0;x<=Math.min(r,w-1);x++) s+=M[o+x];
+    for (let x=0;x<w;x++){ tmp[o+x]=s; const a=x+r+1, b=x-r; if(a<w) s+=M[o+a]; if(b>=0) s-=M[o+b]; } }
+  for (let x=0;x<w;x++){ let s=0;
+    for (let y=0;y<=Math.min(r,h-1);y++) s+=tmp[y*w+x];
+    for (let y=0;y<h;y++){ out[y*w+x]=s; const a=y+r+1, b=y-r; if(a<h) s+=tmp[a*w+x]; if(b>=0) s-=tmp[b*w+x]; } }
+  return out;
+}
+const erodeM  = (M,w,h,r)=>{ const c=boxCount(M,w,h,r), f=(2*r+1)*(2*r+1), o=new Uint8Array(w*h); for(let i=0;i<o.length;i++) o[i]=c[i]===f?1:0; return o; };
+const dilateM = (M,w,h,r)=>{ const c=boxCount(M,w,h,r), o=new Uint8Array(w*h); for(let i=0;i<o.length;i++) o[i]=c[i]>0?1:0; return o; };
+
+// componente conexa más "documento" (grande, central, que no toque el borde)
+function pickComponent(mask,w,h,minFrac,central){
+  const N=w*h, lab=new Int32Array(N), stack=[]; let best=-1, bestScore=0, nl=0;
+  for (let s0=0;s0<N;s0++){
+    if(!mask[s0]||lab[s0]) continue; nl++; lab[s0]=nl; stack.push(s0);
+    let area=0, sx=0, sy=0, touch=false;
+    while(stack.length){
+      const k=stack.pop(), x=k%w, y=(k/w)|0; area++; sx+=x; sy+=y;
+      if(x<3||y<3||x>w-4||y>h-4) touch=true;
+      if(x>0&&mask[k-1]&&!lab[k-1]){lab[k-1]=nl;stack.push(k-1);} if(x<w-1&&mask[k+1]&&!lab[k+1]){lab[k+1]=nl;stack.push(k+1);}
+      if(y>0&&mask[k-w]&&!lab[k-w]){lab[k-w]=nl;stack.push(k-w);} if(y<h-1&&mask[k+w]&&!lab[k+w]){lab[k+w]=nl;stack.push(k+w);}
+    }
+    if (area < N*minFrac) continue;
+    const dist=central?Math.hypot(sx/area/w-0.5, sy/area/h-0.5):0;
+    const score=area/(1+4*dist)*(touch?0.35:1);
+    if (score>bestScore){ bestScore=score; best=nl; }
+  }
+  if (best<0) return null;
+  const out=new Uint8Array(N); for (let i=0;i<N;i++) out[i]=lab[i]===best?1:0; return out;
+}
+// solidez: área de la región (agujeros rellenos) / área de su casco convexo. ~1 = hoja única; <1 = hojas juntas
+function solidity(sel,w,h){
+  const N=w*h, bg=new Uint8Array(N), st=[];
+  const push=k=>{ if(!sel[k]&&!bg[k]){ bg[k]=1; st.push(k); } };
+  for (let x=0;x<w;x++){ push(x); push((h-1)*w+x); } for (let y=0;y<h;y++){ push(y*w); push(y*w+w-1); }
+  while(st.length){ const k=st.pop(), x=k%w, y=(k/w)|0; if(x>0)push(k-1); if(x<w-1)push(k+1); if(y>0)push(k-w); if(y<h-1)push(k+w); }
+  let area=0; const P=[];
+  for (let y=0;y<h;y++) for (let x=0;x<w;x++){ const k=y*w+x; if(!bg[k]){ area++; if(x%2===0||y%2===0){ if(!bg[k] && (x===0||y===0||x===w-1||y===h-1||bg[k-1]||bg[k+1]||bg[k-w]||bg[k+w])) P.push([x,y]); } } }
+  if (P.length<4) return 1;
+  const hull=convexHull(P); let ar=0; for(let i=0;i<hull.length;i++){ const p=hull[i], n=hull[(i+1)%hull.length]; ar+=p[0]*n[1]-n[0]*p[1]; }
+  ar=Math.abs(ar)/2; return ar>0 ? Math.min(1, area/ar) : 1;
+}
 function detectQuad(src, sw, sh, res){
   try {
-    const w = res||160, h = Math.max(1, Math.round(w*sh/sw));
+    const w = res||256, h = Math.max(1, Math.round(w*sh/sw));
     const t = document.createElement('canvas'); t.width=w; t.height=h;
     const g = t.getContext('2d', {willReadFrequently:true}); g.drawImage(src,0,0,w,h);
-    const d = g.getImageData(0,0,w,h).data, L = new Uint8Array(w*h), S = new Float32Array(w*h), hist = new Array(256).fill(0);
+    const d = g.getImageData(0,0,w,h).data, N=w*h, L=new Float32Array(N), S=new Float32Array(N), hist=new Array(256).fill(0);
     let nPix=0;
-    for (let i=0;i<w*h;i++){
+    for (let i=0;i<N;i++){
       const r=d[i*4], gg=d[i*4+1], b=d[i*4+2], mx=Math.max(r,gg,b), mn=Math.min(r,gg,b);
-      const v=(r*0.299+gg*0.587+b*0.114)|0; L[i]=v; S[i]=mx? (mx-mn)/mx : 0;
-      if (v>25){ hist[v]++; nPix++; }          // ignora bandas negras
+      const v=r*0.299+gg*0.587+b*0.114; L[i]=v; S[i]=mx?(mx-mn)/mx:0;
+      if (v>25){ hist[v|0]++; nPix++; }
     }
     let sum=0; for (let i=0;i<256;i++) sum+=i*hist[i];
     let sB=0,wB=0,max=0,thr=128;
     for (let i=0;i<256;i++){ wB+=hist[i]; if(!wB) continue; const wF=nPix-wB; if(!wF) break; sB+=i*hist[i];
       const mB=sB/wB, mF=(sum-sB)/wF, v=wB*wF*(mB-mF)*(mB-mF); if(v>max){max=v;thr=i;} }
-    // papel = claro y poco saturado (la madera, el suelo de color, etc. quedan fuera)
-    const M = new Uint8Array(w*h);
+    // papel = claro y poco saturado
+    const M0=new Uint8Array(N); for (let i=0;i<N;i++) M0[i]=(L[i]>thr&&S[i]<0.30)?1:0;
+    const M1=erodeM(M0,w,h,1);
+    // bordes marcados (fotos de hojas apiladas): se usan de barrera entre hojas pegadas
+    const E=new Uint8Array(N), T=7*Math.sqrt(320/w);
     for (let y=1;y<h-1;y++) for (let x=1;x<w-1;x++){
-      const k=y*w+x; let ok=1;
-      for (const o of [0,-1,1,-w,w]) if (!(L[k+o]>thr && S[k+o]<0.30)) { ok=0; break; }
-      M[k]=ok;
+      const k=y*w+x;
+      const gx=(L[k-w+1]+2*L[k+1]+L[k+w+1])-(L[k-w-1]+2*L[k-1]+L[k+w-1]);
+      const gy=(L[k+w-1]+2*L[k+w]+L[k+w+1])-(L[k-w-1]+2*L[k-w]+L[k-w+1]);
+      if (Math.hypot(gx,gy)/8 > T) E[k]=1;
     }
-    // componentes conexas; se elige la mayor que no toque el borde (el documento suele verse entero)
-    const lab = new Int32Array(w*h); let best=null, bestScore=0, n=0; const stack=[];
-    for (let s0=0;s0<w*h;s0++){
-      if(!M[s0]||lab[s0]) continue; n++; lab[s0]=n; stack.push(s0);
-      let area=0, border=0, x0=w,x1=0,y0=h,y1=0, pts=[];
-      while(stack.length){
-        const k=stack.pop(), x=k%w, y=(k/w)|0; area++; pts.push(k);
-        if(x<2||y<2||x>w-3||y>h-3) border++;
-        for (const nb of [k-1,k+1,k-w,k+w]) if(M[nb]&&!lab[nb]){ lab[nb]=n; stack.push(nb); }
-      }
-      if (area < w*h*0.025) continue;
-      const score = area * (border>area*0.03 ? 0.35 : 1);
-      if (score>bestScore){ bestScore=score; best={pts,area}; }
+    const ED=dilateM(E,w,h,1), M2=new Uint8Array(N); for (let i=0;i<N;i++) M2[i]=(M1[i]&&!ED[i])?1:0;
+    // B) región clara simple (sin barreras). Si es una forma limpia (una sola hoja), se usa tal cual.
+    const selB=pickComponent(M1,w,h,0.025,false);
+    let sel=null;
+    if (selB && solidity(selB,w,h)>=0.985) sel=selB;
+    else {
+      // A) hojas pegadas: núcleo erosionado separado por los bordes (corta puentes finos entre hojas)
+      const R=Math.max(3,Math.round(w*0.02)), core=erodeM(M2,w,h,R);
+      const c=pickComponent(core,w,h,0.01,true);
+      if (c){ const sd=dilateM(c,w,h,R); sel=new Uint8Array(N); for (let i=0;i<N;i++) sel[i]=(sd[i]&&M2[i])?1:0; }
+      else sel=selB;
     }
-    if(!best || best.area < w*h*0.035) return null;
-    const P0 = best.pts.map(k=>[k%w, (k/w)|0]);
-    const hull = convexHull(P0);
-    if (hull.length < 4) return null;
-    const corners = bestQuad(hull);
-    const ccx=corners.reduce((t,p)=>t+p[0],0)/4, ccy=corners.reduce((t,p)=>t+p[1],0)/4, INSET=0.006;
-    const q = corners.map(p=>[Math.min(1,Math.max(0,(p[0]+0.5+(ccx-p[0])*INSET*2)/w)), Math.min(1,Math.max(0,(p[1]+0.5+(ccy-p[1])*INSET*2)/h))]);
+    if (!sel) return null;
+    const PP=new Uint8Array(N); for (let i=0;i<N;i++) PP[i]=(S[i]<0.30&&L[i]>thr*0.55)?1:0;   // "papel", incluido el texto
+    // contorno de la región (suficiente para el casco convexo)
+    const P0=[];
+    for (let y=1;y<h-1;y++) for (let x=1;x<w-1;x++){ const k=y*w+x;
+      if (sel[k] && (!sel[k-1]||!sel[k+1]||!sel[k-w]||!sel[k+w])) P0.push([x,y]); }
+    if (P0.length<8) return null;
+    const hull=convexHull(P0); if (hull.length<4) return null;
+    let C=bestQuad(hull);
+    C=extendToA4(C, PP, w, h);
+    const ccx=C.reduce((t,p)=>t+p[0],0)/4, ccy=C.reduce((t,p)=>t+p[1],0)/4, INSET=0.006;
+    const q=C.map(p=>[Math.min(1,Math.max(0,(p[0]+0.5+(ccx-p[0])*INSET*2)/w)), Math.min(1,Math.max(0,(p[1]+0.5+(ccy-p[1])*INSET*2)/h))]);
     let ar=0; for(let i=0;i<4;i++){ const p=q[i], nx=q[(i+1)%4]; ar+=p[0]*nx[1]-nx[0]*p[1]; }
-    if (Math.abs(ar)/2 < 0.1) return null;
+    if (Math.abs(ar)/2 < 0.08) return null;
     return q;
   } catch(e){ return null; }
 }
-const autoQuad = canvas => detectQuad(canvas, canvas.width, canvas.height, 480) || fullQuad();
+// Si la hoja detectada es algo más "corta" que un A4 y hay papel justo al lado, se completa ese lado
+// (típico: la cabecera con logo o el pie se separan del resto por una línea).
+function extendToA4(C0, PP, w, h){
+  try {
+    const C=C0.map(p=>p.slice()), dist=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]), A4=1.4142;
+    const unit=(a,b)=>{ const l=dist(a,b)||1; return [(b[0]-a[0])/l,(b[1]-a[1])/l]; };
+    const [tl,tr,br,bl]=C;
+    const Wq=(dist(tl,tr)+dist(bl,br))/2, Hq=(dist(tl,bl)+dist(tr,br))/2, portrait=Hq>=Wq, short=portrait?Wq:Hq;
+    const hit=(x,y)=>{ const xi=Math.round(x), yi=Math.round(y); return xi>=0&&yi>=0&&xi<w&&yi<h&&PP[yi*w+xi]; };
+    // lados largos: [esquina a, esquina b, esquina del lado opuesto cercana a a]
+    const sides = portrait ? [[3,0,1],[2,1,0]] : [[0,1,3],[3,2,0]];   // izq/der (vertical) o arriba/abajo (horizontal)
+    for (const [ia,ib] of sides){
+      const A=C[ia], B=C[ib], len=dist(A,B), expected=A4*short, ratio=expected/len;
+      if (!(ratio>1.04 && ratio<1.5)) continue;
+      const deficit=expected-len, u=unit(A,B);
+      const opp = portrait ? (ia===3?C[2]:C[3]) : null;       // sólo para dirección interior
+      const inw = portrait ? (ia===3?unit(C[0],C[1]):unit(C[1],C[0])) : (ia===0?unit(C[0],C[3]):unit(C[3],C[0]));
+      const frac=(from,dir)=>{ let ok=0,tot=0;
+        for (let t=0.15;t<=1;t+=0.17) for (const ins of [0.08,0.2,0.32]){
+          tot++; if (hit(from[0]+dir[0]*deficit*t+inw[0]*ins*short, from[1]+dir[1]*deficit*t+inw[1]*ins*short)) ok++; }
+        return ok/tot; };
+      const fB=frac(B,u), fA=frac(A,[-u[0],-u[1]]);
+      if (Math.max(fA,fB)<0.5) continue;
+      if (fB>=fA){ C[ib]=[B[0]+u[0]*deficit, B[1]+u[1]*deficit]; } else { C[ia]=[A[0]-u[0]*deficit, A[1]-u[1]*deficit]; }
+    }
+    return C;
+  } catch(e){ return C0; }
+}
+const autoQuad = canvas => detectQuad(canvas, canvas.width, canvas.height, 400) || fullQuad();
 
 /* ---------- recorte con esquinas ---------- */
 const cvSrc = $('cv-src'), layer = $('crop-layer'), stage = $('stage');
@@ -766,16 +848,24 @@ function applyFilter(canvas, filter){
   for (let y=0;y<H;y++) for (let x=0;x<W;x++){
     const i=(y*W+x)*4, bg=bgAt(m,x,y), k=255/bg;
     if (filter==='color'){
-      const r=d[i]*k*gR/255, gg=d[i+1]*k*gG/255, b=d[i+2]*k*gB/255;
-      const l=r*0.299+gg*0.587+b*0.114, sat=1.3;            // colores más intensos
-      const ch=[r,gg,b].map(v=>{
-        v=l+(v-l)*sat;
-        v=(v-bp)/(wp-bp); v=Math.min(1,Math.max(0,v));       // niveles automáticos: negros reales y papel blanco
-        v=Math.pow(v,1.12);                                   // medios tonos más profundos (efecto HDR)
-        v=v*v*(3-2*v)*0.3+v*0.7;                              // curva S suave
-        return v*255;
-      });
-      d[i]=ch[0]; d[i+1]=ch[1]; d[i+2]=ch[2];
+      let r=d[i]*k*gR/255, gg=d[i+1]*k*gG/255, b=d[i+2]*k*gB/255;
+      const l=r*0.299+gg*0.587+b*0.114;
+      // el contraste (niveles + curva HDR) se aplica solo al brillo: así el tono del color (p. ej. el naranja) no cambia
+      let v=(l-bp)/(wp-bp); v=Math.min(1,Math.max(0,v));
+      const vLin=v; v=Math.pow(v,1.12); v=v*v*(3-2*v)*0.3+v*0.7;
+      // los colores muy saturados (naranja, etc.) conservan su luminosidad: el efecto HDR sólo profundiza negros y grises
+      { const mxs=Math.max(r,gg,b), mns=Math.min(r,gg,b), Sin=mxs>0?(mxs-mns)/mxs:0, wC=smooth(0.3,0.65,Sin);
+        v=v*(1-wC)+Math.min(1,vLin*1.08)*wC; }
+      const f = l>0.002 ? v/l : 0;
+      r*=f; gg*=f; b*=f;
+      const sat=1.6, l2=r*0.299+gg*0.587+b*0.114;
+      r=l2+(r-l2)*sat; gg=l2+(gg-l2)*sat; b=l2+(b-l2)*sat;
+      const mx=Math.max(r,gg,b); if (mx>1){ r/=mx; gg/=mx; b/=mx; }
+      // el papel (zona clara y casi sin color) se lleva a blanco neutro: quita el tinte azulado/amarillento de la luz
+      { const mx2=Math.max(r,gg,b), mn2=Math.min(r,gg,b), S2=mx2>0?(mx2-mn2)/mx2:0, l3=r*0.299+gg*0.587+b*0.114;
+        const w1=smooth(0.70,0.92,l3)*(1-smooth(0.14,0.32,S2)), tgt=l3+(1-l3)*0.6;
+        r=r*(1-w1)+tgt*w1; gg=gg*(1-w1)+tgt*w1; b=b*(1-w1)+tgt*w1; }
+      d[i]=Math.max(0,r)*255; d[i+1]=Math.max(0,gg)*255; d[i+2]=Math.max(0,b)*255;
     } else {
       const l=(d[i]*0.299+d[i+1]*0.587+d[i+2]*0.114)*k/255;
       const v = filter==='doc' ? smooth(0.50,0.82,l) : smooth(0.12,0.92,l);
@@ -862,6 +952,40 @@ $('btn-gal').onclick=()=>$('in-gal').click();
 $('in-gal').onchange=e=>{ addFiles([...e.target.files]); e.target.value=''; };
 $('in-cam').onchange=e=>{ addFiles([...e.target.files]); e.target.value=''; };
 
+/* ---------- sonido y vibración al disparar ---------- */
+const fx={on:true}; try{ if(localStorage.getItem('oi-scan-fx')==='0') fx.on=false; }catch(e){}
+let actx=null, hapticLabel=null;
+function initAudio(){
+  try { const AC=window.AudioContext||window.webkitAudioContext; if(!actx&&AC) actx=new AC(); if(actx&&actx.state==='suspended') actx.resume(); } catch(e){}
+}
+function clickSound(){            // "clic-clac" de obturador generado en el momento (no hace falta ningún archivo)
+  if(!fx.on||!actx) return;
+  try {
+    const t=actx.currentTime;
+    const burst=(at,freq,dur,gain)=>{
+      const n=Math.floor(actx.sampleRate*dur), buf=actx.createBuffer(1,n,actx.sampleRate), d=buf.getChannelData(0);
+      for(let i=0;i<n;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/n,3);
+      const src=actx.createBufferSource(); src.buffer=buf;
+      const bp=actx.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=freq; bp.Q.value=1.2;
+      const g=actx.createGain(); g.gain.value=gain; src.connect(bp); bp.connect(g); g.connect(actx.destination); src.start(at);
+    };
+    burst(t,2600,0.045,1.2); burst(t+0.075,1500,0.07,1.0);
+  } catch(e){}
+}
+function haptic(){
+  if(!fx.on) return;
+  try { if (navigator.vibrate && navigator.vibrate(30)) return; } catch(e){}
+  try {                           // iPhone (Safari 17.4+): un interruptor invisible da un toque háptico
+    if(!hapticLabel){ hapticLabel=document.createElement('label'); hapticLabel.setAttribute('aria-hidden','true');
+      hapticLabel.style.cssText='position:fixed;left:-200px;top:-200px;opacity:0;pointer-events:none;';
+      hapticLabel.innerHTML='<input type="checkbox" switch>'; document.body.appendChild(hapticLabel); }
+    hapticLabel.click();
+  } catch(e){}
+}
+function paintFx(){ $('cam-fx').textContent = fx.on ? '🔊' : '🔇'; }
+$('cam-fx').onclick=()=>{ fx.on=!fx.on; try{ localStorage.setItem('oi-scan-fx', fx.on?'1':'0'); }catch(e){} paintFx(); initAudio(); if(fx.on){ clickSound(); haptic(); } };
+paintFx();
+
 let stream=null, shots=0, liveQuad=null, liveT=null;
 function liveTick(){
   const v=$('cam-video'), cv=$('cam-overlay'); if(!v.videoWidth) return;
@@ -883,6 +1007,7 @@ function liveTick(){
   P.forEach(p=>{ g.beginPath(); g.arc(p[0],p[1],6,0,7); g.fillStyle='#4ad2a0'; g.fill(); });
 }
 async function openCam(){
+  initAudio();
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ $('in-cam').click(); return; }
   try {
     stream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:{ideal:'environment'}, width:{ideal:1920}, height:{ideal:1080} }, audio:false });
@@ -899,8 +1024,9 @@ $('btn-cam').onclick=openCam;
 $('cam-cancel').onclick=()=>{ closeCam(); };
 $('cam-shot').onclick=()=>{
   const v=$('cam-video'); if(!v.videoWidth) return;
+  initAudio(); clickSound(); haptic();
   const fc=fitCanvas(v.videoWidth, v.videoHeight, (g,w,h)=>g.drawImage(v,0,0,w,h));
-  addPage(fc, detectQuad(fc, fc.width, fc.height, 480) || (liveQuad ? liveQuad.map(p=>p.slice()) : null));
+  addPage(fc, detectQuad(fc, fc.width, fc.height, 400) || (liveQuad ? liveQuad.map(p=>p.slice()) : null));
   shots++; $('cam-count').textContent='('+shots+')';
   const tb=$('cam-thumbs'), pg=pages[pages.length-1];
   const wc=warp(fc, pg.quad, 160), tc=document.createElement('canvas');   // miniatura ya recortada
