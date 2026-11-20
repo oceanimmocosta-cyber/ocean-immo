@@ -1089,6 +1089,23 @@ html,body{overflow-anchor:none}
 #vender .val-copy>*:not(.flyer-x){position:relative;z-index:2}
 #vender .val-grid>*:not(.val-copy){position:relative;z-index:2}
 @media(max-width:980px){#vender .val-copy{position:relative}#vender .flyer-x{left:50%;top:50%;width:360px;transform:translate(-50%,-50%) rotate(-7deg);opacity:.11}}
+</style><style id="oc-video-css">
+/* Botón "Vídeo" en la ficha + ventana con el vídeo de YouTube */
+.ocv-pill{position:absolute;right:14px;bottom:14px;z-index:6;display:none;align-items:center;gap:8px;border:0;cursor:pointer;background:rgba(26,46,67,.88);color:#fff;font:600 .85rem var(--body,system-ui),sans-serif;padding:9px 16px 9px 12px;border-radius:999px;box-shadow:0 4px 16px rgba(0,0,0,.3);transition:.2s}
+.ocv-pill.on{display:inline-flex}
+.ocv-pill:hover{background:var(--turquoise)}
+.ocv-pill svg{width:18px;height:18px;fill:#fff}
+.ocv-link{display:none;align-items:center;gap:8px;margin:0;border:1.5px solid var(--turquoise);background:#fff;color:var(--turquoise);font:600 .95rem var(--body,system-ui),sans-serif;padding:10px 20px 10px 16px;border-radius:999px;cursor:pointer;transition:.2s}
+.ocv-link.on{display:inline-flex;float:right;margin:-6px 0 0 12px;padding:7px 15px 7px 12px;font-size:.84rem}
+.ocv-l-short{display:none}
+@media(max-width:700px){.ocv-l-long{display:none}.ocv-l-short{display:inline}}
+.ocv-link:hover{background:var(--turquoise);color:#fff}
+#ocv-modal{position:fixed;inset:0;z-index:100000;background:rgba(10,18,28,.88);display:none;align-items:center;justify-content:center;padding:20px}
+#ocv-modal.open{display:flex}
+.ocv-box{position:relative;width:min(960px,100%);aspect-ratio:16/9;background:#000;border-radius:16px;overflow:hidden}
+.ocv-box.vert{aspect-ratio:9/16;width:auto;height:min(86vh,760px);max-width:100%}
+.ocv-box iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.ocv-x{position:absolute;right:16px;top:16px;z-index:100001;width:42px;height:42px;border:0;border-radius:50%;background:rgba(255,255,255,.95);color:#1A2E43;font-size:26px;line-height:1;cursor:pointer;display:grid;place-items:center}
 </style><script>window.__OPEN_PAGE="servicio-seguros-hogar";</script>
 <style id="oc-preload">#home{display:none}#page-servicio-seguros-hogar{display:block}</style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Inicio","item":"https://www.oceanimmocosta.com/"},{"@type":"ListItem","position":2,"name":"Servicios","item":"https://www.oceanimmocosta.com/servicios.html"},{"@type":"ListItem","position":3,"name":"Seguros"}]}</script>
@@ -4688,6 +4705,68 @@ html,body{overflow-anchor:none}
     var _al=applyLang;
     window.applyLang=function(){ var r=_al.apply(this,arguments); try{ if(Z&&VENTAS){ buildMenu(); buildHome(); } }catch(e){} return r; };
   }
+})();
+</script>
+<script id="oc-video-js">
+(function(){
+  var VID=null, loading=null, current=null;
+  var LBL={es:'Vídeo',ca:'Vídeo',fr:'Vidéo',en:'Video'};
+  var LBL3={es:'Ver vídeo',ca:'Veure vídeo',fr:'Voir la vidéo',en:'Watch video'};
+  var LBL2={es:'Ver vídeo de la propiedad',ca:'Veure el vídeo de la propietat',fr:'Voir la vidéo du bien',en:'Watch the property video'};
+  var PLAY='<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+  function lang(){ return (typeof currentLang!=='undefined'&&currentLang)||document.documentElement.lang||'es'; }
+  function load(){
+    if(loading) return loading;
+    loading=fetch('../videos.json',{cache:'no-cache'}).then(function(r){return r.ok?r.json():{}}).catch(function(){return {}}).then(function(d){VID=d||{};return VID;});
+    return loading;
+  }
+  function refNow(){ var el=document.getElementById('d-ref'); return el?(el.textContent||'').replace(/^Ref\.\s*/i,'').trim():''; }
+  function ensureUI(){
+    if(!document.getElementById('ocv-link')){
+      var l=document.createElement('button'); l.type='button'; l.id='ocv-link'; l.className='ocv-link';
+      var rf=document.getElementById('d-ref'); if(rf) rf.parentNode.insertBefore(l,rf); l.addEventListener('click',openModal);
+    }
+    if(!document.getElementById('ocv-modal')){
+      var m=document.createElement('div'); m.id='ocv-modal'; m.setAttribute('role','dialog'); m.setAttribute('aria-modal','true');
+      m.innerHTML='<button type="button" class="ocv-x" aria-label="Cerrar">&times;</button><div class="ocv-box" id="ocv-box"></div>';
+      document.body.appendChild(m);
+      m.addEventListener('click',function(e){ if(e.target===m||e.target.classList.contains('ocv-x')) closeModal(); });
+      document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeModal(); });
+    }
+  }
+  function openModal(){
+    if(!current) return;
+    var m=document.getElementById('ocv-modal'), box=document.getElementById('ocv-box');
+    box.className='ocv-box'+(current.vertical?' vert':'');
+    box.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/'+current.id+'?autoplay=1&rel=0&playsinline=1" title="'+(LBL[lang()]||LBL.es)+'" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';
+    m.classList.add('open'); document.body.style.overflow='hidden';
+  }
+  function closeModal(){
+    var m=document.getElementById('ocv-modal'); if(!m||!m.classList.contains('open')) return;
+    m.classList.remove('open'); document.getElementById('ocv-box').innerHTML=''; document.body.style.overflow='';
+  }
+  function render(){
+    ensureUI();
+    var pill=null, link=document.getElementById('ocv-link');
+    current=null;
+    if(pill) pill.classList.remove('on'); if(link) link.classList.remove('on');
+    var ref=refNow(); if(!ref) return;
+    load().then(function(v){
+      if(refNow()!==ref) return;
+      var e=v[ref]; if(!e) return;
+      var id=typeof e==='string'?e:e.id; if(!id||!/^[\w-]{6,20}$/.test(id)) return;
+      current={id:id,vertical:(typeof e==='object')&&!!e.vertical};
+      var t=LBL[lang()]||LBL.es;
+      
+      if(link){ link.innerHTML=PLAY.replace('<svg ','<svg width="18" height="18" style="fill:currentColor" ')+'<span class="ocv-l-long">'+(LBL2[lang()]||LBL2.es)+'</span><span class="ocv-l-short">'+(LBL3[lang()]||LBL3.es)+'</span>'; link.classList.add('on'); }
+    });
+  }
+  function init(){
+    var refEl=document.getElementById('d-ref'); if(!refEl) return;
+    new MutationObserver(render).observe(refEl,{childList:true,characterData:true,subtree:true});
+    render();
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
 })();
 </script>
 </body>
