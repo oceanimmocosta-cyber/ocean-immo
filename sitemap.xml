@@ -21,6 +21,36 @@
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://www.oceanimmocosta.com/ca/zonas/empuriabrava.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.oceanimmocosta.com/zonas/empuriabrava.html"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://www.oceanimmocosta.com/ca/zonas/empuriabrava.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.oceanimmocosta.com/en/zonas/empuriabrava.html"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.oceanimmocosta.com/fr/zonas/empuriabrava.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.oceanimmocosta.com/zonas/empuriabrava.html"/>
+    <lastmod>2026-11-20</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.oceanimmocosta.com/ca/zonas/roses.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.oceanimmocosta.com/zonas/roses.html"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://www.oceanimmocosta.com/ca/zonas/roses.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.oceanimmocosta.com/en/zonas/roses.html"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.oceanimmocosta.com/fr/zonas/roses.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.oceanimmocosta.com/zonas/roses.html"/>
+    <lastmod>2026-11-20</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.oceanimmocosta.com/ca/zonas/santa-margarida.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.oceanimmocosta.com/zonas/santa-margarida.html"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://www.oceanimmocosta.com/ca/zonas/santa-margarida.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.oceanimmocosta.com/en/zonas/santa-margarida.html"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.oceanimmocosta.com/fr/zonas/santa-margarida.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.oceanimmocosta.com/zonas/santa-margarida.html"/>
+    <lastmod>2026-11-20</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.oceanimmocosta.com/comprar.html</loc>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.oceanimmocosta.com/comprar.html"/>
     <xhtml:link rel="alternate" hreflang="ca" href="https://www.oceanimmocosta.com/ca/comprar.html"/>
@@ -91,6 +121,36 @@
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://www.oceanimmocosta.com/en/zonas/empuriabrava.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.oceanimmocosta.com/zonas/empuriabrava.html"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://www.oceanimmocosta.com/ca/zonas/empuriabrava.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.oceanimmocosta.com/en/zonas/empuriabrava.html"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.oceanimmocosta.com/fr/zonas/empuriabrava.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.oceanimmocosta.com/zonas/empuriabrava.html"/>
+    <lastmod>2026-11-20</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.oceanimmocosta.com/en/zonas/roses.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.oceanimmocosta.com/zonas/roses.html"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://www.oceanimmocosta.com/ca/zonas/roses.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.oceanimmocosta.com/en/zonas/roses.html"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.oceanimmocosta.com/fr/zonas/roses.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.oceanimmocosta.com/zonas/roses.html"/>
+    <lastmod>2026-11-20</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.oceanimmocosta.com/en/zonas/santa-margarida.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.oceanimmocosta.com/zonas/santa-margarida.html"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://www.oceanimmocosta.com/ca/zonas/santa-margarida.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.oceanimmocosta.com/en/zonas/santa-margarida.html"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.oceanimmocosta.com/fr/zonas/santa-margarida.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.oceanimmocosta.com/zonas/santa-margarida.html"/>
+    <lastmod>2026-11-20</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.oceanimmocosta.com/fr/comprar.html</loc>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.oceanimmocosta.com/comprar.html"/>
     <xhtml:link rel="alternate" hreflang="ca" href="https://www.oceanimmocosta.com/ca/comprar.html"/>
@@ -109,6 +169,36 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.oceanimmocosta.com/"/>
     <lastmod>2026-11-20</lastmod>
     <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://www.oceanimmocosta.com/fr/zonas/empuriabrava.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.oceanimmocosta.com/zonas/empuriabrava.html"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://www.oceanimmocosta.com/ca/zonas/empuriabrava.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.oceanimmocosta.com/en/zonas/empuriabrava.html"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.oceanimmocosta.com/fr/zonas/empuriabrava.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.oceanimmocosta.com/zonas/empuriabrava.html"/>
+    <lastmod>2026-11-20</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.oceanimmocosta.com/fr/zonas/roses.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.oceanimmocosta.com/zonas/roses.html"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://www.oceanimmocosta.com/ca/zonas/roses.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.oceanimmocosta.com/en/zonas/roses.html"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.oceanimmocosta.com/fr/zonas/roses.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.oceanimmocosta.com/zonas/roses.html"/>
+    <lastmod>2026-11-20</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.oceanimmocosta.com/fr/zonas/santa-margarida.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.oceanimmocosta.com/zonas/santa-margarida.html"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://www.oceanimmocosta.com/ca/zonas/santa-margarida.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.oceanimmocosta.com/en/zonas/santa-margarida.html"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.oceanimmocosta.com/fr/zonas/santa-margarida.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.oceanimmocosta.com/zonas/santa-margarida.html"/>
+    <lastmod>2026-11-20</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.oceanimmocosta.com/</loc>
@@ -352,16 +442,31 @@
   </url>
   <url>
     <loc>https://www.oceanimmocosta.com/zonas/empuriabrava.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.oceanimmocosta.com/zonas/empuriabrava.html"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://www.oceanimmocosta.com/ca/zonas/empuriabrava.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.oceanimmocosta.com/en/zonas/empuriabrava.html"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.oceanimmocosta.com/fr/zonas/empuriabrava.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.oceanimmocosta.com/zonas/empuriabrava.html"/>
     <lastmod>2026-11-20</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.oceanimmocosta.com/zonas/roses.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.oceanimmocosta.com/zonas/roses.html"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://www.oceanimmocosta.com/ca/zonas/roses.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.oceanimmocosta.com/en/zonas/roses.html"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.oceanimmocosta.com/fr/zonas/roses.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.oceanimmocosta.com/zonas/roses.html"/>
     <lastmod>2026-11-20</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.oceanimmocosta.com/zonas/santa-margarida.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://www.oceanimmocosta.com/zonas/santa-margarida.html"/>
+    <xhtml:link rel="alternate" hreflang="ca" href="https://www.oceanimmocosta.com/ca/zonas/santa-margarida.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.oceanimmocosta.com/en/zonas/santa-margarida.html"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.oceanimmocosta.com/fr/zonas/santa-margarida.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.oceanimmocosta.com/zonas/santa-margarida.html"/>
     <lastmod>2026-11-20</lastmod>
     <priority>0.8</priority>
   </url>

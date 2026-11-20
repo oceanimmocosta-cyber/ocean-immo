@@ -1502,11 +1502,11 @@ html,body{overflow-anchor:none}
 <section class="sec" id="zonas" hidden>
   <div class="wrap">
     <div class="sec-head center">
-      <span class="eyebrow">Explora por zonas</span>
-      <h2>Encuentra tu rincón de la Costa Brava</h2>
-      <p>Estas son algunas de nuestras zonas, pero trabajamos en muchas más. Te contamos cómo es cada una y qué propiedades hay ahora mismo.</p>
+      <span class="eyebrow" id="zonas-eyebrow">Explora por zonas</span>
+      <h2 id="zonas-h2">Encuentra tu rincón de la Costa Brava</h2>
+      <p id="zonas-p">Estas son algunas de nuestras zonas, pero trabajamos en muchas más. Te contamos cómo es cada una y qué propiedades hay ahora mismo.</p>
     </div>
-    <div class="zmap" id="zmapWrap"><div id="zmap" role="region" aria-label="Mapa de zonas"></div><div class="zlist" id="zlist"></div></div>
+    <div class="zmap" id="zmapWrap"><div id="zmap" role="region" aria-label="Mapa de zonas" data-zui="mapa"></div><div class="zlist" id="zlist"></div></div>
   </div>
 </section>
 
@@ -1768,7 +1768,7 @@ html,body{overflow-anchor:none}
     <div class="wrap">
       <div class="zona-head">
         <div><h2 id="zona-h2props"></h2><p id="zona-count"></p></div>
-        <a href="comprar.html" data-page="comprar" class="btn btn-ghost">Ver todas las propiedades</a>
+        <a href="comprar.html" data-page="comprar" class="btn btn-ghost" id="zona-vertodas">Ver todas las propiedades</a>
       </div>
       <div class="prop-grid" id="zona-grid"></div>
       <div class="pagination" id="zona-pagination"></div>
@@ -1776,14 +1776,14 @@ html,body{overflow-anchor:none}
   </section>
   <section class="sec" id="zona-otras" style="padding-top:0;padding-bottom:60px">
     <div class="wrap">
-      <div class="zona-head"><div><h2>Otras zonas</h2></div></div>
+      <div class="zona-head"><div><h2 id="zona-otras-h2">Otras zonas</h2></div></div>
       <div class="zona-chips" id="zona-chips"></div>
     </div>
   </section>
   <section class="sec" style="padding-top:0">
     <div class="wrap">
       <div class="zona-cta">
-        <div><h3 id="zona-cta-t"></h3><p>Cuéntanos qué necesitas y te avisamos de las propiedades antes de que salgan a los portales.</p></div>
+        <div><h3 id="zona-cta-t"></h3><p id="zona-cta-p">Cuéntanos qué necesitas y te avisamos de las propiedades antes de que salgan a los portales.</p></div>
         <a href="https://wa.me/34632251470" id="zona-wa" class="btn btn-wa" target="_blank" rel="noopener">Escríbenos por WhatsApp</a>
       </div>
     </div>
@@ -3310,6 +3310,11 @@ html,body{overflow-anchor:none}
       if(['es','ca','fr','en'].indexOf(code)>=0){
         // En la portada y en Comprar hay una dirección propia por idioma (/en/, /fr/, /ca/):
         // allí cambiamos de dirección. En el resto de páginas se traduce sobre la marcha.
+        var zm = location.pathname.match(/^(.*?\/)(?:(?:en|fr|ca)\/)?(zonas\/[^\/]+\.html)$/);
+        if(zm && location.protocol!=='file:'){
+          var zdest = zm[1] + (code==='es' ? '' : code+'/') + zm[2];
+          if(zdest !== location.pathname){ location.href = zdest + location.search; return; }
+        }
         var lm = location.pathname.match(/^(.*?\/)(?:(?:en|fr|ca)\/)?(index\.html|comprar\.html)?$/);
         if(lm && location.protocol!=='file:'){
           var page = (lm[2]==='comprar.html') ? 'comprar.html' : '';
@@ -4544,7 +4549,14 @@ html,body{overflow-anchor:none}
   function norm(s){return String(s==null?'':s).normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim().replace(/margarita/g,'margarida');}
   function match(p,z){var c=z.coincide||{},x=z.excluye||{};if((x.poblacion||[]).indexOf(norm(p.poblacion))>-1||(x.zona||[]).indexOf(norm(p.zona))>-1)return false;return (c.poblacion||[]).indexOf(norm(p.poblacion))>-1||(c.zona||[]).indexOf(norm(p.zona))>-1;}
   function url(path){return siteRootPath()+path;}
-  function isEs(){return (typeof currentLang==='undefined')||currentLang==='es';}
+  function lang(){return (typeof currentLang==='undefined')?'es':currentLang;}
+  // Dirección de una zona en el idioma actual: /zonas/x.html, /en/zonas/x.html ...
+  function zurl(slug){var l=lang();return siteRootPath()+(l==='es'?'':l+'/')+'zonas/'+slug+'.html';}
+  // Texto fijo de la sección en el idioma actual (si falta, castellano)
+  function ui(k,vars){var U=(Z&&Z.ui)||{};var t=(U[lang()]&&U[lang()][k]!=null)?U[lang()][k]:((U.es&&U.es[k])||'');if(vars)for(var v in vars)t=t.replace('{'+v+'}',vars[v]);return t;}
+  // La zona con sus textos traducidos al idioma actual (lo que no esté traducido sale en castellano)
+  function tz(z){var t=(z.i18n&&z.i18n[lang()])||null;if(!t)return z;var o={};for(var k in z)o[k]=z[k];for(var k2 in t)o[k2]=t[k2];return o;}
+  function ztodas(){var t=(Z.todas.i18n&&Z.todas.i18n[lang()])||null;return (t&&t.nombre)||Z.todas.nombre;}
 
   function compute(){
     ACTIVE=Z.zonas.map(function(z){return {z:z,list:VENTAS.filter(function(p){return !p.vendido && match(p,z);})};})
@@ -4556,10 +4568,10 @@ html,body{overflow-anchor:none}
     var dd=document.querySelector('.nav-item-dropdown .nav-dropdown');
     if(!dd) return;
     [].slice.call(dd.querySelectorAll('[data-zona-menu]')).forEach(function(n){n.remove();});
-    if(!ACTIVE.length||!isEs()) return;
-    var h='<span class="nav-dd-label" data-zona-menu>Por zona</span>';
-    ACTIVE.forEach(function(x){h+='<a href="'+url('zonas/'+x.z.slug+'.html')+'" data-zona="'+x.z.slug+'" data-zona-menu>'+esc(x.z.nombre)+'</a>';});
-    h+='<a href="'+url('comprar.html')+'" data-page="comprar" data-zona-menu>Todas las propiedades</a>';
+    if(!ACTIVE.length) return;
+    var h='<span class="nav-dd-label" data-zona-menu>'+esc(ui('menu'))+'</span>';
+    ACTIVE.forEach(function(x){h+='<a href="'+zurl(x.z.slug)+'" data-zona="'+x.z.slug+'" data-zona-menu>'+esc(tz(x.z).nombre)+'</a>';});
+    h+='<a href="'+url((lang()==='es'?'':lang()+'/')+'comprar.html')+'" data-page="comprar" data-zona-menu>'+esc(ui('todas'))+'</a>';
     dd.insertAdjacentHTML('beforeend',h);
   }
 
@@ -4568,12 +4580,15 @@ html,body{overflow-anchor:none}
   function buildHome(){
     sec=document.getElementById('zonas'); if(!sec) return;
     zlist=document.getElementById('zlist'); zmapEl=document.getElementById('zmap'); wrapEl=document.getElementById('zmapWrap');
-    if(!ACTIVE.length||!isEs()){ sec.hidden=true; return; }
+    if(!ACTIVE.length){ sec.hidden=true; return; }
+    var set=function(id,k){var e=document.getElementById(id);if(e)e.textContent=ui(k);};
+    set('zonas-eyebrow','eyebrow'); set('zonas-h2','h2'); set('zonas-p','p');
+    if(zmapEl) zmapEl.setAttribute('aria-label',ui('mapa'));
     var h='';
     ACTIVE.forEach(function(x){
-      h+='<a href="'+url('zonas/'+x.z.slug+'.html')+'" class="zrow" data-zona="'+x.z.slug+'" data-z="'+x.z.slug+'"><div class="zrow-img" style="background-image:url('+url(x.z.foto)+')"></div><div class="zrow-t"><h3>'+esc(x.z.nombre)+'</h3><span>Ver propiedades</span></div>'+ARROW+'</a>';
+      h+='<a href="'+zurl(x.z.slug)+'" class="zrow" data-zona="'+x.z.slug+'" data-z="'+x.z.slug+'"><div class="zrow-img" style="background-image:url('+url(x.z.foto)+')"></div><div class="zrow-t"><h3>'+esc(tz(x.z).nombre)+'</h3><span>'+esc(ui('ver'))+'</span></div>'+ARROW+'</a>';
     });
-    h+='<a href="'+url('comprar.html')+'" data-page="comprar" class="zrow" data-z="todas"><div class="zrow-img" style="background-image:url('+url(Z.todas.foto)+')"></div><div class="zrow-t"><h3>'+esc(Z.todas.nombre)+'</h3><span>Ver propiedades</span></div>'+ARROW+'</a>';
+    h+='<a href="'+url((lang()==='es'?'':lang()+'/')+'comprar.html')+'" data-page="comprar" class="zrow" data-z="todas"><div class="zrow-img" style="background-image:url('+url(Z.todas.foto)+')"></div><div class="zrow-t"><h3>'+esc(ztodas())+'</h3><span>'+esc(ui('ver'))+'</span></div>'+ARROW+'</a>';
     zlist.innerHTML=h;
     sec.hidden=false;
     wrapEl.classList.remove('nomap');
@@ -4619,8 +4634,8 @@ html,body{overflow-anchor:none}
   function refreshMarkers(){
     markers.forEach(function(m){m.marker.remove();}); markers=[];
     ACTIVE.forEach(function(x){
-      var z=x.z, el=document.createElement('div'); el.className='zmk';
-      el.innerHTML='<span class="ztip"><b>'+esc(z.nombre)+'</b><span class="zsub"><span class="zph" style="background-image:url('+url(z.foto)+')"></span><span class="zn">'+x.list.length+' propiedades</span><span class="zd">'+SVG(ICON[z.iconoDato]||ICON.pin).replace('width="20" height="20"','width="13" height="13"').replace('stroke-width="1.8"','stroke-width="2"')+esc(z.dato||'')+'</span></span></span><div class="zpin"></div>';
+      var z=x.z, zt=tz(z), el=document.createElement('div'); el.className='zmk';
+      el.innerHTML='<span class="ztip"><b>'+esc(zt.nombre)+'</b><span class="zsub"><span class="zph" style="background-image:url('+url(z.foto)+')"></span><span class="zn">'+esc(ui('n',{n:x.list.length}))+'</span><span class="zd">'+SVG(ICON[z.iconoDato]||ICON.pin).replace('width="20" height="20"','width="13" height="13"').replace('stroke-width="1.8"','stroke-width="2"')+esc(zt.dato||'')+'</span></span></span><div class="zpin"></div>';
       var pin=el.querySelector('.zpin');
       el.addEventListener('mouseenter',function(){setOn(z.slug,true);});
       el.addEventListener('mouseleave',function(){setOn(z.slug,false);});
@@ -4649,22 +4664,23 @@ html,body{overflow-anchor:none}
       if(!zz){ if(typeof showHome==='function') showHome(); return; }
       item={z:zz,list:VENTAS.filter(function(p){return !p.vendido&&match(p,zz);})};
     }
-    var z=item.z, n=item.list.length, g=function(id){return document.getElementById(id);};
-    g('zona-eyebrow').textContent='Zonas · '+z.nombre;
+    var z=tz(item.z), n=item.list.length, g=function(id){return document.getElementById(id);};
+    g('zona-eyebrow').textContent=ui('zonas')+' · '+z.nombre;
     g('zona-h1').textContent=z.h1; g('zona-lead').textContent=z.lead;
     g('zona-h2texto').textContent=z.h2texto;
     g('zona-texto').innerHTML=z.texto.map(function(t){return '<p>'+esc(t)+'</p>';}).join('');
     g('zona-h2datos').textContent=z.h2datos;
     g('zona-hechos').innerHTML=z.hechos.map(function(f){return '<div class="zona-fact"><div class="ic">'+SVG(ICON[f.icono]||ICON.pin)+'</div><div><strong>'+esc(f.t)+'</strong><span>'+esc(f.d)+'</span></div></div>';}).join('');
     g('zona-h2props').textContent=z.h2props;
-    g('zona-count').textContent=n+(n===1?' propiedad disponible':' propiedades disponibles')+' ahora mismo';
+    g('zona-count').textContent=n+(n===1?ui('disp1'):ui('dispN'))+ui('ahora');
+    g('zona-otras-h2').textContent=ui('otras'); g('zona-cta-p').textContent=ui('ctap'); g('zona-wa').textContent=ui('wa'); g('zona-vertodas').textContent=ui('verTodas');
     g('zona-cta-t').textContent=z.cta;
-    g('zona-wa').href='https://wa.me/34632251470?text='+encodeURIComponent('Hola, busco una propiedad en '+z.nombre+'.');
+    g('zona-wa').href='https://wa.me/34632251470?text='+encodeURIComponent(ui('wamsg',{z:z.nombre}));
     var b=g('zona-banner');
     if(z.hero){ b.style.backgroundImage='url('+url(z.hero)+')'; b.classList.add('has-img'); } else { b.style.backgroundImage=''; b.classList.remove('has-img'); }
     var otras=ACTIVE.filter(function(a){return a.z.slug!==slug;});
     g('zona-otras').style.display=otras.length?'':'none';
-    g('zona-chips').innerHTML=otras.map(function(a){return '<a href="'+url('zonas/'+a.z.slug+'.html')+'" data-zona="'+a.z.slug+'">'+esc(a.z.nombre)+'</a>';}).join('');
+    g('zona-chips').innerHTML=otras.map(function(a){return '<a href="'+zurl(a.z.slug)+'" data-zona="'+a.z.slug+'">'+esc(tz(a.z).nombre)+'</a>';}).join('');
     var pd=window.__propertyData;
     if(pd&&pd.renderPaginated) pd.renderPaginated(item.list,g('zona-grid'),g('zona-pagination'),1);
     window.__ZONA_CUR=slug;
@@ -4672,7 +4688,7 @@ html,body{overflow-anchor:none}
     // En el móvil el navegador a veces no sube del todo al cambiar de página: se fuerza arriba tras pintar.
     window.scrollTo(0,0); requestAnimationFrame(function(){window.scrollTo(0,0);}); setTimeout(function(){window.scrollTo(0,0);},120);
     document.title=z.titulo;
-    if(push) history.pushState({ocListing:true},'',url('zonas/'+slug+'.html'));
+    if(push) history.pushState({ocListing:true},'',zurl(slug));
   }
   // "Volver" desde una zona: si se entró desde "Explora por zonas", se vuelve a esa misma sección y no al inicio de la portada.
   document.addEventListener('click',function(e){
@@ -4700,10 +4716,10 @@ html,body{overflow-anchor:none}
   var zp=fetch('./zonas.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;});
   zp.then(function(d){ Z=d; init(); });
   document.addEventListener('oc:props',init);
-  // Si cambia el idioma, esta sección (solo en castellano por ahora) se oculta o vuelve a aparecer.
+  // Si cambia el idioma, se vuelven a escribir el menú, las tarjetas y la zona abierta en el idioma nuevo.
   if(typeof applyLang==='function'){
     var _al=applyLang;
-    window.applyLang=function(){ var r=_al.apply(this,arguments); try{ if(Z&&VENTAS){ buildMenu(); buildHome(); } }catch(e){} return r; };
+    window.applyLang=function(){ var r=_al.apply(this,arguments); try{ if(Z&&VENTAS){ buildMenu(); buildHome(); if(window.__ZONA_CUR&&document.getElementById('page-zona')&&document.getElementById('page-zona').style.display==='block') openZona(window.__ZONA_CUR,false); } }catch(e){} return r; };
   }
 })();
 </script>
