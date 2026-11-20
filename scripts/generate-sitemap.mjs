@@ -24,6 +24,8 @@ function buscarHtml() {
   const rutas = [...PAGINAS_RAIZ].filter((f) => fs.existsSync(f));
   for (const c of CARPETAS_PUBLICAS) rutas.push(...listarHtml(c));
   for (const l of IDIOMAS) for (const f of PAGINAS_IDIOMA) if (fs.existsSync(`${l}/${f}`)) rutas.push(`${l}/${f}`);
+  // Páginas de zona en cada idioma: ca/zonas/x.html, en/zonas/x.html, fr/zonas/x.html
+  for (const l of IDIOMAS) rutas.push(...listarHtml(`${l}/zonas`));
   // Las páginas marcadas "noindex" (p. ej. propiedades vendidas) no deben estar en el sitemap:
   // Google avisa de "Excluida por una etiqueta noindex" si una URL del sitemap no se puede indexar.
   const indexable = (ruta) => !/<meta\s+name="robots"\s+content="[^"]*noindex/i.test(fs.readFileSync(ruta, 'utf8'));
@@ -41,7 +43,7 @@ const urlDe = (ruta) => {
 // Grupos de idiomas: la portada y Comprar existen en español (raíz) y en cada idioma.
 const grupoDe = (ruta) => {
   const base = ruta.replace(/^(?:ca|en|fr)\//, '');
-  if (!PAGINAS_IDIOMA.includes(base)) return null;
+  if (!PAGINAS_IDIOMA.includes(base) && !base.startsWith('zonas/')) return null;
   const versiones = [['es', base]];
   for (const l of IDIOMAS) if (fs.existsSync(`${l}/${base}`)) versiones.push([l, `${l}/${base}`]);
   return versiones.length > 1 ? versiones : null;
