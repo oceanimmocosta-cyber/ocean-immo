@@ -376,7 +376,10 @@
   /* cámara */
   .cam-modal { position: fixed; inset: 0; background: #000; z-index: 200; display: none; flex-direction: column; }
   .cam-modal.open { display: flex; }
-  .cam-modal video { flex: 1 1 auto; min-height: 0; width: 100%; object-fit: contain; background: #000; }
+  .cam-view { position: relative; flex: 1 1 auto; min-height: 0; background: #000; }
+  .cam-modal video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #000; }
+  #cam-overlay { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .cam-hint { position: absolute; top: 14px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,.55); color: #fff; font-size: 13px; font-weight: 600; padding: 6px 14px; border-radius: 999px; }
   .cam-bar { flex: 0 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px calc(14px + env(safe-area-inset-bottom)); background: #0b1520; color: #fff; }
   .cam-bar .count { font-size: 13px; font-weight: 600; min-width: 90px; }
   .shutter { all: initial; cursor: pointer; width: 66px; height: 66px; border-radius: 50%; background: #fff; border: 5px solid #cfd8de; box-sizing: border-box; }
@@ -499,8 +502,7 @@
 </main>
 
 <div class="cam-modal" id="cam-modal">
-  <video id="cam-video" playsinline muted autoplay></video>
-  <div class="cam-flash" id="cam-flash"></div>
+  <div class="cam-view" id="cam-view"><video id="cam-video" playsinline muted autoplay></video><canvas id="cam-overlay"></canvas><div class="cam-hint" id="cam-hint">Buscando documento…</div><div class="cam-flash" id="cam-flash"></div></div>
   <div class="cam-bar">
     <button type="button" class="cam-btn" id="cam-cancel">Cerrar</button>
     <button type="button" class="shutter" id="cam-shot" aria-label="Hacer foto"></button>
@@ -543,8 +545,8 @@ async function fileToCanvas(file){
     img.src = url;
   });
 }
-function addPage(canvas, autoDetect=true){
-  pages.push({ src: canvas, quad: autoDetect ? autoQuad(canvas) : fullQuad(), filter: 'doc', result: null });
+function addPage(canvas, quad){
+  pages.push({ src: canvas, quad: quad || autoQuad(canvas), filter: 'doc', result: null });
 }
 async function addFiles(files){
   let n = 0;
@@ -557,30 +559,58 @@ async function addFiles(files){
 
 /* ---------- detección de bordes (sencilla) ---------- */
 const fullQuad = () => [[0.03,0.03],[0.97,0.03],[0.97,0.97],[0.03,0.97]];
-function autoQuad(canvas){
+function detectQuad(src, sw, sh){
   try {
-    const w = 160, h = Math.max(1, Math.round(160*canvas.height/canvas.width));
+    const w = 160, h = Math.max(1, Math.round(160*sh/sw));
     const t = document.createElement('canvas'); t.width=w; t.height=h;
-    const g = t.getContext('2d'); g.drawImage(canvas,0,0,w,h);
-    const d = g.getImageData(0,0,w,h).data, L = new Uint8Array(w*h), hist = new Array(256).fill(0);
-    for (let i=0;i<w*h;i++){ const v = (d[i*4]*0.299 + d[i*4+1]*0.587 + d[i*4+2]*0.114)|0; L[i]=v; hist[v]++; }
-    // Otsu
+    const g = t.getContext('2d', {willReadFrequently:true}); g.drawImage(src,0,0,w,h);
+    const d = g.getImageData(0,0,w,h).data, L = new Uint8Array(w*h), S = new Float32Array(w*h), hist = new Array(256).fill(0);
+    let nPix=0;
+    for (let i=0;i<w*h;i++){
+      const r=d[i*4], gg=d[i*4+1], b=d[i*4+2], mx=Math.max(r,gg,b), mn=Math.min(r,gg,b);
+      const v=(r*0.299+gg*0.587+b*0.114)|0; L[i]=v; S[i]=mx? (mx-mn)/mx : 0;
+      if (v>25){ hist[v]++; nPix++; }          // ignora bandas negras
+    }
     let sum=0; for (let i=0;i<256;i++) sum+=i*hist[i];
-    let sB=0,wB=0,max=0,thr=128; const tot=w*h;
-    for (let i=0;i<256;i++){ wB+=hist[i]; if(!wB) continue; const wF=tot-wB; if(!wF) break; sB+=i*hist[i];
+    let sB=0,wB=0,max=0,thr=128;
+    for (let i=0;i<256;i++){ wB+=hist[i]; if(!wB) continue; const wF=nPix-wB; if(!wF) break; sB+=i*hist[i];
       const mB=sB/wB, mF=(sum-sB)/wF, v=wB*wF*(mB-mF)*(mB-mF); if(v>max){max=v;thr=i;} }
-    // máscara de zona clara: filas/columnas con suficiente densidad
-    const rows = new Float32Array(h), cols = new Float32Array(w); let bright=0;
-    for (let y=0;y<h;y++) for (let x=0;x<w;x++) if (L[y*w+x] > thr){ rows[y]++; cols[x]++; bright++; }
-    if (bright/tot < 0.2 || bright/tot > 0.93) return fullQuad();
-    const first = (arr,n,min)=>{ for(let i=0;i<arr.length;i++) if(arr[i]/n>min) return i; return 0; };
-    const last  = (arr,n,min)=>{ for(let i=arr.length-1;i>=0;i--) if(arr[i]/n>min) return i; return arr.length-1; };
-    const top = first(rows,w,0.35), bot = last(rows,w,0.35), lef = first(cols,h,0.35), rig = last(cols,h,0.35);
-    if (rig-lef < w*0.3 || bot-top < h*0.3) return fullQuad();
-    const x0=Math.max(0,lef-1)/w, x1=Math.min(w,rig+2)/w, y0=Math.max(0,top-1)/h, y1=Math.min(h,bot+2)/h;
-    return [[x0,y0],[x1,y0],[x1,y1],[x0,y1]];
-  } catch(e){ return fullQuad(); }
+    // papel = claro y poco saturado (la madera, el suelo de color, etc. quedan fuera)
+    const M = new Uint8Array(w*h);
+    for (let y=1;y<h-1;y++) for (let x=1;x<w-1;x++){
+      const k=y*w+x; let ok=1;
+      for (const o of [0,-1,1,-w,w]) if (!(L[k+o]>thr && S[k+o]<0.30)) { ok=0; break; }
+      M[k]=ok;
+    }
+    // componentes conexas; se elige la mayor que no toque el borde (el documento suele verse entero)
+    const lab = new Int32Array(w*h); let best=null, bestScore=0, n=0; const stack=[];
+    for (let s0=0;s0<w*h;s0++){
+      if(!M[s0]||lab[s0]) continue; n++; lab[s0]=n; stack.push(s0);
+      let area=0, border=0, x0=w,x1=0,y0=h,y1=0, pts=[];
+      while(stack.length){
+        const k=stack.pop(), x=k%w, y=(k/w)|0; area++; pts.push(k);
+        if(x<2||y<2||x>w-3||y>h-3) border++;
+        for (const nb of [k-1,k+1,k-w,k+w]) if(M[nb]&&!lab[nb]){ lab[nb]=n; stack.push(nb); }
+      }
+      if (area < w*h*0.025) continue;
+      const score = area * (border>area*0.03 ? 0.35 : 1);
+      if (score>bestScore){ bestScore=score; best={pts,area}; }
+    }
+    if(!best || best.area < w*h*0.035) return null;
+    let tl=null,tr=null,br=null,bl=null, a=1e9,b=-1e9,c=-1e9,e=1e9;
+    for (const k of best.pts){
+      const x=k%w, y=(k/w)|0, s1=x+y, s2=x-y;
+      if (s1<a){a=s1;tl=[x,y];} if (s2>b){b=s2;tr=[x,y];} if (s1>c){c=s1;br=[x,y];} if (s2<e){e=s2;bl=[x,y];}
+    }
+    // pequeño margen hacia fuera para compensar la erosión de la máscara
+    const cx=(tl[0]+tr[0]+br[0]+bl[0])/4, cy=(tl[1]+tr[1]+br[1]+bl[1])/4;
+    const q=[tl,tr,br,bl].map(p=>{ const dx=p[0]-cx, dy=p[1]-cy, l=Math.hypot(dx,dy)||1; return [Math.min(1,Math.max(0,(p[0]+dx/l*1.5)/w)), Math.min(1,Math.max(0,(p[1]+dy/l*1.5)/h))]; });
+    let ar=0; for(let i=0;i<4;i++){ const p=q[i], nx=q[(i+1)%4]; ar+=p[0]*nx[1]-nx[0]*p[1]; }
+    if (Math.abs(ar)/2 < 0.1) return null;
+    return q;
+  } catch(e){ return null; }
 }
+const autoQuad = canvas => detectQuad(canvas, canvas.width, canvas.height) || fullQuad();
 
 /* ---------- recorte con esquinas ---------- */
 const cvSrc = $('cv-src'), layer = $('crop-layer'), stage = $('stage');
@@ -758,15 +788,36 @@ $('btn-gal').onclick=()=>$('in-gal').click();
 $('in-gal').onchange=e=>{ addFiles([...e.target.files]); e.target.value=''; };
 $('in-cam').onchange=e=>{ addFiles([...e.target.files]); e.target.value=''; };
 
-let stream=null, shots=0;
+let stream=null, shots=0, liveQuad=null, liveT=null;
+function liveTick(){
+  const v=$('cam-video'), cv=$('cam-overlay'); if(!v.videoWidth) return;
+  const W=cv.clientWidth, H=cv.clientHeight;
+  if (cv.width!==W||cv.height!==H){ cv.width=W; cv.height=H; }
+  const q=detectQuad(v, v.videoWidth, v.videoHeight);
+  if (q && liveQuad){   // suavizado para que no tiemble
+    const jump=q.some((p,i)=>Math.hypot(p[0]-liveQuad[i][0],p[1]-liveQuad[i][1])>0.15);
+    liveQuad = jump ? q : liveQuad.map((o,i)=>[o[0]+(q[i][0]-o[0])*0.55, o[1]+(q[i][1]-o[1])*0.55]);
+  } else liveQuad = q;
+  const g=cv.getContext('2d'); g.clearRect(0,0,W,H);
+  $('cam-hint').style.display = liveQuad ? 'none' : 'block';
+  if(!liveQuad) return;
+  // el vídeo se muestra con object-fit: contain
+  const sc=Math.min(W/v.videoWidth, H/v.videoHeight), dw=v.videoWidth*sc, dh=v.videoHeight*sc, ox=(W-dw)/2, oy=(H-dh)/2;
+  const P=liveQuad.map(p=>[ox+p[0]*dw, oy+p[1]*dh]);
+  g.beginPath(); P.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1])); g.closePath();
+  g.fillStyle='rgba(74,210,160,.22)'; g.fill(); g.lineWidth=3; g.strokeStyle='#4ad2a0'; g.stroke();
+  P.forEach(p=>{ g.beginPath(); g.arc(p[0],p[1],6,0,7); g.fillStyle='#4ad2a0'; g.fill(); });
+}
 async function openCam(){
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ $('in-cam').click(); return; }
   try {
     stream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:{ideal:'environment'}, width:{ideal:1920}, height:{ideal:1080} }, audio:false });
   } catch(e){ toast('No se pudo abrir la cámara. Usa la cámara del dispositivo.'); $('in-cam').click(); return; }
   shots=0; $('cam-count').textContent=''; const v=$('cam-video'); v.srcObject=stream; $('cam-modal').classList.add('open'); v.play().catch(()=>{});
+  liveQuad=null; clearInterval(liveT); liveT=setInterval(liveTick,250);
 }
 function closeCam(){
+  clearInterval(liveT); liveQuad=null;
   if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; }
   $('cam-video').srcObject=null; $('cam-modal').classList.remove('open');
 }
@@ -774,7 +825,7 @@ $('btn-cam').onclick=openCam;
 $('cam-cancel').onclick=()=>{ closeCam(); };
 $('cam-shot').onclick=()=>{
   const v=$('cam-video'); if(!v.videoWidth) return;
-  addPage(fitCanvas(v.videoWidth, v.videoHeight, (g,w,h)=>g.drawImage(v,0,0,w,h)));
+  addPage(fitCanvas(v.videoWidth, v.videoHeight, (g,w,h)=>g.drawImage(v,0,0,w,h)), liveQuad ? liveQuad.map(p=>p.slice()) : null);
   shots++; $('cam-count').textContent='('+shots+')';
   const f=$('cam-flash'); f.classList.add('go'); requestAnimationFrame(()=>requestAnimationFrame(()=>f.classList.remove('go')));
 };
