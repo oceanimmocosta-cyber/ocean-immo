@@ -475,6 +475,7 @@
         <button type="button" class="chip" data-f="gray">⚪ Grises</button>
         <button type="button" class="chip" data-f="orig">🖼️ Original</button>
       </div>
+      <label class="sign-check" style="margin:14px 0 0;font-size:13.5px;"><input type="checkbox" id="chk-fix" checked> 📐 Enderezar y limpiar bordes automáticamente</label>
       <div class="toolbar">
         <button type="button" class="btn-sec" id="btn-back-crop">← Ajustar recorte</button>
         <button type="button" class="btn-sec" id="btn-rot2">↻ Girar</button>
@@ -875,8 +876,93 @@ function applyFilter(canvas, filter){
   g.putImageData(img,0,0);
   return canvas;
 }
+/* ---------- enderezado (deskew) y limpieza de márgenes ---------- */
+let autoFix = true;
+function analysisPoints(canvas, maxSide){
+  const sc=Math.min(1, maxSide/Math.max(canvas.width, canvas.height)), w=Math.max(8,Math.round(canvas.width*sc)), h=Math.max(8,Math.round(canvas.height*sc));
+  const t=document.createElement('canvas'); t.width=w; t.height=h; const g=t.getContext('2d',{willReadFrequently:true}); g.drawImage(canvas,0,0,w,h);
+  const d=g.getImageData(0,0,w,h).data, L=new Float32Array(w*h), hist=new Uint32Array(256);
+  for (let i=0;i<w*h;i++){ const v=d[i*4]*0.299+d[i*4+1]*0.587+d[i*4+2]*0.114; L[i]=v; hist[v|0]++; }
+  let acc=0, paper=255; for (let v=0;v<256;v++){ acc+=hist[v]; if(acc>=w*h*0.8){ paper=v; break; } }
+  return { L, w, h, paper, sc };
+}
+function detectSkew(canvas){
+  const A=analysisPoints(canvas, 640), thr=A.paper*0.62, pts=[]; 
+  for (let y=0;y<A.h;y++) for (let x=0;x<A.w;x++) if (A.L[y*A.w+x]<thr) pts.push(x-A.w/2, y-A.h/2);
+  const n=pts.length/2; if (n<300) return {angle:0, sharp:0};
+  const step=Math.max(1,Math.floor(n/50000)), size=Math.ceil(Math.hypot(A.w,A.h))+4;
+  const score=(a,axis)=>{ const c=Math.cos(a), s=Math.sin(a), hs=new Float32Array(size);
+    for (let i=0;i<n;i+=step){ const x=pts[2*i], y=pts[2*i+1], v=axis? x*c+y*s : y*c-x*s; hs[Math.round(v+size/2)]++; }
+    let sum=0; for (let i=0;i<size;i++) sum+=hs[i]*hs[i]; return sum; };
+  let best={sharp:0, angle:0, axis:0};
+  for (const axis of [0,1]){
+    const arr=[]; for (let deg=-6; deg<=6.001; deg+=0.3) arr.push([deg, score(deg*Math.PI/180, axis)]);
+    const sorted=arr.map(a=>a[1]).sort((a,b)=>a-b), med=sorted[Math.floor(sorted.length/2)], top=arr.reduce((m,a)=>a[1]>m[1]?a:m);
+    let bestDeg=top[0], bestSc=top[1];
+    for (let deg=top[0]-0.3; deg<=top[0]+0.3001; deg+=0.05){ const sc=score(deg*Math.PI/180, axis); if(sc>bestSc){ bestSc=sc; bestDeg=deg; } }
+    const sharp=bestSc/(med||1);
+    if (sharp>best.sharp) best={sharp, angle:bestDeg, axis};
+  }
+  return best;
+}
+function deskewCanvas(canvas){
+  const k=detectSkew(canvas);
+  if (k.sharp<1.1 || Math.abs(k.angle)<0.35 || Math.abs(k.angle)>5.8) return canvas;
+  const out=document.createElement('canvas'); out.width=canvas.width; out.height=canvas.height;
+  const g=out.getContext('2d'); g.fillStyle='#fff'; g.fillRect(0,0,out.width,out.height);
+  g.imageSmoothingQuality='high'; g.translate(out.width/2,out.height/2); g.rotate(-k.angle*Math.PI/180); g.drawImage(canvas,-canvas.width/2,-canvas.height/2); g.setTransform(1,0,0,1,0,0);
+  return out;
+}
+// Borra manchas, bordes de funda, trozos de mesa o marcas sueltas que quedan aislados en los márgenes
+// (un grupo de tinta solo se borra si TODO él cae dentro de la banda del margen; el texto de la cabecera se une a otros trozos y se conserva)
+function cleanMargins(canvas){
+  const A=analysisPoints(canvas, 320), w=A.w, h=A.h, N=w*h, thr=A.paper*0.80, ink=new Uint8Array(N);
+  for (let i=0;i<N;i++) ink[i]=A.L[i]<thr?1:0;
+  const r=Math.max(2,Math.round(w*0.022));
+  const hor=new Uint8Array(N), D=new Uint8Array(N);   // dilatación separable (caja)
+  for (let y=0;y<h;y++){ let last=-1e9; const row=y*w, nx=new Int32Array(w); let nxt=1e9;
+    for (let x=w-1;x>=0;x--){ if(ink[row+x]) nxt=x; nx[x]=nxt; }
+    for (let x=0;x<w;x++){ if(ink[row+x]) last=x; hor[row+x]=(x-last<=r||nx[x]-x<=r)?1:0; } }
+  for (let x=0;x<w;x++){ let last=-1e9, nxt=1e9; const nx=new Int32Array(h);
+    for (let y=h-1;y>=0;y--){ if(hor[y*w+x]) nxt=y; nx[y]=nxt; }
+    for (let y=0;y<h;y++){ if(hor[y*w+x]) last=y; D[y*w+x]=(y-last<=r||nx[y]-y<=r)?1:0; } }
+  const bx=Math.max(3,Math.round(w*0.035)), by=Math.max(3,Math.round(h*0.035));
+  const lab=new Int32Array(N), boxes=[0]; let nl=0; const st=[];
+  for (let s0=0;s0<N;s0++){
+    if(!D[s0]||lab[s0]) continue; nl++; lab[s0]=nl; st.push(s0); const bb=[w,0,h,0];
+    while(st.length){
+      const k=st.pop(), x=k%w, y=(k/w)|0;
+      if(ink[k]){ if(x<bb[0])bb[0]=x; if(x>bb[1])bb[1]=x; if(y<bb[2])bb[2]=y; if(y>bb[3])bb[3]=y; }
+      for (let dy=-1;dy<=1;dy++) for (let dx=-1;dx<=1;dx++){ const xx=x+dx, yy=y+dy; if(xx<0||yy<0||xx>=w||yy>=h) continue; const kk=yy*w+xx; if(D[kk]&&!lab[kk]){ lab[kk]=nl; st.push(kk); } }
+    }
+    boxes.push(bb);
+  }
+  const g=canvas.getContext('2d'); g.setTransform(1,0,0,1,0,0); g.fillStyle='#fff';
+  const inv=1/A.sc, pad=3;
+  for (let i=1;i<boxes.length;i++){
+    const [x0,x1,y0,y1]=boxes[i]; if(x1<x0) continue;
+    const inBand = x1<bx || x0>w-1-bx || y1<by || y0>h-1-by;
+    if (inBand) g.fillRect(Math.max(0,(x0-pad)*inv), Math.max(0,(y0-pad)*inv), (x1-x0+1+2*pad)*inv, (y1-y0+1+2*pad)*inv);
+  }
+  // marcas pequeñas en las esquinas (dedos, bordes de la mesa, rayas) aunque estén cerca del logo
+  const cx=Math.round(w*0.06), cy=Math.round(h*0.06), maxS=w*0.1, lab2=new Uint8Array(N);
+  for (let s0=0;s0<N;s0++){
+    if(!ink[s0]||lab2[s0]) continue; lab2[s0]=1; st.push(s0); let x0=w,x1=0,y0=h,y1=0;
+    while(st.length){
+      const k=st.pop(), x=k%w, y=(k/w)|0; if(x<x0)x0=x; if(x>x1)x1=x; if(y<y0)y0=y; if(y>y1)y1=y;
+      for (let dy=-1;dy<=1;dy++) for (let dx=-1;dx<=1;dx++){ const xx=x+dx, yy=y+dy; if(xx<0||yy<0||xx>=w||yy>=h) continue; const kk=yy*w+xx; if(ink[kk]&&!lab2[kk]){ lab2[kk]=1; st.push(kk); } }
+    }
+    const inCorner=(x1<cx||x0>w-1-cx)&&(y1<cy||y0>h-1-cy);
+    if (inCorner && x1-x0<maxS && y1-y0<maxS) g.fillRect(Math.max(0,(x0-pad)*inv), Math.max(0,(y0-pad)*inv), (x1-x0+1+2*pad)*inv, (y1-y0+1+2*pad)*inv);
+  }
+  return canvas;
+}
 function getResult(p){
-  if (!p.result){ const w = warp(p.src, p.quad); p.result = applyFilter(w, p.filter); }
+  if (!p.result){
+    let c = applyFilter(warp(p.src, p.quad), p.filter);
+    if (autoFix){ c = deskewCanvas(c); if (p.filter!=='orig') cleanMargins(c); }
+    p.result = c;
+  }
   return p.result;
 }
 
@@ -934,6 +1020,7 @@ function rotate(){
   p.src=c; p.quad=[q[3],q[0],q[1],q[2]]; p.result=null; renderStrip(); setMode(mode);
 }
 
+$('chk-fix').onchange=e=>{ autoFix=e.target.checked; pages.forEach(p=>p.result=null); if(cur>=0){ renderStrip(); setMode(mode); } };
 $('tab-crop').onclick=()=>setMode('crop'); $('tab-res').onclick=()=>setMode('res');
 $('btn-go-res').onclick=()=>setMode('res'); $('btn-back-crop').onclick=()=>setMode('crop');
 $('btn-auto').onclick=()=>{ const p=pages[cur]; p.quad=autoQuad(p.src); p.result=null; drawQuad(); toast('Bordes detectados. Ajusta las esquinas si hace falta.'); };
