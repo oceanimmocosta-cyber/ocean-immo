@@ -237,36 +237,71 @@ async function avisarSuscriptores(nuevas, modoPrueba = false) {
     return;
   }
 
+  // Los títulos de Inmoweb suelen venir TODO EN MAYÚSCULAS. En el correo los pasamos a
+  // minúsculas normales y mantenemos la mayúscula de los nombres de lugar.
+  const LUGARES = ['roses', 'santa', 'margarita', 'margarida', 'empuriabrava', 'castelló', 'castello', "d'empúries", "d'empuries", 'empúries', 'empuries',
+    'puig', 'rom', 'mas', 'matas', 'oliva', 'canyelles', 'costa', 'brava', 'girona', 'cadaqués', 'cadaques', 'llançà', 'llanca', 'figueres',
+    'palau', 'saverdera', 'garriguella', 'vilajuïga', 'vilajuiga', 'pau', 'peralada', 'pedret', 'marzà', 'marza', 'sant', 'martí', 'llémena', 'cap', 'creus', 'jesús', 'jesus', 'nazaret', 'grecs', 'els'];
+  const bonito = (p) => {
+    const t = String(p.titulo || '').trim();
+    const letras = t.replace(/[^A-Za-zÀ-ÿ]/g, '');
+    const mayus = letras.replace(/[^A-ZÀ-ÖØ-Þ]/g, '');
+    if (!letras || mayus.length / letras.length < 0.6) return t;   // ya está en minúsculas normales
+    const extra = `${p.zona || ''} ${p.poblacion || ''}`.toLowerCase().split(/\s+/).filter(Boolean);
+    const lugares = new Set([...LUGARES, ...extra]);
+    const out = t.toLowerCase().replace(/[a-zà-ÿ'’]+/g, (w) => (lugares.has(w) ? w.charAt(0).toUpperCase() + w.slice(1) : w));
+    return out.replace(/[a-zà-ÿ]/, (c) => c.toUpperCase()).replace(/¡\s+/g, '¡').replace(/\s+!/g, '!');
+  };
+
+  const WHATSAPP = '34632251470';
   const tarjetas = nuevas
     .map((p) => {
       const foto = p.fotos && p.fotos[0] ? p.fotos[0] : '';
-      const titulo = escHtml(p.titulo);
+      const tituloTxt = bonito(p);
+      const titulo = escHtml(tituloTxt);
       const operacion = escHtml(p.operacion);
       const poblacion = escHtml(p.poblacion);
       const fotoSafe = escHtml(foto);
       // Enlace directo a la ficha (propiedades/<referencia>.html, mismo criterio que generate-property-pages.mjs)
       const refLimpia = String(p.referencia || '').replace(/[^a-zA-Z0-9_-]/g, '');
       const urlFicha = escHtml(refLimpia ? `${SITE_URL}propiedades/${refLimpia}.html` : SITE_URL);
+      const urlWa = escHtml(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(`Hola, me interesa la propiedad ${refLimpia || tituloTxt}.`)}`);
+      // Datos clave: solo los que existen, sin dejar huecos.
+      const datos = [];
+      if (Number(p.habitaciones) > 0) datos.push(`🛏 ${Number(p.habitaciones)} hab`);
+      if (Number(p.banos) > 0) datos.push(`🛁 ${Number(p.banos)} ${Number(p.banos) === 1 ? 'baño' : 'baños'}`);
+      if (Number(p.m2) > 0) datos.push(`📐 ${Math.round(Number(p.m2))} m²`);
+      if (refLimpia) datos.push(`<span style="color:#8a8578">Ref. ${escHtml(refLimpia)}</span>`);
+      const lineaDatos = datos.length
+        ? `<p style="margin:0 0 18px;color:#4a5866;font-size:15px">${datos.join(' &nbsp;·&nbsp; ')}</p>`
+        : '';
       return `
-        <table style="width:100%;max-width:560px;margin:0 auto 24px;border:1px solid #e5e0d8;border-radius:8px;overflow:hidden;font-family:Helvetica,Arial,sans-serif">
-          <tr>${foto ? `<td><img src="${fotoSafe}" alt="${titulo}" style="width:100%;display:block;max-height:260px;object-fit:cover"></td>` : ''}</tr>
-          <tr><td style="padding:16px 20px">
-            <p style="margin:0 0 4px;color:#039BA5;font-weight:700;font-size:13px;letter-spacing:.03em;text-transform:uppercase">${operacion}${poblacion ? ' · ' + poblacion : ''}</p>
-            <h3 style="margin:0 0 8px;color:#1A2E43;font-size:19px">${titulo}</h3>
-            <p style="margin:0 0 14px;color:#1A2E43;font-size:18px;font-weight:700">${escHtml(fmtPrecio(p.precio))}</p>
-            <a href="${urlFicha}" style="display:inline-block;background:#039BA5;color:#fff;text-decoration:none;padding:10px 22px;border-radius:100px;font-size:14px;font-weight:600">Ver en la web</a>
+        <table role="presentation" style="width:100%;max-width:560px;margin:0 auto 24px;border:1px solid #e5e0d8;border-radius:10px;overflow:hidden;font-family:Helvetica,Arial,sans-serif;border-collapse:separate">
+          <tr>${foto ? `<td><img src="${fotoSafe}" alt="${titulo}" style="width:100%;display:block;max-height:300px;object-fit:cover"></td>` : ''}</tr>
+          <tr><td style="padding:18px 20px 22px">
+            <p style="margin:0 0 6px;color:#039BA5;font-weight:700;font-size:13px;letter-spacing:.04em;text-transform:uppercase">${operacion}${poblacion ? ' · ' + poblacion : ''}</p>
+            <h3 style="margin:0 0 8px;color:#1A2E43;font-size:20px;line-height:1.3">${titulo}</h3>
+            <p style="margin:0 0 12px;color:#1A2E43;font-size:24px;font-weight:700">${escHtml(fmtPrecio(p.precio))}</p>
+            ${lineaDatos}
+            <a href="${urlFicha}" style="display:block;text-align:center;background:#039BA5;color:#fff;text-decoration:none;padding:13px;border-radius:100px;font-size:15px;font-weight:700;margin-bottom:10px">Ver en la web</a>
+            <a href="${urlWa}" style="display:block;text-align:center;background:#fff;color:#128C7E;text-decoration:none;border:2px solid #25D366;padding:11px;border-radius:100px;font-size:15px;font-weight:700">💬 Pregúntanos por WhatsApp</a>
           </td></tr>
         </table>`;
     })
     .join('');
 
   const htmlContent = `
-    <div style="background:#F6F1E7;padding:32px 16px;font-family:Helvetica,Arial,sans-serif">
-      <h2 style="text-align:center;color:#1A2E43;margin-bottom:24px">
+    <div style="background:#F6F1E7;padding:34px 14px 28px;font-family:Helvetica,Arial,sans-serif">
+      <h2 style="text-align:center;color:#1A2E43;margin:0 0 22px;font-size:24px;line-height:1.25">
         ${nuevas.length === 1 ? 'Nueva propiedad disponible en Ocean Immo' : `${nuevas.length} nuevas propiedades disponibles en Ocean Immo`}
       </h2>
       ${tarjetas}
-      <p style="text-align:center;color:#8a8578;font-size:12px;margin-top:24px">Ocean Immo · Roses, Costa Brava</p>
+      <div style="max-width:560px;margin:26px auto 0;text-align:center;color:#8a8578;font-size:12px;line-height:1.7;border-top:1px solid #e5e0d8;padding-top:16px">
+        <b style="color:#1A2E43">Ocean Immo</b> · Carrer de Bernat Desclot, 17 · Roses<br>
+        Tel. 632 25 14 70 · API A14553 · AICAT 13757<br>
+        Recibes este aviso porque te suscribiste en oceanimmocosta.com.<br>
+        <a href="{{ unsubscribe }}" style="color:#8a8578">Darse de baja</a>
+      </div>
     </div>`;
 
   // Quitamos saltos de línea del título para el asunto del correo: evita que alguien
@@ -274,7 +309,7 @@ async function avisarSuscriptores(nuevas, modoPrueba = false) {
   const tituloSeguro = (s) => String(s ?? '').replace(/[\r\n]+/g, ' ').trim();
   const subject =
     nuevas.length === 1
-      ? `Nueva propiedad: ${tituloSeguro(nuevas[0].titulo)}`
+      ? `Nueva en ${tituloSeguro(nuevas[0].zona || nuevas[0].poblacion || 'Roses')}: ${tituloSeguro(bonito(nuevas[0]))}${nuevas[0].precio ? ' · ' + fmtPrecio(nuevas[0].precio) : ''}`
       : `${nuevas.length} nuevas propiedades en Ocean Immo`;
 
   if (modoPrueba) {
