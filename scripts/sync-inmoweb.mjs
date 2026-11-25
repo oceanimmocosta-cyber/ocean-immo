@@ -271,10 +271,9 @@ async function avisarSuscriptores(nuevas, modoPrueba = false) {
       if (Number(p.habitaciones) > 0) datos.push(`🛏 ${Number(p.habitaciones)} hab`);
       if (Number(p.banos) > 0) datos.push(`🛁 ${Number(p.banos)} ${Number(p.banos) === 1 ? 'baño' : 'baños'}`);
       if (Number(p.m2) > 0) datos.push(`📐 ${Math.round(Number(p.m2))} m²`);
-      if (refLimpia) datos.push(`<span style="color:#8a8578">Ref. ${escHtml(refLimpia)}</span>`);
-      const lineaDatos = datos.length
-        ? `<p style="margin:0 0 18px;color:#4a5866;font-size:15px">${datos.join(' &nbsp;·&nbsp; ')}</p>`
-        : '';
+      const lineaDatos =
+        (datos.length ? `<p style="margin:0 0 6px;color:#4a5866;font-size:15px">${datos.map((d) => `<span style="white-space:nowrap">${d}</span>`).join(' &nbsp;·&nbsp; ')}</p>` : '') +
+        (refLimpia ? `<p style="margin:0 0 18px;color:#8a8578;font-size:13px;letter-spacing:.03em">Ref. ${escHtml(refLimpia)}</p>` : '');
       return `
         <table role="presentation" style="width:100%;max-width:560px;margin:0 auto 24px;border:1px solid #e5e0d8;border-radius:10px;overflow:hidden;font-family:Helvetica,Arial,sans-serif;border-collapse:separate">
           <tr>${foto ? `<td><img src="${fotoSafe}" alt="${titulo}" style="width:100%;display:block;max-height:300px;object-fit:cover"></td>` : ''}</tr>
