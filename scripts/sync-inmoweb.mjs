@@ -254,14 +254,16 @@ async function avisarSuscriptores(nuevas, modoPrueba = false) {
   };
 
   const WHATSAPP = '34632251470';
+  const IMG = (f) => `${SITE_URL}${f}`;   // imágenes del correo: están en la raíz del repositorio
+  const NAVY = '#1A2E43', TURQ = '#039BA5', GRIS = '#8a95a1';
+
   const tarjetas = nuevas
-    .map((p) => {
+    .map((p, i) => {
       const foto = p.fotos && p.fotos[0] ? p.fotos[0] : '';
       const tituloTxt = bonito(p);
       const titulo = escHtml(tituloTxt);
       const operacion = escHtml(p.operacion);
-      const poblacion = escHtml(p.poblacion);
-      const fotoSafe = escHtml(foto);
+      const zona = escHtml(p.zona || p.poblacion || '');
       // Enlace directo a la ficha (propiedades/<referencia>.html, mismo criterio que generate-property-pages.mjs)
       const refLimpia = String(p.referencia || '').replace(/[^a-zA-Z0-9_-]/g, '');
       const urlFicha = escHtml(refLimpia ? `${SITE_URL}propiedades/${refLimpia}.html` : SITE_URL);
@@ -271,36 +273,60 @@ async function avisarSuscriptores(nuevas, modoPrueba = false) {
       if (Number(p.habitaciones) > 0) datos.push(`🛏 ${Number(p.habitaciones)} hab`);
       if (Number(p.banos) > 0) datos.push(`🛁 ${Number(p.banos)} ${Number(p.banos) === 1 ? 'baño' : 'baños'}`);
       if (Number(p.m2) > 0) datos.push(`📐 ${Math.round(Number(p.m2))} m²`);
-      const lineaDatos =
-        (datos.length ? `<p style="margin:0 0 6px;color:#4a5866;font-size:15px">${datos.map((d) => `<span style="white-space:nowrap">${d}</span>`).join(' &nbsp;·&nbsp; ')}</p>` : '') +
-        (refLimpia ? `<p style="margin:0 0 18px;color:#8a8578;font-size:13px;letter-spacing:.03em">Ref. ${escHtml(refLimpia)}</p>` : '');
+      const lineaDatos = datos.length
+        ? `<p style="margin:0 18px;text-align:center;color:${NAVY};font-size:15px;font-weight:700">${datos.map((d) => `<span style="white-space:nowrap">${d}</span>`).join(' &nbsp;|&nbsp; ')}</p>`
+        : '';
+      const refHtml = refLimpia
+        ? `<p style="margin:0 0 14px;text-align:center;color:${GRIS};font-size:12px;letter-spacing:.06em">REF. ${escHtml(refLimpia)}</p>`
+        : '<div style="height:10px"></div>';
       return `
-        <table role="presentation" style="width:100%;max-width:560px;margin:0 auto 24px;border:1px solid #e5e0d8;border-radius:10px;overflow:hidden;font-family:Helvetica,Arial,sans-serif;border-collapse:separate">
-          <tr>${foto ? `<td><img src="${fotoSafe}" alt="${titulo}" style="width:100%;display:block;max-height:300px;object-fit:cover"></td>` : ''}</tr>
-          <tr><td style="padding:18px 20px 22px">
-            <p style="margin:0 0 6px;color:#039BA5;font-weight:700;font-size:13px;letter-spacing:.04em;text-transform:uppercase">${operacion}${poblacion ? ' · ' + poblacion : ''}</p>
-            <h3 style="margin:0 0 8px;color:#1A2E43;font-size:20px;line-height:1.3">${titulo}</h3>
-            <p style="margin:0 0 12px;color:#1A2E43;font-size:24px;font-weight:700">${escHtml(fmtPrecio(p.precio))}</p>
-            ${lineaDatos}
-            <a href="${urlFicha}" style="display:block;text-align:center;background:#039BA5;color:#fff;text-decoration:none;padding:13px;border-radius:100px;font-size:15px;font-weight:700;margin-bottom:10px">Ver en la web</a>
-            <a href="${urlWa}" style="display:block;text-align:center;background:#fff;color:#128C7E;text-decoration:none;border:2px solid #25D366;padding:11px;border-radius:100px;font-size:15px;font-weight:700">💬 Pregúntanos por WhatsApp</a>
-          </td></tr>
-        </table>`;
+      <div style="${i > 0 ? 'border-top:1px solid #e6ebf0;margin-top:30px;padding-top:6px' : ''}">
+        ${foto ? `<div style="padding:20px 18px 0"><img src="${escHtml(foto)}" alt="${titulo}" width="564" style="width:100%;height:auto;display:block;border-radius:12px"></div>` : ''}
+        <table role="presentation" width="100%" style="border-collapse:collapse;margin-top:18px"><tr>
+          <td style="padding:0 0 0 18px;vertical-align:middle">
+            <span style="display:block;color:${TURQ};font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase">${operacion}</span>
+            <span style="display:block;font-family:Georgia,serif;font-size:18px;font-weight:700;margin-top:3px;color:${NAVY}">${zona}</span>
+          </td>
+          <td style="padding:0 18px 0 0;text-align:right;vertical-align:middle">
+            <span style="display:inline-block;background:${TURQ};color:#ffffff;font-size:19px;font-weight:700;padding:7px 16px;border-radius:100px;white-space:nowrap">${escHtml(fmtPrecio(p.precio))}</span>
+          </td>
+        </tr></table>
+        <h3 style="margin:18px 22px 6px;text-align:center;font-family:Georgia,serif;font-size:21px;line-height:1.32;font-weight:700;color:${NAVY}">${titulo}</h3>
+        ${refHtml}
+        ${lineaDatos}
+        <p style="margin:20px 26px 0;text-align:center;color:#3b4b5b;font-size:15px;line-height:1.6">Una nueva propiedad${zona ? ' en ' + zona : ''} acaba de publicarse en Ocean Immo.</p>
+        <div style="padding:20px 22px 0">
+          <a href="${urlFicha}" style="display:block;text-align:center;background:${NAVY};color:#ffffff;text-decoration:none;padding:15px;border-radius:100px;font-size:15px;font-weight:700;margin-bottom:10px"><img src="${IMG('casa-blanca.png')}" width="18" height="18" alt="" style="vertical-align:-3px;margin-right:8px;border:0">Ver la propiedad en nuestra web</a>
+          <a href="${urlWa}" style="display:block;text-align:center;background:#ffffff;color:${NAVY};text-decoration:none;border:2px solid ${TURQ};padding:13px;border-radius:100px;font-size:15px;font-weight:700"><img src="${IMG('chat-turquesa.png')}" width="20" height="20" alt="" style="vertical-align:-4px;margin-right:8px;border:0">Escríbenos por WhatsApp</a>
+        </div>
+      </div>`;
     })
     .join('');
 
+  const primera = nuevas[0] || {};
+  const preheader = escHtml(
+    nuevas.length === 1
+      ? `${bonito(primera)}${primera.precio ? ' · ' + fmtPrecio(primera.precio) : ''}`
+      : `${nuevas.length} nuevas propiedades en Roses y la Costa Brava`
+  );
   const htmlContent = `
-    <div style="background:#F6F1E7;padding:34px 14px 28px;font-family:Helvetica,Arial,sans-serif">
-      <h2 style="text-align:center;color:#1A2E43;margin:0 0 22px;font-size:24px;line-height:1.25">
-        ${nuevas.length === 1 ? 'Nueva propiedad disponible en Ocean Immo' : `${nuevas.length} nuevas propiedades disponibles en Ocean Immo`}
-      </h2>
-      ${tarjetas}
-      <div style="max-width:560px;margin:26px auto 0;text-align:center;color:#8a8578;font-size:12px;line-height:1.7;border-top:1px solid #e5e0d8;padding-top:16px">
-        <b style="color:#1A2E43">Ocean Immo</b> · Carrer de Bernat Desclot, 17 · Roses<br>
-        Tel. 632 25 14 70 · API A14553 · AICAT 13757<br>
-        Recibes este aviso porque te suscribiste en oceanimmocosta.com.<br>
-        <a href="{{ unsubscribe }}" style="color:#8a8578">Darse de baja</a>
+    <div style="display:none;max-height:0;overflow:hidden;opacity:0;font-size:1px;line-height:1px;color:#ffffff">${preheader}</div>
+    <div style="background:#e9eef3;padding:0;margin:0">
+    <div style="max-width:600px;margin:0 auto;background:#ffffff;font-family:Helvetica,Arial,sans-serif;color:${NAVY}">
+      <div style="text-align:center;padding:28px 16px 6px"><img src="${IMG('logo-email.png')}" width="210" alt="Ocean Immo" style="height:auto;display:inline-block;border:0"></div>
+      <div style="padding:18px 20px 0;text-align:center">
+        <span style="font-family:Georgia,serif;font-size:23px;font-weight:700;line-height:1.3;color:${NAVY}">${nuevas.length === 1 ? 'Nueva propiedad disponible<br>en Ocean Immo' : `${nuevas.length} nuevas propiedades<br>disponibles en Ocean Immo`}</span>
+        <div style="width:44px;height:3px;background:${TURQ};border-radius:3px;margin:12px auto 0"></div>
       </div>
+      ${tarjetas}
+      <div style="padding:26px 22px 0"><img src="${IMG('firma-email.png')}" width="200" alt="Un saludo, el equipo de Ocean Immo" style="display:block;height:auto;border:0"></div>
+      <div style="background-color:#d9f1f3;background-image:url(${IMG('olas-email.jpg')});background-size:100% 100%;background-position:center bottom;background-repeat:no-repeat;padding:48px 16px 22px;text-align:center;font-size:12px;line-height:1.75;color:${NAVY}">
+        <b>Ocean Immo</b> · Carrer de Bernat Desclot, 17 · Roses<br>
+        Tel. 632 25 14 70 · API A14553 · AICAT 13757<br>
+        <span style="color:#3b5368">Recibes este aviso porque te suscribiste en oceanimmocosta.com.</span><br>
+        <a href="{{ unsubscribe }}" style="color:${NAVY}">Darse de baja</a>
+      </div>
+    </div>
     </div>`;
 
   // Quitamos saltos de línea del título para el asunto del correo: evita que alguien
