@@ -4739,11 +4739,19 @@ html,body{overflow-anchor:none}
   var PLAY='<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
   function lang(){ return (typeof currentLang!=='undefined'&&currentLang)||document.documentElement.lang||'es'; }
   var loadedAt=0;
+  // Ruta de la raíz de la web. Al abrir una propiedad desde el listado la URL cambia a /propiedades/REF.html
+  // y una ruta relativa ('../videos.json') apuntaría a /propiedades/videos.json (no existe).
+  function rootPath(){
+    var path=location.pathname;
+    var m=path.match(/^(.*?\/)(?:(?:en|fr|ca)\/)?(?:propiedades\/|comprar|servicios|zonas\/)/);
+    if(m) return m[1];
+    return path.replace(/[^\/]*$/,'').replace(/(?:en|fr|ca)\/$/,'');
+  }
   function load(){
     // Se vuelve a leer videos.json si han pasado más de 15 s, para que un vídeo recién añadido salga sin recargar la página.
     if(loading && (Date.now()-loadedAt)<15000) return loading;
     loadedAt=Date.now();
-    loading=fetch('../videos.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():{}}).catch(function(){return {}}).then(function(d){VID=d||{};return VID;});
+    loading=fetch(rootPath()+'videos.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():{}}).catch(function(){return {}}).then(function(d){VID=d||{};return VID;});
     return loading;
   }
   function refNow(){ var el=document.getElementById('d-ref'); return el?(el.textContent||'').replace(/^Ref\.\s*/i,'').trim():''; }
