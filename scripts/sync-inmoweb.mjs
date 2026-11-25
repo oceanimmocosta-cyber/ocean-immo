@@ -67,7 +67,7 @@ async function main() {
   const data = parser.parse(xml);
   const propsRaw = toArray(data.properties?.propiedad);
 
-  const propiedades = propsRaw.map((p) => {
+  const propiedadesFeed = propsRaw.map((p) => {
     const opId = String(p.operacion?.['@_id'] ?? '');
     const operacion = OP_MAP[opId] || 'Venta';
 
@@ -147,6 +147,14 @@ async function main() {
       vendido,
       reservado,
     };
+  });
+
+  // Propiedades inacabadas: sin título, sin precio y sin fotos. Inmoweb las envía si alguien
+  // las marca para la web sin querer; aquí se ignoran hasta que tengan lo mínimo para mostrarse.
+  const propiedades = propiedadesFeed.filter((p) => {
+    const incompleta = !String(p.titulo || '').trim() && !String(p.precio || '').trim() && (!p.fotos || p.fotos.length === 0);
+    if (incompleta) console.log(`Propiedad ${p.referencia} ignorada: está inacabada (sin título, precio ni fotos).`);
+    return !incompleta;
   });
 
   // Si el feed devuelve 0 propiedades pero antes había muchas, algo ha ido mal
