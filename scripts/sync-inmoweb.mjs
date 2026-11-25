@@ -315,7 +315,7 @@ async function avisarSuscriptores(nuevas, modoPrueba = false) {
     <div style="max-width:600px;margin:0 auto;background:#ffffff;font-family:Helvetica,Arial,sans-serif;color:${NAVY}">
       <div style="text-align:center;padding:28px 16px 6px"><img src="${IMG('logo-email.png')}" width="210" alt="Ocean Immo" style="height:auto;display:inline-block;border:0"></div>
       <div style="padding:18px 20px 0;text-align:center">
-        <span style="font-family:Georgia,serif;font-size:23px;font-weight:700;line-height:1.3;color:${NAVY}">${nuevas.length === 1 ? 'Nueva propiedad disponible<br>en Ocean Immo' : `${nuevas.length} nuevas propiedades<br>disponibles en Ocean Immo`}</span>
+        <span style="font-family:Georgia,serif;font-size:23px;font-weight:700;line-height:1.3;color:${NAVY}">${nuevas.length === 1 ? 'Nueva propiedad<br>en Ocean Immo' : `${nuevas.length} nuevas propiedades<br>en Ocean Immo`}</span>
         <div style="width:44px;height:3px;background:${TURQ};border-radius:3px;margin:12px auto 0"></div>
       </div>
       ${tarjetas}
