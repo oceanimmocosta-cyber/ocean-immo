@@ -4731,9 +4731,12 @@ html,body{overflow-anchor:none}
   var LBL2={es:'Ver vídeo de la propiedad',ca:'Veure el vídeo de la propietat',fr:'Voir la vidéo du bien',en:'Watch the property video'};
   var PLAY='<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
   function lang(){ return (typeof currentLang!=='undefined'&&currentLang)||document.documentElement.lang||'es'; }
+  var loadedAt=0;
   function load(){
-    if(loading) return loading;
-    loading=fetch('../videos.json',{cache:'no-cache'}).then(function(r){return r.ok?r.json():{}}).catch(function(){return {}}).then(function(d){VID=d||{};return VID;});
+    // Se vuelve a leer videos.json si han pasado más de 15 s, para que un vídeo recién añadido salga sin recargar la página.
+    if(loading && (Date.now()-loadedAt)<15000) return loading;
+    loadedAt=Date.now();
+    loading=fetch('../videos.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():{}}).catch(function(){return {}}).then(function(d){VID=d||{};return VID;});
     return loading;
   }
   function refNow(){ var el=document.getElementById('d-ref'); return el?(el.textContent||'').replace(/^Ref\.\s*/i,'').trim():''; }
