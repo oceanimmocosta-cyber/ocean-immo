@@ -370,9 +370,10 @@ function construirCorreo(nuevas, lang) {
       : T.preVarias(nuevas.length)
   );
   const htmlContent = `
+    <meta name="color-scheme" content="light only"><meta name="supported-color-schemes" content="light only"><style>:root{color-scheme:light only;supported-color-schemes:light only}</style>
     <div style="display:none;max-height:0;overflow:hidden;opacity:0;font-size:1px;line-height:1px;color:#ffffff">${preheader}</div>
-    <div style="background:#e9eef3;padding:0;margin:0">
-    <div style="max-width:600px;margin:0 auto;background:#ffffff;font-family:Helvetica,Arial,sans-serif;color:${NAVY}">
+    <div style="background-color:#e9eef3;background-image:linear-gradient(#e9eef3,#e9eef3);padding:0;margin:0">
+    <div style="max-width:600px;margin:0 auto;background-color:#ffffff;background-image:linear-gradient(#ffffff,#ffffff);font-family:Helvetica,Arial,sans-serif;color:${NAVY}">
       <div style="text-align:center;padding:28px 16px 6px"><img src="${IMG('logo-email.png')}" width="210" alt="Ocean Immo" style="height:auto;display:inline-block;border:0"></div>
       <div style="padding:18px 20px 0;text-align:center">
         <span style="font-family:Georgia,serif;font-size:23px;font-weight:700;line-height:1.3;color:${NAVY}">${nuevas.length === 1 ? T.tituloUno : T.tituloVarias(nuevas.length)}</span>
@@ -380,7 +381,7 @@ function construirCorreo(nuevas, lang) {
       </div>
       ${tarjetas}
       <div style="padding:26px 22px 0"><img src="${IMG(T.firmaImg)}" width="${T.firmaW}" alt="${escHtml(T.firmaAlt)}" style="display:block;height:auto;border:0"></div>
-      <div style="background-color:#d9f1f3;background-image:url(${IMG('olas-email.jpg')});background-size:100% 100%;background-position:center bottom;background-repeat:no-repeat;padding:48px 16px 22px;text-align:center;font-size:12px;line-height:1.75;color:${NAVY}">
+      <div style="background-color:#d9f1f3;background-image:url(${IMG('olas-email.jpg')}),linear-gradient(#d9f1f3,#d9f1f3);background-size:100% 100%;background-position:center bottom;background-repeat:no-repeat;padding:48px 16px 22px;text-align:center;font-size:12px;line-height:1.75;color:${NAVY}">
         <b>Ocean Immo</b> · Carrer de Bernat Desclot, 17 · Roses<br>
         Tel. 632 25 14 70 · API A14553 · AICAT 13757<br>
         <span style="color:#3b5368">${escHtml(T.pie)}</span><br>
