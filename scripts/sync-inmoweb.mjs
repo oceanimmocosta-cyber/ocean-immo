@@ -217,61 +217,121 @@ async function main() {
 }
 
 const SITE_URL = 'https://www.oceanimmocosta.com/';
-// Lista real donde el formulario de suscripción de la web mete a la gente,
-// comprobado suscribiéndose de verdad desde la web y viendo dónde aparece el
-// contacto en Brevo: en "Contactos que participan en las conversaciones" (ID 4).
-// Las listas "Su primera lista" (ID 2) y "Suscriptores Ocean Immo" (ID 5) no
-// reciben contactos del formulario real.
-const BREVO_LIST_ID = 4;
+// Una lista de Brevo por idioma. Cada formulario de suscripción de la web (según el idioma
+// en que el visitante tenga la web) mete el contacto en SU lista, así cada suscriptor
+// recibe el aviso en su idioma. es=4, ca=6, en=7, fr=8.
+const BREVO_LISTAS = { es: 4, ca: 6, en: 7, fr: 8 };
 
-function fmtPrecio(n) {
+function fmtPrecio(n, lang = 'es') {
   const num = typeof n === 'string' ? parseFloat(n.replace(/[^\d.,-]/g, '').replace(',', '.')) : n;
   if (isNaN(num)) return n;
-  return Math.round(num).toLocaleString('es-ES') + ' €';
+  const r = Math.round(num);
+  if (lang === 'en') return '€' + r.toLocaleString('en-GB');
+  if (lang === 'fr') return r.toLocaleString('fr-FR').replace(/[  ]/g, ' ') + ' €';
+  return r.toLocaleString('es-ES') + ' €';
 }
 
-async function avisarSuscriptores(nuevas, modoPrueba = false) {
-  const apiKey = process.env.BREVO_API_KEY;
-  if (!apiKey) {
-    console.warn('Falta BREVO_API_KEY: no se puede avisar a los suscriptores (revisa el secreto en GitHub).');
-    return;
-  }
+// Textos del correo en cada idioma.
+const TEXTOS = {
+  es: {
+    venta: 'Venta', hab: 'hab', bano: 'baño', banos: 'baños',
+    tituloUno: 'Nueva propiedad<br>en Ocean Immo', tituloVarias: (n) => `${n} nuevas propiedades<br>en Ocean Immo`,
+    intro: (z) => `Una nueva propiedad${z ? ' en ' + z : ''} acaba de publicarse en Ocean Immo.`,
+    ver: 'Ver la propiedad en nuestra web', wa: 'Escríbenos por WhatsApp',
+    waMsg: (r) => `Hola, me interesa la propiedad ${r}.`,
+    preVarias: (n) => `${n} nuevas propiedades en Roses y la Costa Brava`,
+    asuntoUno: (z, t, p) => `Nueva en ${z}: ${t}${p ? ' · ' + p : ''}`, asuntoVarias: (n) => `${n} nuevas propiedades en Ocean Immo`,
+    pie: 'Recibes este aviso porque te suscribiste en oceanimmocosta.com.', baja: 'Darse de baja',
+    firmaImg: 'firma-email.png', firmaW: 200, firmaAlt: 'Un saludo, el equipo de Ocean Immo',
+  },
+  ca: {
+    venta: 'Venda', hab: 'hab', bano: 'bany', banos: 'banys',
+    tituloUno: 'Nova propietat<br>a Ocean Immo', tituloVarias: (n) => `${n} noves propietats<br>a Ocean Immo`,
+    intro: (z) => `Una nova propietat${z ? ' a ' + z : ''} acaba de publicar-se a Ocean Immo.`,
+    ver: 'Veure la propietat a la nostra web', wa: 'Escriu-nos per WhatsApp',
+    waMsg: (r) => `Hola, m'interessa la propietat ${r}.`,
+    preVarias: (n) => `${n} noves propietats a Roses i la Costa Brava`,
+    asuntoUno: (z, t, p) => `Nova a ${z}: ${t}${p ? ' · ' + p : ''}`, asuntoVarias: (n) => `${n} noves propietats a Ocean Immo`,
+    pie: 'Reps aquest avís perquè et vas subscriure a oceanimmocosta.com.', baja: 'Donar-se de baixa',
+    firmaImg: 'firma-email-ca.png', firmaW: 182, firmaAlt: "Una salutació, l'equip d'Ocean Immo",
+  },
+  en: {
+    venta: 'For sale', hab: 'bed', bano: 'bath', banos: 'baths',
+    tituloUno: 'New property<br>at Ocean Immo', tituloVarias: (n) => `${n} new properties<br>at Ocean Immo`,
+    intro: (z) => `A new property${z ? ' in ' + z : ''} has just been listed on Ocean Immo.`,
+    ver: 'View the property on our website', wa: 'Message us on WhatsApp',
+    waMsg: (r) => `Hello, I'm interested in property ${r}.`,
+    preVarias: (n) => `${n} new properties in Roses and the Costa Brava`,
+    asuntoUno: (z, t, p) => `New in ${z}: ${t}${p ? ' · ' + p : ''}`, asuntoVarias: (n) => `${n} new properties at Ocean Immo`,
+    pie: 'You are receiving this alert because you subscribed at oceanimmocosta.com.', baja: 'Unsubscribe',
+    firmaImg: 'firma-email-en.png', firmaW: 178, firmaAlt: 'Kind regards, the Ocean Immo team',
+  },
+  fr: {
+    venta: 'À vendre', hab: 'ch.', bano: 'sdb', banos: 'sdb',
+    tituloUno: 'Nouveau bien<br>chez Ocean Immo', tituloVarias: (n) => `${n} nouveaux biens<br>chez Ocean Immo`,
+    intro: (z) => `Un nouveau bien${z ? ' à ' + z : ''} vient d’être publié sur Ocean Immo.`,
+    ver: 'Voir le bien sur notre site', wa: 'Écrivez-nous sur WhatsApp',
+    waMsg: (r) => `Bonjour, je suis intéressé(e) par le bien ${r}.`,
+    preVarias: (n) => `${n} nouveaux biens à Roses et sur la Costa Brava`,
+    asuntoUno: (z, t, p) => `Nouveau à ${z} : ${t}${p ? ' · ' + p : ''}`, asuntoVarias: (n) => `${n} nouveaux biens chez Ocean Immo`,
+    pie: 'Vous recevez cet avis car vous êtes inscrit(e) sur oceanimmocosta.com.', baja: 'Se désabonner',
+    firmaImg: 'firma-email-fr.png', firmaW: 176, firmaAlt: 'Cordialement, l’équipe Ocean Immo',
+  },
+};
 
-  // Los títulos de Inmoweb suelen venir TODO EN MAYÚSCULAS. En el correo los pasamos a
-  // minúsculas normales y mantenemos la mayúscula de los nombres de lugar.
-  const LUGARES = ['roses', 'santa', 'margarita', 'margarida', 'empuriabrava', 'castelló', 'castello', "d'empúries", "d'empuries", 'empúries', 'empuries',
-    'puig', 'rom', 'mas', 'matas', 'oliva', 'canyelles', 'costa', 'brava', 'girona', 'cadaqués', 'cadaques', 'llançà', 'llanca', 'figueres',
-    'palau', 'saverdera', 'garriguella', 'vilajuïga', 'vilajuiga', 'pau', 'peralada', 'pedret', 'marzà', 'marza', 'sant', 'martí', 'llémena', 'cap', 'creus', 'jesús', 'jesus', 'nazaret', 'grecs', 'els'];
-  const bonito = (p) => {
-    const t = String(p.titulo || '').trim();
-    const letras = t.replace(/[^A-Za-zÀ-ÿ]/g, '');
-    const mayus = letras.replace(/[^A-ZÀ-ÖØ-Þ]/g, '');
-    if (!letras || mayus.length / letras.length < 0.6) return t;   // ya está en minúsculas normales
-    const extra = `${p.zona || ''} ${p.poblacion || ''}`.toLowerCase().split(/\s+/).filter(Boolean);
-    const lugares = new Set([...LUGARES, ...extra]);
-    const out = t.toLowerCase().replace(/[a-zà-ÿ'’]+/g, (w) => (lugares.has(w) ? w.charAt(0).toUpperCase() + w.slice(1) : w));
-    return out.replace(/[a-zà-ÿ]/, (c) => c.toUpperCase()).replace(/¡\s+/g, '¡').replace(/\s+!/g, '!');
-  };
+// Los títulos de Inmoweb suelen venir TODO EN MAYÚSCULAS. En el correo los pasamos a
+// minúsculas normales y mantenemos la mayúscula de los nombres de lugar.
+const LUGARES = ['roses', 'santa', 'margarita', 'margarida', 'empuriabrava', 'castelló', 'castello', "d'empúries", "d'empuries", 'empúries', 'empuries',
+  'puig', 'rom', 'mas', 'matas', 'oliva', 'canyelles', 'costa', 'brava', 'girona', 'cadaqués', 'cadaques', 'llançà', 'llanca', 'figueres',
+  'palau', 'saverdera', 'garriguella', 'vilajuïga', 'vilajuiga', 'pau', 'peralada', 'pedret', 'marzà', 'marza', 'sant', 'martí', 'llémena', 'cap', 'creus', 'jesús', 'jesus', 'nazaret', 'grecs', 'els'];
 
+// Título de la propiedad en el idioma pedido (si Inmoweb no lo trae, el español).
+function tituloIdioma(p, lang) {
+  const t = { es: p.titulo, ca: p.tituloCa, en: p.tituloEn, fr: p.tituloFr }[lang];
+  return String(t || p.titulo || '').trim();
+}
+
+function bonito(p, lang = 'es') {
+  const t = tituloIdioma(p, lang);
+  const letras = t.replace(/[^A-Za-zÀ-ÿ]/g, '');
+  const mayus = letras.replace(/[^A-ZÀ-ÖØ-Þ]/g, '');
+  if (!letras || mayus.length / letras.length < 0.6) return t;   // ya está en minúsculas normales
+  const extra = `${p.zona || ''} ${p.poblacion || ''}`.toLowerCase().split(/\s+/).filter(Boolean);
+  const lugares = new Set([...LUGARES, ...extra]);
+  const out = t.toLowerCase().replace(/[a-zà-ÿ'’]+/g, (w) => (lugares.has(w) ? w.charAt(0).toUpperCase() + w.slice(1) : w));
+  const limpio = out.replace(/[a-zà-ÿ]/, (c) => c.toUpperCase()).replace(/¡\s+/g, '¡').replace(/\s+!/g, '!');
+  // En francés se escribe un espacio antes de ! y ?
+  return lang === 'fr' ? limpio.replace(/\s*([!?])/g, '\u00a0$1') : limpio;
+}
+
+// Quitamos saltos de línea del título para el asunto del correo: evita que alguien
+// intente inyectar cabeceras de email adicionales (Bcc, etc.) a través de ese campo.
+const tituloSeguro = (s) => String(s ?? '').replace(/[\r\n]+/g, ' ').trim();
+
+// Construye el correo (asunto + HTML) en un idioma.
+function construirCorreo(nuevas, lang) {
+  const T = TEXTOS[lang] || TEXTOS.es;
   const WHATSAPP = '34632251470';
   const IMG = (f) => `${SITE_URL}${f}`;   // imágenes del correo: están en la raíz del repositorio
   const NAVY = '#1A2E43', TURQ = '#039BA5', GRIS = '#8a95a1';
+  const sufijoLang = lang === 'es' ? '' : `?lang=${lang}`;
 
   const tarjetas = nuevas
     .map((p, i) => {
       const foto = p.fotos && p.fotos[0] ? p.fotos[0] : '';
-      const tituloTxt = bonito(p);
+      const tituloTxt = bonito(p, lang);
       const titulo = escHtml(tituloTxt);
-      const operacion = escHtml(p.operacion);
+      const operacion = escHtml(T.venta);
       const zona = escHtml(p.zona || p.poblacion || '');
       // Enlace directo a la ficha (propiedades/<referencia>.html, mismo criterio que generate-property-pages.mjs)
+      // ?lang=xx hace que la ficha se abra ya en el idioma del suscriptor.
       const refLimpia = String(p.referencia || '').replace(/[^a-zA-Z0-9_-]/g, '');
-      const urlFicha = escHtml(refLimpia ? `${SITE_URL}propiedades/${refLimpia}.html` : SITE_URL);
-      const urlWa = escHtml(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(`Hola, me interesa la propiedad ${refLimpia || tituloTxt}.`)}`);
+      const urlFicha = escHtml(refLimpia ? `${SITE_URL}propiedades/${refLimpia}.html${sufijoLang}` : SITE_URL + sufijoLang);
+      const urlWa = escHtml(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(T.waMsg(refLimpia || tituloTxt))}`);
       // Datos clave: solo los que existen, sin dejar huecos.
       const datos = [];
-      if (Number(p.habitaciones) > 0) datos.push(`🛏 ${Number(p.habitaciones)} hab`);
-      if (Number(p.banos) > 0) datos.push(`🛁 ${Number(p.banos)} ${Number(p.banos) === 1 ? 'baño' : 'baños'}`);
+      if (Number(p.habitaciones) > 0) datos.push(`🛏 ${Number(p.habitaciones)} ${T.hab}`);
+      if (Number(p.banos) > 0) datos.push(`🛁 ${Number(p.banos)} ${Number(p.banos) === 1 ? T.bano : T.banos}`);
       if (Number(p.m2) > 0) datos.push(`📐 ${Math.round(Number(p.m2))} m²`);
       const lineaDatos = datos.length
         ? `<p style="margin:0 18px;text-align:center;color:${NAVY};font-size:15px;font-weight:700">${datos.map((d) => `<span style="white-space:nowrap">${d}</span>`).join(' &nbsp;|&nbsp; ')}</p>`
@@ -288,16 +348,16 @@ async function avisarSuscriptores(nuevas, modoPrueba = false) {
             <span style="display:block;font-family:Georgia,serif;font-size:18px;font-weight:700;margin-top:3px;color:${NAVY}">${zona}</span>
           </td>
           <td style="padding:0 18px 0 0;text-align:right;vertical-align:middle">
-            <span style="display:inline-block;background:${TURQ};color:#ffffff;font-size:19px;font-weight:700;padding:7px 16px;border-radius:100px;white-space:nowrap">${escHtml(fmtPrecio(p.precio))}</span>
+            <span style="display:inline-block;background:${TURQ};color:#ffffff;font-size:19px;font-weight:700;padding:7px 16px;border-radius:100px;white-space:nowrap">${escHtml(fmtPrecio(p.precio, lang))}</span>
           </td>
         </tr></table>
         <h3 style="margin:18px 22px 6px;text-align:center;font-family:Georgia,serif;font-size:21px;line-height:1.32;font-weight:700;color:${NAVY}">${titulo}</h3>
         ${refHtml}
         ${lineaDatos}
-        <p style="margin:20px 26px 0;text-align:center;color:#3b4b5b;font-size:15px;line-height:1.6">Una nueva propiedad${zona ? ' en ' + zona : ''} acaba de publicarse en Ocean Immo.</p>
+        <p style="margin:20px 26px 0;text-align:center;color:#3b4b5b;font-size:15px;line-height:1.6">${escHtml(T.intro(p.zona || p.poblacion || ''))}</p>
         <div style="padding:20px 22px 0">
-          <a href="${urlFicha}" style="display:block;text-align:center;background:${NAVY};color:#ffffff;text-decoration:none;padding:15px;border-radius:100px;font-size:15px;font-weight:700;margin-bottom:10px"><img src="${IMG('casa-blanca.png')}" width="18" height="18" alt="" style="vertical-align:-3px;margin-right:8px;border:0">Ver la propiedad en nuestra web</a>
-          <a href="${urlWa}" style="display:block;text-align:center;background:#ffffff;color:${NAVY};text-decoration:none;border:2px solid ${TURQ};padding:13px;border-radius:100px;font-size:15px;font-weight:700"><img src="${IMG('chat-turquesa.png')}" width="20" height="20" alt="" style="vertical-align:-4px;margin-right:8px;border:0">Escríbenos por WhatsApp</a>
+          <a href="${urlFicha}" style="display:block;text-align:center;background:${NAVY};color:#ffffff;text-decoration:none;padding:15px;border-radius:100px;font-size:15px;font-weight:700;margin-bottom:10px"><img src="${IMG('casa-blanca.png')}" width="18" height="18" alt="" style="vertical-align:-3px;margin-right:8px;border:0">${escHtml(T.ver)}</a>
+          <a href="${urlWa}" style="display:block;text-align:center;background:#ffffff;color:${NAVY};text-decoration:none;border:2px solid ${TURQ};padding:13px;border-radius:100px;font-size:15px;font-weight:700"><img src="${IMG('chat-turquesa.png')}" width="20" height="20" alt="" style="vertical-align:-4px;margin-right:8px;border:0">${escHtml(T.wa)}</a>
         </div>
       </div>`;
     })
@@ -306,8 +366,8 @@ async function avisarSuscriptores(nuevas, modoPrueba = false) {
   const primera = nuevas[0] || {};
   const preheader = escHtml(
     nuevas.length === 1
-      ? `${bonito(primera)}${primera.precio ? ' · ' + fmtPrecio(primera.precio) : ''}`
-      : `${nuevas.length} nuevas propiedades en Roses y la Costa Brava`
+      ? `${bonito(primera, lang)}${primera.precio ? ' · ' + fmtPrecio(primera.precio, lang) : ''}`
+      : T.preVarias(nuevas.length)
   );
   const htmlContent = `
     <div style="display:none;max-height:0;overflow:hidden;opacity:0;font-size:1px;line-height:1px;color:#ffffff">${preheader}</div>
@@ -315,27 +375,34 @@ async function avisarSuscriptores(nuevas, modoPrueba = false) {
     <div style="max-width:600px;margin:0 auto;background:#ffffff;font-family:Helvetica,Arial,sans-serif;color:${NAVY}">
       <div style="text-align:center;padding:28px 16px 6px"><img src="${IMG('logo-email.png')}" width="210" alt="Ocean Immo" style="height:auto;display:inline-block;border:0"></div>
       <div style="padding:18px 20px 0;text-align:center">
-        <span style="font-family:Georgia,serif;font-size:23px;font-weight:700;line-height:1.3;color:${NAVY}">${nuevas.length === 1 ? 'Nueva propiedad<br>en Ocean Immo' : `${nuevas.length} nuevas propiedades<br>en Ocean Immo`}</span>
+        <span style="font-family:Georgia,serif;font-size:23px;font-weight:700;line-height:1.3;color:${NAVY}">${nuevas.length === 1 ? T.tituloUno : T.tituloVarias(nuevas.length)}</span>
         <div style="width:44px;height:3px;background:${TURQ};border-radius:3px;margin:12px auto 0"></div>
       </div>
       ${tarjetas}
-      <div style="padding:26px 22px 0"><img src="${IMG('firma-email.png')}" width="200" alt="Un saludo, el equipo de Ocean Immo" style="display:block;height:auto;border:0"></div>
+      <div style="padding:26px 22px 0"><img src="${IMG(T.firmaImg)}" width="${T.firmaW}" alt="${escHtml(T.firmaAlt)}" style="display:block;height:auto;border:0"></div>
       <div style="background-color:#d9f1f3;background-image:url(${IMG('olas-email.jpg')});background-size:100% 100%;background-position:center bottom;background-repeat:no-repeat;padding:48px 16px 22px;text-align:center;font-size:12px;line-height:1.75;color:${NAVY}">
         <b>Ocean Immo</b> · Carrer de Bernat Desclot, 17 · Roses<br>
         Tel. 632 25 14 70 · API A14553 · AICAT 13757<br>
-        <span style="color:#3b5368">Recibes este aviso porque te suscribiste en oceanimmocosta.com.</span><br>
-        <a href="{{ unsubscribe }}" style="color:${NAVY}">Darse de baja</a>
+        <span style="color:#3b5368">${escHtml(T.pie)}</span><br>
+        <a href="{{ unsubscribe }}" style="color:${NAVY}">${escHtml(T.baja)}</a>
       </div>
     </div>
     </div>`;
 
-  // Quitamos saltos de línea del título para el asunto del correo: evita que alguien
-  // intente inyectar cabeceras de email adicionales (Bcc, etc.) a través de ese campo.
-  const tituloSeguro = (s) => String(s ?? '').replace(/[\r\n]+/g, ' ').trim();
   const subject =
     nuevas.length === 1
-      ? `Nueva en ${tituloSeguro(nuevas[0].zona || nuevas[0].poblacion || 'Roses')}: ${tituloSeguro(bonito(nuevas[0]))}${nuevas[0].precio ? ' · ' + fmtPrecio(nuevas[0].precio) : ''}`
-      : `${nuevas.length} nuevas propiedades en Ocean Immo`;
+      ? T.asuntoUno(tituloSeguro(nuevas[0].zona || nuevas[0].poblacion || 'Roses'), tituloSeguro(bonito(nuevas[0], lang)), nuevas[0].precio ? fmtPrecio(nuevas[0].precio, lang) : '')
+      : T.asuntoVarias(nuevas.length);
+  return { subject, htmlContent };
+}
+
+async function avisarSuscriptores(nuevas, modoPrueba = false) {
+  const apiKey = process.env.BREVO_API_KEY;
+  if (!apiKey) {
+    console.warn('Falta BREVO_API_KEY: no se puede avisar a los suscriptores (revisa el secreto en GitHub).');
+    return;
+  }
+  const idiomas = Object.keys(BREVO_LISTAS);
 
   if (modoPrueba) {
     // Diagnóstico 1: ¿está validado el remitente en Brevo?
@@ -353,48 +420,72 @@ async function avisarSuscriptores(nuevas, modoPrueba = false) {
     } else {
       console.error('No se pudo consultar los remitentes de Brevo:', sendersRes.status, await sendersRes.text());
     }
-    // Diagnóstico 2: ¿funciona la clave y se entrega el correo?
-    const testRes = await fetch('https://api.brevo.com/v3/smtp/email', {
+    // Diagnóstico 2: ¿funciona la clave y se entrega el correo? Se envía uno por idioma.
+    for (const lang of idiomas) {
+      const { subject, htmlContent } = construirCorreo(nuevas, lang);
+      const testRes = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: { 'api-key': apiKey, 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          sender: { name: 'Ocean Immo', email: 'oceanimmocosta@gmail.com' },
+          to: [{ email: 'oceanimmocosta@gmail.com' }],
+          subject: `[PRUEBA ${lang.toUpperCase()}] ` + subject,
+          htmlContent,
+        }),
+      });
+      if (testRes.ok) console.log(`Aviso de PRUEBA (${lang}) enviado a oceanimmocosta@gmail.com. Revisa la bandeja (y el spam).`);
+      else console.error(`Error al enviar el aviso de prueba (${lang}):`, testRes.status, await testRes.text());
+    }
+    return;
+  }
+
+  // Envío real: una campaña por idioma, a la lista de ese idioma.
+  for (const lang of idiomas) {
+    const listId = BREVO_LISTAS[lang];
+    // Si la lista aún no tiene suscriptores confirmados, no se crea la campaña.
+    try {
+      const lr = await fetch(`https://api.brevo.com/v3/contacts/lists/${listId}`, {
+        headers: { 'api-key': apiKey, Accept: 'application/json' },
+      });
+      if (lr.ok) {
+        const info = await lr.json();
+        if (Number(info.totalSubscribers ?? info.uniqueSubscribers ?? 1) === 0) {
+          console.log(`Lista ${lang} (#${listId}) vacía: no hay nadie a quien avisar en ese idioma.`);
+          continue;
+        }
+      }
+    } catch (e) {
+      console.warn(`No se pudo consultar la lista ${lang} (#${listId}); se intenta enviar igualmente.`);
+    }
+
+    const { subject, htmlContent } = construirCorreo(nuevas, lang);
+    const createRes = await fetch('https://api.brevo.com/v3/emailCampaigns', {
       method: 'POST',
       headers: { 'api-key': apiKey, 'Content-Type': 'application/json', Accept: 'application/json' },
       body: JSON.stringify({
+        name: `Aviso automático ${lang.toUpperCase()} - ${new Date().toISOString().slice(0, 10)}`,
+        subject,
         sender: { name: 'Ocean Immo', email: 'oceanimmocosta@gmail.com' },
-        to: [{ email: 'oceanimmocosta@gmail.com' }],
-        subject: '[PRUEBA] ' + subject,
         htmlContent,
+        recipients: { listIds: [listId] },
       }),
     });
-    if (testRes.ok) console.log('Aviso de PRUEBA enviado a oceanimmocosta@gmail.com. Revisa la bandeja (y el spam).');
-    else console.error('Error al enviar el aviso de prueba:', testRes.status, await testRes.text());
-    return;
-  }
+    if (!createRes.ok) {
+      console.error(`Error al crear la campaña (${lang}) en Brevo:`, createRes.status, await createRes.text());
+      continue;
+    }
+    const { id } = await createRes.json();
 
-  const createRes = await fetch('https://api.brevo.com/v3/emailCampaigns', {
-    method: 'POST',
-    headers: { 'api-key': apiKey, 'Content-Type': 'application/json', Accept: 'application/json' },
-    body: JSON.stringify({
-      name: `Aviso automático - ${new Date().toISOString().slice(0, 10)}`,
-      subject,
-      sender: { name: 'Ocean Immo', email: 'oceanimmocosta@gmail.com' },
-      htmlContent,
-      recipients: { listIds: [BREVO_LIST_ID] },
-    }),
-  });
-  if (!createRes.ok) {
-    console.error('Error al crear la campaña en Brevo:', createRes.status, await createRes.text());
-    return;
+    const sendRes = await fetch(`https://api.brevo.com/v3/emailCampaigns/${id}/sendNow`, {
+      method: 'POST',
+      headers: { 'api-key': apiKey, Accept: 'application/json' },
+    });
+    if (!sendRes.ok) {
+      console.error(`Error al enviar la campaña (${lang}) en Brevo:`, sendRes.status, await sendRes.text());
+      continue;
+    }
+    console.log(`Aviso (${lang}) enviado a la lista #${listId} correctamente.`);
   }
-  const { id } = await createRes.json();
-
-  const sendRes = await fetch(`https://api.brevo.com/v3/emailCampaigns/${id}/sendNow`, {
-    method: 'POST',
-    headers: { 'api-key': apiKey, Accept: 'application/json' },
-  });
-  if (!sendRes.ok) {
-    console.error('Error al enviar la campaña en Brevo:', sendRes.status, await sendRes.text());
-    return;
-  }
-  console.log('Aviso enviado a los suscriptores correctamente.');
 }
 
 main().catch((err) => {
