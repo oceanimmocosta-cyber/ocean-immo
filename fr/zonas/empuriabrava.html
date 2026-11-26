@@ -1686,6 +1686,7 @@ html,body{overflow-anchor:none}
       <input type="email" name="EMAIL" required placeholder="Votre adresse e-mail" aria-label="Email">
       <input type="text" name="email_address_check" value="" style="display:none">
       <input type="hidden" name="locale" value="es">
+      <input type="hidden" name="IDIOMA" id="news-idioma" value="es">
       <button class="btn btn-navy" type="submit">M'abonner</button>
     </form>
     <p class="news-success" id="news-form-success" style="display:none">✓ ¡Gracias! Revisa tu correo para confirmar la suscripción.</p>
@@ -2881,6 +2882,14 @@ html,body{overflow-anchor:none}
     var successMsg=document.getElementById('news-form-success');
     if(!form) return;
     form.addEventListener('submit', function(){
+      // Se guarda en Brevo el idioma en el que la persona está viendo la web (es, ca, en o fr).
+      try{
+        var il=document.getElementById('news-idioma');
+        var lg=(typeof currentLang!=='undefined'&&currentLang)||window.__LANG||document.documentElement.lang||'es';
+        lg=String(lg).toLowerCase().slice(0,2);
+        if(['es','ca','en','fr'].indexOf(lg)<0) lg='es';
+        if(il) il.value=lg;
+      }catch(e){}
       // El envío real ocurre de forma normal (hacia el iframe oculto), solo mostramos el aviso.
       setTimeout(function(){
         form.style.display='none';
